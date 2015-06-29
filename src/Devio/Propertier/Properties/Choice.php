@@ -1,6 +1,7 @@
 <?php namespace Devio\Propertier\Properties;
 
 use Devio\Propertier\Models\PropertyChoice;
+use Devio\Propertier\Exceptions\PropertyChoiceNotFound;
 
 class Choice extends PropertyAbstract {
 
@@ -34,8 +35,11 @@ class Choice extends PropertyAbstract {
      */
     public function isValidForStorage()
     {
-        return PropertyChoice::find(
-            (int) $this->plainValue
-        ) ? true : false;
+        if ( ! $choice = PropertyChoice::find($this->plainValue))
+        {
+            throw new PropertyChoiceNotFound;
+        }
+
+        return true;
     }
 }
