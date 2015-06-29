@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Devio\\Propertier\\": "src/"
+            "Devio\\Propertier\\": "src/Devio/Propertier"
         }
     }
 }
