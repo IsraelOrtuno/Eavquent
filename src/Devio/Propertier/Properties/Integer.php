@@ -7,11 +7,6 @@ class Integer extends PropertyAbstract {
         return (int) $plainValue;
     }
 
-    public function decorate($value)
-    {
-        return (int) $value;
-    }
-
     public function isValidForStorage()
     {
         return is_integer($this->plainValue);
