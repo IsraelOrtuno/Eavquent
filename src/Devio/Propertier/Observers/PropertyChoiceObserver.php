@@ -15,11 +15,6 @@ class PropertyChoiceObserver {
      */
     public function deleted(PropertyChoice $choice)
     {
-//        $choice->property->with(['values' => function($query) use ($choice)
-//        {
-//            $query->where('value', (string) $choice->id);
-//        }]);
 
-       // Destroy $choice->property->values
     }
 }
