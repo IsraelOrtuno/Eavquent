@@ -16,11 +16,6 @@ class ValueSetter {
     protected $entity;
 
     /**
-     * @var array
-     */
-    public static $deletionQueue = [];
-
-    /**
      * Returns a new ValueSetter instance.
      *
      * @param Model $entity
@@ -202,13 +197,5 @@ class ValueSetter {
     protected function getProperty($key)
     {
         return $this->entity->getProperty($key);
-    }
-
-    /**
-     * @return array
-     */
-    public function getDeletionQueue()
-    {
-        return static::$deletionQueue;
     }
 }
