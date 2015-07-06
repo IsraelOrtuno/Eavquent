@@ -1,6 +1,7 @@
 <?php namespace Devio\Propertier\Models;
 
 use Devio\Propertier\Observers\PropertyValueObserver;
+use Devio\Propertier\Properties\PropertyFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -64,11 +65,47 @@ class PropertyValue extends Model {
     }
 
     /**
+     * Casting the value to a native PHP type. Will override the default
+     * model casting function.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool|BaseCollection|mixed
+     */
+    protected function castAttribute($key, $value)
+    {
+        if ($key == 'value' && is_null($value))
+        {
+            return $value;
+        }
+
+        // Will cast the PropertyValue value to the type required int the
+        // property definition class (if any). If no element is found,
+        // this will act as normally and call the parent function.
+        if ($property = $this->getPropertyRelation())
+        {
+            $value = PropertyFactory::make($property)
+                                    ->value($this);
+
+            return $value->getPlainValue();
+        }
+
+        return parent::castAttribute($key, $value);
+    }
+
+    /**
+     * The property relation.
+     *
      * @return Property
      */
     public function getPropertyRelation()
     {
-        return $this->propertyRelation;
+        if ($this->propertyRelation)
+        {
+            return $this->propertyRelation;
+        }
+
+        return $this->property;
     }
 
     /**
