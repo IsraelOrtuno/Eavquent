@@ -110,6 +110,8 @@ class PropertyValue extends Model {
     }
 
     /**
+     * Sets the property relation.
+     *
      * @param Property $propertyRelation
      */
     public function setPropertyRelation($propertyRelation)
