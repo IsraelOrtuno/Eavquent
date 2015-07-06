@@ -86,6 +86,8 @@ abstract class PropertyAbstract {
     }
 
     /**
+     * Will return the property value object.
+     *
      * @return PropertyValue
      */
     public function getValue()
@@ -94,6 +96,8 @@ abstract class PropertyAbstract {
     }
 
     /**
+     * Will return the plain value already casted.
+     *
      * @return string
      */
     public function getPlainValue()
