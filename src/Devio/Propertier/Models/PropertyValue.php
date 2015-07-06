@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PropertyValue extends Model {
 
     /**
+     * Value field name.
+     */
+    const VALUE_FIELD = 'value';
+
+    /**
      * Property Value fillable attributes.
      *
      * @var array
@@ -74,7 +79,7 @@ class PropertyValue extends Model {
      */
     protected function castAttribute($key, $value)
     {
-        if ($key == 'value' && is_null($value))
+        if ($this->isValueField($key) && is_null($value))
         {
             return $value;
         }
@@ -92,6 +97,28 @@ class PropertyValue extends Model {
         }
 
         return parent::castAttribute($key, $value);
+    }
+
+    /**
+     * Forcing true when the key is the value field.
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function hasCast($key)
+    {
+        return $this->isValueField($key);
+    }
+
+    /**
+     * Check if the key is the same as the value field name.
+     *
+     * @param $key
+     * @return bool
+     */
+    protected function isValueField($key)
+    {
+        return $key == static::VALUE_FIELD;
     }
 
     /**
