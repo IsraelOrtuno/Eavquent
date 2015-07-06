@@ -55,7 +55,7 @@ abstract class PropertyAbstract {
      */
     public function value($value)
     {
-        $value->value = $this->castValue($value->value);
+        $value->value = $this->cast($value->value);
 
         $this->value = $value;
 
@@ -70,7 +70,7 @@ abstract class PropertyAbstract {
      *
      * @param $plainValue
      */
-    protected function castValue($plainValue)
+    protected function cast($plainValue)
     {
         return $plainValue;
     }
@@ -83,5 +83,21 @@ abstract class PropertyAbstract {
     public function isValidForStorage()
     {
         return true;
+    }
+
+    /**
+     * @return PropertyValue
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlainValue()
+    {
+        return $this->plainValue;
     }
 }
