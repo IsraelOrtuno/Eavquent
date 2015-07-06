@@ -79,13 +79,14 @@ class PropertyValue extends Model {
             return $value;
         }
 
+        $propertyRelation = $this->getPropertyRelation();
+
         // Will cast the PropertyValue value to the type required int the
         // property definition class (if any). If no element is found,
         // this will act as normally and call the parent function.
-        if ($property = $this->getPropertyRelation())
+        if ($property = PropertyFactory::make($propertyRelation))
         {
-            $value = PropertyFactory::make($property)
-                                    ->value($this);
+            $value = $propertyRelation->value($this);
 
             return $value->getPlainValue();
         }
