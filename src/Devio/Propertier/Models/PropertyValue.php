@@ -1,9 +1,9 @@
 <?php namespace Devio\Propertier\Models;
 
-use Devio\Propertier\Observers\PropertyValueObserver;
-use Devio\Propertier\Properties\PropertyFactory;
 use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Properties\PropertyFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Devio\Propertier\Observers\PropertyValueObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PropertyValue extends Model {
