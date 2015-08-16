@@ -3,7 +3,8 @@
 use Devio\Propertier\Models\Property;
 use Devio\Propertier\Models\PropertyValue;
 
-abstract class PropertyAbstract {
+abstract class PropertyAbstract
+{
 
     /**
      * The property model.
@@ -50,16 +51,16 @@ abstract class PropertyAbstract {
     /**
      * Will set the PropertyValue assigned to this property.
      *
-     * @param $value
+     * @param $propertyValue
      * @return $this
      */
-    public function value($value)
+    public function value($propertyValue)
     {
-        $value->value = $this->cast($value->value);
+        $propertyValue->value = $this->cast($propertyValue->value);
 
-        $this->value = $value;
+        $this->value = $propertyValue;
 
-        $this->plainValue = $value->value;
+        $this->plainValue = $propertyValue->value;
 
         return $this;
     }
