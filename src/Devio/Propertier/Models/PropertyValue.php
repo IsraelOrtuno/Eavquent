@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Devio\Propertier\Observers\PropertyValueObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PropertyValue extends Model {
+class PropertyValue extends Model
+{
 
     /**
      * Value field name.
@@ -77,48 +78,36 @@ class PropertyValue extends Model {
      * @param mixed $value
      * @return bool|BaseCollection|mixed
      */
-    protected function castAttribute($key, $value)
-    {
-        if ($this->isValueField($key) && is_null($value))
-        {
-            return $value;
-        }
-
-        $propertyRelation = $this->getPropertyRelation();
-
-        // Will cast the PropertyValue value to the type required int the
-        // property definition class (if any). If no element is found,
-        // this will act as normally and call the parent function.
-        if ($property = PropertyFactory::make($propertyRelation))
-        {
-            $value = $propertyRelation->value($this);
-
-            return $value->getPlainValue();
-        }
-
-        return parent::castAttribute($key, $value);
-    }
+//    protected function castAttribute($key, $value)
+//    {
+//        if ($this->isValueField($key) && is_null($value))
+//        {
+//            return $value;
+//        }
+//
+//        $propertyRelation = $this->getPropertyRelation();
+//
+//        // Will cast the PropertyValue value to the type required int the
+//        // property definition class (if any). If no element is found,
+//        // this will act as normally and call the parent function.
+//        if ($property = PropertyFactory::make($propertyRelation))
+//        {
+//            return $property->value($this)
+//                            ->getPlainValue();
+//        }
+//
+//        return parent::castAttribute($key, $value);
+//    }
 
     /**
-     * Forcing true when the key is the value field.
+     * Forcing false for casting.
      *
      * @param string $key
      * @return bool
      */
     protected function hasCast($key)
     {
-        return $this->isValueField($key);
-    }
-
-    /**
-     * Check if the key is the same as the value field name.
-     *
-     * @param $key
-     * @return bool
-     */
-    protected function isValueField($key)
-    {
-        return $key == static::VALUE_FIELD;
+        return false;
     }
 
     /**
