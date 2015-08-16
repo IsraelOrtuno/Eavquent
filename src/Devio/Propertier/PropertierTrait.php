@@ -7,7 +7,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Devio\Propertier\Observers\PropertyObserver;
 use Devio\Propertier\Relations\PropertierHasMany;
 
-trait PropertierTrait {
+trait PropertierTrait
+{
+
+    /**
+     * Indicates if the properties should stored at level 0.
+     *
+     * @var bool
+     */
+    protected $plainProperties = true;
 
     /**
      * Values to be deleted.

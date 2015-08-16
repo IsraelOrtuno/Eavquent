@@ -23,6 +23,8 @@ class Choice extends PropertyAbstract {
      */
     public function decorate()
     {
+//        $this->isValidForStorage();
+
         return [
             'id'    => $this->plainValue,
             'value' => PropertyChoice::find($this->plainValue)->value

@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Devio\Propertier\Models\PropertyValue;
 use Devio\Propertier\Exceptions\PropertyIsNotMultivalue;
 
-class ValueSetter {
+class ValueSetter
+{
 
     /**
      * Entity instance.
@@ -44,6 +45,8 @@ class ValueSetter {
      *
      * @param $key
      * @param $value
+     *
+     * @return PropertyValue|mixed|void
      */
     public function assign($key, $value)
     {
@@ -64,6 +67,7 @@ class ValueSetter {
      *
      * @param $property
      * @param $value
+     *
      * @return PropertyValue|mixed
      */
     protected function assignOne($property, $value)

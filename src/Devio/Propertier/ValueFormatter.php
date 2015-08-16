@@ -38,7 +38,6 @@ class ValueFormatter {
         {
             return $this->formatMany($this->model);
         }
-
         return $this->formatOne($this->model);
     }
 

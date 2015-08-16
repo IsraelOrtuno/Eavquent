@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class ValueGetter {
+class ValueGetter
+{
 
     /**
      * @var Model
