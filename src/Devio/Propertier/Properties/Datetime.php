@@ -1,8 +1,10 @@
-<?php namespace Devio\Propertier\Properties;
+<?php
+namespace Devio\Propertier\Properties;
 
 use Carbon\Carbon;
 
-class Datetime extends PropertyAbstract {
+class Datetime extends PropertyAbstract
+{
 
     public function cast($plainValue)
     {

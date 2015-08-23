@@ -1,11 +1,13 @@
-<?php namespace Devio\Propertier\Observers;
+<?php
+namespace Devio\Propertier\Observers;
 
 use Devio\Propertier\ValueSetter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Devio\Propertier\Jobs\ClearPreviousValues;
 
-class PropertyObserver {
+class PropertyObserver
+{
 
     use DispatchesJobs;
 
@@ -22,7 +24,6 @@ class PropertyObserver {
         // By iterating them, we will just assign the property values to
         // the property (being this handled by the ValueSetter class).
         $model = $this->eagerLoadRelations($model);
-
         $valueSetter = ValueSetter::make($model);
 
         foreach ($model->getAttributes() as $key => $value)
@@ -30,7 +31,6 @@ class PropertyObserver {
             if ($model->isProperty($key))
             {
                 $valueSetter->assign($key, $value);
-
                 // Unsetting the model property from the model attribute list
                 // to make sure we are not trying to insert or update a db
                 // field that does not exist in the real database schema.
@@ -59,7 +59,6 @@ class PropertyObserver {
         {
             $property->push();
         }
-
         // We are currently performing this task in a Job class as it is
         // perfectly functional and wanted to try the new queue system
         // that Laravel 5.1 introduced. This might change in future.

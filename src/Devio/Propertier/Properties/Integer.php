@@ -1,6 +1,8 @@
-<?php namespace Devio\Propertier\Properties;
+<?php
+namespace Devio\Propertier\Properties;
 
-class Integer extends PropertyAbstract {
+class Integer extends PropertyAbstract
+{
 
     protected function cast($plainValue)
     {

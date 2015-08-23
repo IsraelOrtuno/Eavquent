@@ -1,6 +1,8 @@
-<?php namespace Devio\Propertier\Properties;
+<?php
+namespace Devio\Propertier\Properties;
 
-class Boolean extends PropertyAbstract {
+class Boolean extends PropertyAbstract
+{
 
     protected function cast($plainValue)
     {

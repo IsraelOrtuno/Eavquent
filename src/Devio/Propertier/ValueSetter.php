@@ -1,4 +1,5 @@
-<?php namespace Devio\Propertier;
+<?php
+namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
 use Devio\Propertier\Models\Property;
@@ -51,7 +52,6 @@ class ValueSetter
     public function assign($key, $value)
     {
         $property = $this->getProperty($key);
-
         if ($value instanceof Collection)
         {
             return $this->assignMany($property, $value);
@@ -102,12 +102,10 @@ class ValueSetter
         {
             throw new PropertyIsNotMultivalue;
         }
-
         // Any existing value will be added to the value deletion queue that
         // will be processed after saving. Meanwhile, the new values will
         // be created as new and added to the current values relation.
         $this->clearAndQueuePropertyValues($property);
-
         foreach ($valueCollection as $value)
         {
             $this->createNewValue($property, $value);
@@ -123,9 +121,7 @@ class ValueSetter
     protected function clearAndQueuePropertyValues(Property $property)
     {
         $currentValues = $this->getValues($property);
-
         $this->queueForDeletion($currentValues);
-
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Let's iterate the relation till clear.
@@ -155,13 +151,11 @@ class ValueSetter
             'entity_id'   => $this->entity->id,
             'property_id' => $property->id
         ]);
-
         // Will set the property relation property. This will help to avoid infinite
         // pointing loops that the method "relationsToArray" will cause if a model
         // relation is pointing its own parent. This is only for accessing the
         // PropertyValue Property object without making a new database call.
         $propertyValue->setPropertyRelation($property);
-
         $property->values->push($propertyValue);
     }
 

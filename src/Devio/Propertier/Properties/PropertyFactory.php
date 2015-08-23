@@ -1,8 +1,10 @@
-<?php namespace Devio\Propertier\Properties;
+<?php
+namespace Devio\Propertier\Properties;
 
 use Devio\Propertier\Models\Property;
 
-class PropertyFactory {
+class PropertyFactory
+{
 
     /**
      * Get the right property type class based on the property provided.

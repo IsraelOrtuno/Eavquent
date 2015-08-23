@@ -1,9 +1,11 @@
-<?php namespace Devio\Propertier;
+<?php
+namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
 use Devio\Propertier\Properties\PropertyFactory;
 
-class ValueFormatter {
+class ValueFormatter
+{
 
     /**
      * @var mixed
@@ -38,6 +40,7 @@ class ValueFormatter {
         {
             return $this->formatMany($this->model);
         }
+
         return $this->formatOne($this->model);
     }
 
@@ -64,7 +67,6 @@ class ValueFormatter {
     protected function formatMany($models)
     {
         $formattedCollection = new Collection();
-
         foreach ($models as $model)
         {
             $formattedCollection->put(

@@ -1,4 +1,5 @@
-<?php namespace Devio\Propertier\Models;
+<?php
+namespace Devio\Propertier\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Devio\Propertier\Properties\PropertyFactory;
@@ -36,7 +37,6 @@ class PropertyValue extends Model
     protected static function boot()
     {
         static::observe(new PropertyValueObserver);
-
         parent::boot();
     }
 

@@ -1,9 +1,11 @@
-<?php namespace Devio\Propertier\Properties;
+<?php
+namespace Devio\Propertier\Properties;
 
 use Devio\Propertier\Models\PropertyChoice;
 use Devio\Propertier\Exceptions\PropertyChoiceNotFound;
 
-class Choice extends PropertyAbstract {
+class Choice extends PropertyAbstract
+{
 
     /**
      * Casting to an integer value.
@@ -23,8 +25,7 @@ class Choice extends PropertyAbstract {
      */
     public function decorate()
     {
-//        $this->isValidForStorage();
-
+        //        $this->isValidForStorage();
         return [
             'id'    => $this->plainValue,
             'value' => PropertyChoice::find($this->plainValue)->value

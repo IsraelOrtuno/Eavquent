@@ -1,4 +1,5 @@
-<?php namespace Devio\Propertier\Properties;
+<?php
+namespace Devio\Propertier\Properties;
 
 use Devio\Propertier\Models\Property;
 use Devio\Propertier\Models\PropertyValue;
@@ -57,9 +58,7 @@ abstract class PropertyAbstract
     public function value($propertyValue)
     {
         $propertyValue->value = $this->cast($propertyValue->value);
-
         $this->value = $propertyValue;
-
         $this->plainValue = $propertyValue->value;
 
         return $this;

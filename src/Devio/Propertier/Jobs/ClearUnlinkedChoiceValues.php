@@ -1,5 +1,7 @@
-<?php namespace Devio\Propertier\Jobs;
+<?php
+namespace Devio\Propertier\Jobs;
 
-class ClearUnlinkedChoiceValues {
+class ClearUnlinkedChoiceValues
+{
 
 }

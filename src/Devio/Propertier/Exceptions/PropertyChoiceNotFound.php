@@ -1,4 +1,7 @@
-<?php namespace Devio\Propertier\Exceptions;
+<?php
+namespace Devio\Propertier\Exceptions;
 
-class PropertyChoiceNotFound extends \Exception {
+class PropertyChoiceNotFound extends \Exception
+{
+
 }

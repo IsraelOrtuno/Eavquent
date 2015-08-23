@@ -1,9 +1,11 @@
-<?php namespace Devio\Propertier\Models;
+<?php
+namespace Devio\Propertier\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Property extends Model {
+class Property extends Model
+{
 
     /**
      * Relationship Property Values.

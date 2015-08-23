@@ -1,4 +1,7 @@
-<?php namespace Devio\Propertier\Exceptions;
+<?php
+namespace Devio\Propertier\Exceptions;
 
-class PropertyIsNotMultivalue extends \Exception {
+class PropertyIsNotMultivalue extends \Exception
+{
+
 }

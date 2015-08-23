@@ -1,11 +1,13 @@
-<?php namespace Devio\Propertier\Relations;
+<?php
+namespace Devio\Propertier\Relations;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PropertierHasMany extends HasMany {
+class PropertierHasMany extends HasMany
+{
 
     /**
      * @var string
@@ -33,7 +35,6 @@ class PropertierHasMany extends HasMany {
         if (static::$constraints)
         {
             $this->query->where($this->foreignKey, '=', $this->getParentKey());
-
             $this->query->whereNotNull($this->foreignKey);
         }
     }

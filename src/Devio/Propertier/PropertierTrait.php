@@ -1,4 +1,5 @@
-<?php namespace Devio\Propertier;
+<?php
+namespace Devio\Propertier;
 
 use Devio\Propertier\Models\Value;
 use Devio\Propertier\Models\Property;
@@ -73,7 +74,6 @@ trait PropertierTrait
         {
             return false;
         }
-
         // Also we have to be sure that the relationship has been already
         // loaded into the entity before checking anything in it. This
         // also eager loads the properties relation into the entity.
