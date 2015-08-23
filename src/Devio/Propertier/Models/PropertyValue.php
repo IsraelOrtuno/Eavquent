@@ -71,17 +71,6 @@ class PropertyValue extends Model
     }
 
     /**
-     * Forcing false for casting.
-     *
-     * @param string $key
-     * @return bool
-     */
-    protected function hasCast($key)
-    {
-        return false;
-    }
-
-    /**
      * The property relation.
      *
      * @return Property
