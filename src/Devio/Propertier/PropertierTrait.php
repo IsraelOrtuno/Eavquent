@@ -11,7 +11,7 @@ trait PropertierTrait
 {
 
     /**
-     * Indicates if the properties should stored at level 0.
+     * Properties should be at level 0 when converting to array.
      *
      * @var bool
      */
@@ -103,12 +103,12 @@ trait PropertierTrait
      */
     public function getValueDeletionQueue()
     {
-        if ( ! is_null($this->valueDeletionQueue))
+        if (is_null($this->valueDeletionQueue))
         {
-            return $this->valueDeletionQueue;
+            $this->valueDeletionQueue = new Collection;
         }
 
-        return new Collection;
+        return $this->valueDeletionQueue;
     }
 
     /**
@@ -118,12 +118,7 @@ trait PropertierTrait
      */
     public function queueValueForDeletion($element)
     {
-        if (is_null($this->valueDeletionQueue))
-        {
-            $this->valueDeletionQueue = new Collection;
-        }
-
-        $this->valueDeletionQueue->push($element);
+        $this->getValueDeletionQueue()->push($element);
     }
 
     /**
