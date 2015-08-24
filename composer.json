@@ -22,6 +22,7 @@
     },
     "require-dev": {
         "laravel/laravel": "~5.1",
+        "laracasts/testdummy": "~2.1",
         "phpunit/phpunit": "~4.7@dev"
     },
     "autoload": {
@@ -34,7 +35,7 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/TestCase.php"
+            "tests/"
         ]
     }
 }

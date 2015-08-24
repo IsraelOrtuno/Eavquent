@@ -7,10 +7,10 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="true"
+         stopOnFailure="false"
          syntaxCheck="false"
         >
-    <testsuites>cd
+    <testsuites>
         <testsuite>
             <directory suffix="Test.php">./tests/</directory>
         </testsuite>
