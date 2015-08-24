@@ -1,10 +1,14 @@
 <?php
 
-use Illuminate\Database\Capsule\Manager as DB;
+use Faker\Generator as FakerGenerator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as TestCaseBase;
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 
-class TestCase extends TestCaseBase {
+class TestCase extends TestCaseBase
+{
+
+    use DatabaseMigrations;
 
     /**
      * Setting up test
@@ -13,7 +17,10 @@ class TestCase extends TestCaseBase {
     {
         parent::setUp();
 
+        $this->artisan('key:generate');
+
         $this->setUpDatabase();
+        $this->setUpFactories();
     }
 
     /**
@@ -21,27 +28,25 @@ class TestCase extends TestCaseBase {
      */
     protected function setUpDatabase()
     {
-        $db = new DB();
+        $this->app['config']->set('database.default', 'sqlite');
+        $this->app['config']->set('database.connections.sqlite.database', ':memory:');
 
-        $db->addConnection([
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => ''
-        ], 'sqlite-testing');
+        $this->artisan('migrate', [
+            '--path' => '../../../src/migrations'
+        ]);
 
-        $db->bootEloquent();
-
-        $db->setAsGlobal();
-
-        $this->runDatabaseMigrations();
+        $this->artisan('migrate', [
+            '--path' => '../../../tests/support/migrations'
+        ]);
     }
 
-    public function runDatabaseMigrations()
+    protected function setUpFactories()
     {
-        $this->artisan('migrate', ['--path', __DIR__ . '/../src/migrations']);
+        $this->app->singleton(EloquentFactory::class, function ($app)
+        {
+            $faker = $app->make(FakerGenerator::class);
 
-        $this->beforeApplicationDestroyed(function () {
-            $this->artisan('migrate:rollback');
+            return EloquentFactory::construct($faker, __DIR__ . '/factories');
         });
     }
 
@@ -54,7 +59,7 @@ class TestCase extends TestCaseBase {
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../vendor/laravel/laravel/bootstrap/app.php';
+        $app = require __DIR__ . '/../vendor/laravel/laravel/bootstrap/app.php';
 
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
