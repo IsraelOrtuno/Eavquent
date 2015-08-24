@@ -8,6 +8,15 @@ class Property extends Model
 {
 
     /**
+     * List of attributes that open to mass assignment.
+     *
+     * @var array
+     */
+    public $fillable = [
+        'type', 'name', 'multivalue', 'entity', 'default_value'
+    ];
+
+    /**
      * Relationship Property Values.
      *
      * @return HasMany
