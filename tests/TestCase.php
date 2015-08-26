@@ -51,6 +51,9 @@ class TestCase extends TestCaseBase
         $this->artisan('vendor:publish');
     }
 
+    /**
+     * Will load the model factories.
+     */
     protected function setUpFactories()
     {
         $this->app->singleton(EloquentFactory::class, function ($app)
@@ -63,8 +66,6 @@ class TestCase extends TestCaseBase
 
     /**
      * Creates the application.
-     *
-     * Needs to be implemented by subclasses.
      *
      * @return \Symfony\Component\HttpKernel\HttpKernelInterface
      */
