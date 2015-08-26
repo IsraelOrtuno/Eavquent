@@ -59,6 +59,7 @@ class PropertyObserver
         {
             $property->push();
         }
+
         // We are currently performing this task in a Job class as it is
         // perfectly functional and wanted to try the new queue system
         // that Laravel 5.1 introduced. This might change in future.
