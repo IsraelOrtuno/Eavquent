@@ -97,11 +97,9 @@ abstract class AbstractValidator
     {
         $factory = $this->container->make('Illuminate\Validation\Factory');
 
-        $validator = ValidatorFactory::make(
+        return $factory->make(
             $this->getAttributes(), $this->rules()
         );
-
-        return $validator;
     }
 
     /**
