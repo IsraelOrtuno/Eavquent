@@ -21,6 +21,7 @@ class TestCase extends TestCaseBase
 
         $this->setUpDatabase();
         $this->setUpFactories();
+        $this->setUpServiceprovider();
     }
 
     /**
@@ -38,6 +39,16 @@ class TestCase extends TestCaseBase
         $this->artisan('migrate', [
             '--path' => '../../../tests/support/migrations'
         ]);
+    }
+
+    /**
+     * Register the service provider and publishes the config.
+     */
+    protected function setUpServiceprovider()
+    {
+        $this->app->register('Devio\Propertier\PropertierServiceProvider');
+
+        $this->artisan('vendor:publish');
     }
 
     protected function setUpFactories()
