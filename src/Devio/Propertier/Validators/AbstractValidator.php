@@ -1,11 +1,19 @@
 <?php
 namespace Devio\Propertier\Validators;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Factory as ValidatorFactory;
 
 abstract class AbstractValidator
 {
+    /**
+     * The container instance.
+     *
+     * @var Container
+     */
+    protected $container;
+
     /**
      * Attributes under validation.
      *
@@ -14,18 +22,24 @@ abstract class AbstractValidator
     protected $attributes = [];
 
     /**
-     * Generates a new validator with or without attributes.
+     * Creates a new validator instance.
      *
-     * @param array|null $attributes
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        $this->attributes = $attributes;
+    }
+
+    /**
+     * Making an object with attributes to validate in a static way.
+     *
+     * @param array $attributes
      * @return static
      */
     public static function make(array $attributes = [])
     {
-        $instance = new static;
-
-        return empty($attributes)
-            ? $instance
-            : $instance->attributes($attributes);
+        return new static($attributes);
     }
 
     /**
@@ -36,9 +50,7 @@ abstract class AbstractValidator
      */
     public function attributes(array $attributes)
     {
-        $this->attributes = $attributes;
-
-        return $this;
+        return static::make($attributes);
     }
 
     /**
@@ -83,6 +95,8 @@ abstract class AbstractValidator
      */
     protected function getValidatorInstance()
     {
+        $factory = $this->container->make('Illuminate\Validation\Factory');
+
         $validator = ValidatorFactory::make(
             $this->getAttributes(), $this->rules()
         );
@@ -100,5 +114,25 @@ abstract class AbstractValidator
     protected function failedValidation(Validator $validator)
     {
         throw new ValidationException($validator);
+    }
+
+    /**
+     * Get the container.
+     *
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * Sets the container
+     *
+     * @param Container $container
+     */
+    public function setContainer($container)
+    {
+        $this->container = $container;
     }
 }
