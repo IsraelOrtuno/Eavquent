@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Property extends Model
 {
-
     /**
      * List of attributes that open to mass assignment.
      *

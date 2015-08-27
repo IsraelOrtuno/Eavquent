@@ -4,8 +4,9 @@ namespace Devio\Propertier\Validators;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Factory as ValidatorFactory;
+use Illuminate\Contracts\Validation\ValidatesWhenResolved;
 
-abstract class AbstractValidator
+abstract class AbstractValidator implements ValidatesWhenResolved
 {
     /**
      * The container instance.

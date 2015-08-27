@@ -37,8 +37,22 @@ class PropertierServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerPropertier();
         $this->registerConfig();
         $this->registerProperties();
+    }
+
+    /**
+     * Will register the propertier manager into the service container.
+     */
+    protected function registerPropertier()
+    {
+        $this->app->singleton('propertier', function($app)
+        {
+            $eventDispatcher = $app->make('Illuminate\Contracts\Events\Dispatcher');
+
+            return new Propertier($eventDispatcher);
+        });
     }
 
     /**

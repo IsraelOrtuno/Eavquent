@@ -36,6 +36,7 @@ class ValueGetter
     {
         $property = $this->model->getProperty($key);
         $values = $property->values;
+
         // If the property is multivalue, it will return a values collection.
         // If it does not just set the value to the unique property value.
         // No matter if one or many, the formatter outputs acordingly.
