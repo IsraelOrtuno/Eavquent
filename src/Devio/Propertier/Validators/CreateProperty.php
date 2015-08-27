@@ -1,6 +1,6 @@
 <?php namespace Devio\Propertier\Validators;
 
-class RegisterProperty extends AbstractValidator
+class CreateProperty extends AbstractValidator
 {
     /**
      * {@inheritDoc}

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Factory as ValidatorFactory;
 use Illuminate\Contracts\Validation\ValidatesWhenResolved;
 
-abstract class AbstractValidator implements ValidatesWhenResolved
+abstract class AbstractValidator
 {
     /**
      * The container instance.
