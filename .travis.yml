@@ -11,4 +11,4 @@ matrix:
 
 install: travis_retry composer install --no-interaction --prefer-source
 
-script: vendor/bin/phpspec run && phpunit
+script: phpunit
