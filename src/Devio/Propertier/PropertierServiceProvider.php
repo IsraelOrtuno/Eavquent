@@ -6,11 +6,6 @@ use Devio\Propertier\Validators\AbstractValidator;
 class PropertierServiceProvider extends ServiceProvider
 {
     /**
-     * Path to the package configuration file.
-     */
-    const CONFIG_PATH = __DIR__ . '/../../config/propertier.php';
-
-    /**
      * Botting the service provider.
      */
     public function boot()
@@ -25,7 +20,7 @@ class PropertierServiceProvider extends ServiceProvider
 
         // Publishes the package configuration file when executing vendor:publish
         $this->publishes([
-            static::CONFIG_PATH => config_path('propertier.php'),
+            __DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),
         ]);
 
     }
@@ -71,7 +66,9 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->mergeConfigFrom(static::CONFIG_PATH, 'propertier');
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/propertier.php', 'propertier'
+        );
     }
 
 }
