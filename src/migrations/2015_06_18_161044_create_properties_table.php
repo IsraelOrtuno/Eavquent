@@ -20,16 +20,14 @@ class CreatePropertiesTable extends Migration {
 
             $table->boolean('multivalue')->default(false);
 
-            $table->boolean('choices')->default(false);
+            $table->integer('min_length')->nullable();
+            $table->integer('max_length')->nullable();
 
-            $table->integer('min_length');
-            $table->integer('max_length');
-
-            $table->boolean('is_required');
+            $table->boolean('is_required')->nullable();
 
             $table->string('entity');
 
-            $table->text('default_value');
+            $table->text('default_value')->nullable();
 
 //            $table->boolean('searchable');
 

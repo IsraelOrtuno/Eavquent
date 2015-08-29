@@ -23,6 +23,6 @@ $factory->define(Company::class, function ($faker)
 $factory->define(Property::class, function ($faker)
 {
     return [
-
+        'entity' => 'Company'
     ];
 });

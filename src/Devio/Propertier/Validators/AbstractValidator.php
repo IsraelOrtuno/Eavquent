@@ -44,17 +44,6 @@ abstract class AbstractValidator
     }
 
     /**
-     * Will set the attributes to validate.
-     *
-     * @param array $attributes
-     * @return $this
-     */
-    public function attributes(array $attributes)
-    {
-        return static::make($attributes);
-    }
-
-    /**
      * Returns the validation attributes.
      *
      * @return array
@@ -129,9 +118,25 @@ abstract class AbstractValidator
      * Sets the container
      *
      * @param Container $container
+     *
+     * @return AbstractValidator
      */
     public function setContainer($container)
     {
         $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return AbstractValidator
+     */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
     }
 }

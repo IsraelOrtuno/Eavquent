@@ -10,7 +10,6 @@ use Devio\Propertier\Relations\PropertierHasMany;
 
 trait PropertierTrait
 {
-
     /**
      * Properties should be at level 0 when converting to array.
      *
@@ -67,13 +66,14 @@ trait PropertierTrait
      */
     public function isProperty($key)
     {
-        // Will check if the key requested belongs to a relationship in
-        // the entity. If so, just return false as it would interfere
-        // acting like a regular class instead of a relationship.
-        if ($this->getRelationValue($key))
+        // Will check if the key requested belongs either to a relationship in
+        // the entity or a column name. If so, just return false as we don't
+        // want to interfere with the main entity attributes or relations.
+        if ($this->getRelationValue($key) || in_array($key, $this->getTableColumns()))
         {
             return false;
         }
+
         // Also we have to be sure that the relationship has been already
         // loaded into the entity before checking anything in it. This
         // also eager loads the properties relation into the entity.
@@ -122,6 +122,23 @@ trait PropertierTrait
     }
 
     /**
+     * Will return the table columns.
+     *
+     * NOTE: IMPORTANTE. Esto actualmente está generando una consulta
+     * NOTE: a la base de datos cada vez que isProperty se ejecuta
+     * NOTE: por lo que el rendimiento es pésimo. Considerar cachear
+     * NOTE: o que hacer con esto.
+     *
+     * @return mixed
+     */
+    protected function getTableColumns()
+    {
+        return $this->getConnection()
+                    ->getSchemaBuilder()
+                    ->getColumnListing($this->getTable());
+    }
+
+    /**
      * Dinamically retrive properties or regular attributes.
      *
      * @param $key
@@ -131,7 +148,7 @@ trait PropertierTrait
     {
         if ($this->isProperty($key))
         {
-            return ValueGetter::make($this)->obtain($key);
+            return (new ValueGetter($this))->obtain($key);
         }
 
         return parent::__get($key);

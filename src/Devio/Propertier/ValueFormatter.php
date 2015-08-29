@@ -1,32 +1,29 @@
 <?php
 namespace Devio\Propertier;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Devio\Propertier\Properties\PropertyFactory;
+use Devio\Propertier\Models\Property;
+use Devio\Propertier\Properties\Factory as PropertyFactory;
 
 class ValueFormatter
 {
+    /**
+     * The property factory instance.
+     *
+     * @var PropertyFactory
+     */
+    protected $property;
 
     /**
-     * @var mixed
+     * Creates a ValueFormatter instance.
+     *
+     * @param $model
+     * @param PropertyFactory $property
      */
-    protected $model;
-
-    /**
-     * @param Collection $model
-     */
-    public function __construct($model)
+    public function __construct(PropertyFactory $property)
     {
-        $this->model = $model;
-    }
-
-    /**
-     * @param Collection $model
-     * @return $this
-     */
-    public static function make($model)
-    {
-        return new static($model);
+        $this->property = $property;
     }
 
     /**
@@ -34,14 +31,14 @@ class ValueFormatter
      *
      * @return Collection
      */
-    public function format()
+    public function format($model)
     {
-        if ($this->model instanceof Collection)
+        if (is_array($model) || $model instanceof Collection)
         {
-            return $this->formatMany($this->model);
+            return $this->formatMany($model);
         }
 
-        return $this->formatOne($this->model);
+        return $this->formatOne($model);
     }
 
     /**
@@ -52,9 +49,9 @@ class ValueFormatter
      */
     protected function formatOne($model)
     {
-        return PropertyFactory::make($model->property)
+        return $this->property->make($model->property)
                               ->value($model)
-                              ->decorate($model->value);
+                              ->decorate();
     }
 
     /**
@@ -67,6 +64,7 @@ class ValueFormatter
     protected function formatMany($models)
     {
         $formattedCollection = new Collection();
+
         foreach ($models as $model)
         {
             $formattedCollection->put(

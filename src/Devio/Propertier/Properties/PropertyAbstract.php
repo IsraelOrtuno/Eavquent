@@ -6,7 +6,6 @@ use Devio\Propertier\Models\PropertyValue;
 
 abstract class PropertyAbstract
 {
-
     /**
      * The property model.
      *
@@ -33,7 +32,7 @@ abstract class PropertyAbstract
      *
      * @param Property $property
      */
-    public function __construct(Property $property)
+    public function __construct(Property $property = null)
     {
         $this->property = $property;
     }
@@ -103,5 +102,28 @@ abstract class PropertyAbstract
     public function getPlainValue()
     {
         return $this->plainValue;
+    }
+
+    /**
+     * Returns the property model object.
+     *
+     * @return Property
+     */
+    public function getProperty()
+    {
+        return $this->property;
+    }
+
+    /**
+     * Set the property model object.
+     *
+     * @param Property $property
+     * @return $this
+     */
+    public function setProperty($property)
+    {
+        $this->property = $property;
+
+        return $this;
     }
 }

@@ -31,6 +31,7 @@ class PropertyObserver
             if ($model->isProperty($key))
             {
                 $valueSetter->assign($key, $value);
+
                 // Unsetting the model property from the model attribute list
                 // to make sure we are not trying to insert or update a db
                 // field that does not exist in the real database schema.

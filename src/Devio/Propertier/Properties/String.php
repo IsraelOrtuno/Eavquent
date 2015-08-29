@@ -4,9 +4,9 @@ namespace Devio\Propertier\Properties;
 class String extends PropertyAbstract
 {
 
-    public function decorate($value)
+    public function decorate()
     {
-        return (string) $value;
+        return (string) $this->plainValue;
     }
 
     protected function cast($plainValue)

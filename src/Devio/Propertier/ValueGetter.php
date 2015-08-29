@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ValueGetter
 {
-
     /**
      * @var Model
      */
@@ -13,8 +12,9 @@ class ValueGetter
 
     /**
      * @param Model $model
+     * @param ValueFormatter $formatter
      */
-    public function __construct(Model $model)
+    public function __construct(Model $model, ValueFormatter $formatter)
     {
         $this->model = $model;
     }
@@ -45,6 +45,6 @@ class ValueGetter
             $values = $values->first();
         }
 
-        return ValueFormatter::make($values)->format();
+        return $this->formatter->make($values)->format();
     }
 }
