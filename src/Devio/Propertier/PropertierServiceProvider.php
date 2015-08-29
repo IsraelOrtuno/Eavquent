@@ -18,7 +18,8 @@ class PropertierServiceProvider extends ServiceProvider
             $validator->setContainer($app);
         });
 
-        // Publishes the package configuration file when executing vendor:publish
+        // Publishes the package configuration file when executing the artisan
+        // command `vendor:publish`
         $this->publishes([
             __DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),
         ]);
