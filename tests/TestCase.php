@@ -1,5 +1,6 @@
 <?php
 
+use Devio\Propertier\Models\Property;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as TestCaseBase;
@@ -7,8 +8,9 @@ use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 
 class TestCase extends TestCaseBase
 {
-
     use DatabaseMigrations;
+
+    protected $company;
 
     /**
      * Setting up test
@@ -22,6 +24,8 @@ class TestCase extends TestCaseBase
         $this->setUpDatabase();
         $this->setUpFactories();
         $this->setUpServiceprovider();
+        $this->setUpProperties();
+        $this->setUpCompany();
     }
 
     /**
@@ -62,6 +66,34 @@ class TestCase extends TestCaseBase
 
             return EloquentFactory::construct($faker, __DIR__ . '/factories');
         });
+    }
+
+    protected function setUpProperties()
+    {
+        factory(Property::class)->create([
+            'type' => 'integer',
+            'name' => 'option'
+        ]);
+
+        factory(Property::class)->create([
+            'type' => 'string',
+            'name' => 'country'
+        ]);
+
+        factory(Property::class)->create([
+            'type' => 'string',
+            'name' => 'name'
+        ]);
+
+        factory(Property::class)->create([
+            'type' => 'string',
+            'name' => 'employees'
+        ]);
+    }
+
+    protected function setUpCompany()
+    {
+        $this->company = factory(Company::class)->create();
     }
 
     /**

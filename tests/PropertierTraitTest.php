@@ -1,92 +1,34 @@
 <?php
 
-use Devio\Propertier\Models\Property;
 use Illuminate\Support\Collection;
 
 class PropertierTraitTest extends TestCase
 {
 
-    protected $company;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->registerProperties();
-        $this->registerCompany();
-    }
-
-    public function testPropertyIsSavedEvenIfModelIsFresh()
-    {
-        $company = factory(Company::class)->create();
-        $company->country = 'foo';
-        $company->save();
-
-        $companyItem = Company::find($company->id);
-
-        $this->assertEquals($companyItem->country, 'foo');
-    }
-    
-    public function testPropertyCanBeSetAndReadBeforeSaving()
-    {
-        $company = factory(Company::class)->create();
-
-        $company->country = 'foo';
-
-        $this->assertEquals($company->country, 'foo');
-        $this->assertEquals($company->getProperty('country'), 'foo');
-        $this->assertEquals($company->getProperty('country'), $company->country);
-    }
-
     public function testPropertyAttributesAreIdentificable()
     {
-        $this->assertTrue($this->company->isProperty('option'));
-        $this->assertTrue($this->company->isProperty('country'));
+        $company = factory(Company::class)->create();
 
-        $this->assertFalse($this->company->isProperty('state'));
-        $this->assertFalse($this->company->isProperty('region'));
+        $this->assertTrue($company->isProperty('option'));
+        $this->assertTrue($company->isProperty('country'));
+
+        $this->assertFalse($company->isProperty('state'));
+        $this->assertFalse($company->isProperty('region'));
     }
 
     public function testPropertiesDoNotInterfiereIfMatchingColumnName()
     {
-        $company = factory(Company::class)->create(['name' => 'Devio']);
+        $company = factory(Company::class)->create(['name' => 'foo bar']);
 
-        $this->assertEquals($company->getAttribute('name'), 'Devio');
-        $this->assertEquals($company->name, 'Devio');
+        $this->assertEquals($company->getAttribute('name'), 'foo bar');
+        $this->assertEquals($company->name, 'foo bar');
         $this->assertEquals($company->name, $company->getAttribute('name'));
     }
 
     public function testPropertiesDoNotInterfiereIfMatchingRelationName()
     {
-        $this->assertInstanceOf(Collection::class, $this->company->employees);
+        $company = factory(Company::class)->create();
+
+        $this->assertInstanceOf(Collection::class, $company->employees);
     }
-
-    protected function registerProperties()
-    {
-        factory(Property::class)->create([
-            'type' => 'integer',
-            'name' => 'option'
-        ]);
-
-        factory(Property::class)->create([
-            'type' => 'string',
-            'name' => 'country'
-        ]);
-
-        factory(Property::class)->create([
-            'type' => 'string',
-            'name' => 'name'
-        ]);
-
-        factory(Property::class)->create([
-            'type' => 'string',
-            'name' => 'employees'
-        ]);
-    }
-
-    protected function registerCompany()
-    {
-        $this->company = factory(Company::class)->create();
-    }
-
 }
