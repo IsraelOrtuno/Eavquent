@@ -44,14 +44,4 @@ class Property extends Model
     {
         return $this->multivalue;
     }
-
-    /**
-     * Determinates if the property might handle a limited set of values.
-     *
-     * @return mixed
-     */
-    public function isChoices()
-    {
-        return $this->choices;
-    }
 }
