@@ -39,7 +39,7 @@ trait PropertierTrait
      */
     public static function bootPropertierTrait()
     {
-        static::observe(new PropertyObserver);
+        static::observe(new PropertierObserver);
     }
 
     /**
@@ -180,6 +180,25 @@ trait PropertierTrait
     public function queueValueForDeletion($element)
     {
         $this->getValueDeletionQueue()->push($element);
+    }
+
+    /**
+     * Deletes any element in the deletion queue.
+     */
+    public function executeDeletionQueue()
+    {
+        $queue = $this->getValueDeletionQueue();
+
+        // Will delete all the rows that matches any of the ids stored in the
+        // deletion queue variable. Will check for elements in this queue
+        // to avoid performing a query if no element has to be deleted.
+        if ($queue->count())
+        {
+            $deletionKeys = $queue->pluck('id')->toArray();
+
+            PropertyValue::whereIn('id', $deletionKeys)
+                         ->delete();
+        }
     }
 
     /**

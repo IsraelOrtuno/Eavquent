@@ -26,16 +26,6 @@ class Property extends Model
     }
 
     /**
-     * Relationship Property Choices.
-     *
-     * @return HasMany
-     */
-    public function choices()
-    {
-        return $this->hasMany(PropertyChoice::class);
-    }
-
-    /**
      * Check if the property accepts multiple values.
      *
      * @return mixed

@@ -14,7 +14,6 @@ return [
     */
     'properties' => [
         'integer'  => Devio\Propertier\Properties\IntegerProperty::class,
-        'choice'   => Devio\Propertier\Properties\ChoiceProperty::class,
         'datetime' => Devio\Propertier\Properties\DatetimeProperty::class,
         'string'   => Devio\Propertier\Properties\StringProperty::class,
     ]
