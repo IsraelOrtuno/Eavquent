@@ -1,5 +1,5 @@
 <?php
-namespace Devio\Propertier;
+namespace Devio\Propertier\Services;
 
 use Illuminate\Support\Collection;
 use Devio\Propertier\Models\Property;
@@ -9,7 +9,6 @@ use Devio\Propertier\Exceptions\PropertyIsNotMultivalue;
 
 class ValueSetter
 {
-
     /**
      * Entity instance.
      *
@@ -198,6 +197,6 @@ class ValueSetter
      */
     protected function getProperty($key)
     {
-        return $this->entity->getProperty($key);
+        return $this->entity->getPropertyObject($key);
     }
 }

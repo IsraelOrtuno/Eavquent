@@ -2,7 +2,10 @@
 namespace Devio\Propertier;
 
 use Devio\Propertier\Models\Value;
+use Devio\Propertier\Services\ValueSetter;
+use Illuminate\Container\Container;
 use Devio\Propertier\Models\Property;
+use Devio\Propertier\Services\ValueGetter;
 use Devio\Propertier\Models\PropertyValue;
 use Illuminate\Database\Eloquent\Collection;
 use Devio\Propertier\Observers\PropertyObserver;
@@ -10,6 +13,13 @@ use Devio\Propertier\Relations\PropertierHasMany;
 
 trait PropertierTrait
 {
+    /**
+     * The container instance.
+     *
+     * @var Container
+     */
+    protected $container;
+
     /**
      * Properties should be at level 0 when converting to array.
      *
@@ -25,11 +35,22 @@ trait PropertierTrait
     protected $valueDeletionQueue;
 
     /**
-     * Trait booter
+     * Custom trait booter. Will register the observers.
      */
     public static function bootPropertierTrait()
     {
         static::observe(new PropertyObserver);
+    }
+
+    /**
+     * Booting Propertier.
+     */
+    protected function bootPropertierIfNotBooted()
+    {
+        if ( ! $this->container)
+        {
+            $this->container = Container::getInstance();
+        }
     }
 
     /**
@@ -74,6 +95,11 @@ trait PropertierTrait
             return false;
         }
 
+        // As every trait operation will have to cross this function to check
+        // if it really needs to be performed, this looks a good place for
+        // bootstrapping the trait and simulate a regular constructor.
+        $this->bootPropertierIfNotBooted();
+
         // Also we have to be sure that the relationship has been already
         // loaded into the entity before checking anything in it. This
         // also eager loads the properties relation into the entity.
@@ -86,14 +112,49 @@ trait PropertierTrait
     }
 
     /**
-     * Find a property by key in the properties collection.
+     * Find a property model by key in the properties collection.
      *
      * @param $key
      * @return array
      */
-    public function getProperty($key)
+    public function getPropertyObject($key)
     {
         return $this->properties->get($key);
+    }
+
+    /**
+     * If it is a valid property attribute, will provide it. If not found
+     * will call the regular model get function.
+     *
+     * @param $key
+     * @return \Illuminate\Support\Collection
+     */
+    public function getProperty($key)
+    {
+        if ($this->isProperty($key))
+        {
+            return (new ValueGetter)->obtain($this, $key);
+        }
+
+        return parent::__get($key);
+    }
+
+    /**
+     * Setting a property or a regular eloquent attribute.
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function setProperty($key, $value)
+    {
+        if ($this->isProperty($key))
+        {
+            return (new ValueSetter)->entity($this)
+                                    ->assign($key, $value);
+        }
+
+        return parent::__set($key, $value);
     }
 
     /**
@@ -139,18 +200,25 @@ trait PropertierTrait
     }
 
     /**
-     * Dinamically retrive properties or regular attributes.
+     * Dinamically setting a property or eloquent attribute.
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function __set($key, $value)
+    {
+        return $this->setProperty($key, $value);
+    }
+
+    /**
+     * Dinamically retrive a property or eloquent attribute.
      *
      * @param $key
      * @return mixed
      */
     public function __get($key)
     {
-        if ($this->isProperty($key))
-        {
-            return (new ValueGetter($this))->obtain($key);
-        }
-
-        return parent::__get($key);
+        return $this->getProperty($key);
     }
 }

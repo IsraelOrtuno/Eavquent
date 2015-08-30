@@ -1,5 +1,8 @@
 <?php namespace Devio\Propertier;
 
+use Devio\Propertier\Properties\Factory;
+use Devio\Propertier\Services\ValueFormatter;
+use Devio\Propertier\Services\ValueGetter;
 use Illuminate\Support\ServiceProvider;
 use Devio\Propertier\Validators\AbstractValidator;
 
@@ -12,18 +15,18 @@ class PropertierServiceProvider extends ServiceProvider
     {
         // Will set the service container instance to any validator. This way
         // the full application is accessible from the validators in order
-        // to make the validation process flexible and configurable.
+        // to provide the validation process with much more flexibility.
         $this->app->resolving(function (AbstractValidator $validator, $app)
         {
             $validator->setContainer($app);
         });
 
         // Publishes the package configuration file when executing the artisan
-        // command `vendor:publish`
+        // command `vendor:publish`. This will create a propertier.php file
+        // into the Laravel config path where can be updated if required.
         $this->publishes([
             __DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),
         ]);
-
     }
 
     /**
@@ -72,4 +75,14 @@ class PropertierServiceProvider extends ServiceProvider
         );
     }
 
+    /**
+     * Registering the value formatter.
+     */
+    protected function registerValueFormatter()
+    {
+        $this->app->singleton('propertier.formatter', function($app)
+        {
+            return new ValueFormatter();
+        });
+    }
 }

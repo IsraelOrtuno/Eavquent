@@ -1,40 +1,35 @@
 <?php
-namespace Devio\Propertier;
+namespace Devio\Propertier\Services;
 
 use Illuminate\Database\Eloquent\Model;
 
 class ValueGetter
 {
     /**
-     * @var Model
+     * The value formatter instance.
+     *
+     * @var ValueFormatter
      */
-    private $model;
+    protected $formatter;
 
     /**
-     * @param Model $model
-     * @param ValueFormatter $formatter
+     * Creates a new ValueGetter instance.
      */
-    public function __construct(Model $model, ValueFormatter $formatter)
+    public function __construct()
     {
-        $this->model = $model;
+        $this->formatter = new ValueFormatter();
     }
 
     /**
+     * Will return the entity property value if any.
+     *
      * @param Model $model
-     * @return static
-     */
-    public static function make(Model $model)
-    {
-        return new static($model);
-    }
-
-    /**
      * @param $key
      * @return \Illuminate\Support\Collection
      */
-    public function obtain($key)
+    public function obtain(Model $model, $key)
     {
-        $property = $this->model->getProperty($key);
+        $property = $model->getPropertyObject($key);
         $values = $property->values;
 
         // If the property is multivalue, it will return a values collection.
@@ -42,9 +37,9 @@ class ValueGetter
         // No matter if one or many, the formatter outputs acordingly.
         if ( ! $property->isMultivalue())
         {
-            $values = $values->first();
+            $values = $values->count() ? $values->first() : null;
         }
 
-        return $this->formatter->make($values)->format();
+        return $this->formatter->format($values);
     }
 }

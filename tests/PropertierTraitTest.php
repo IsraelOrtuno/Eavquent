@@ -16,6 +16,17 @@ class PropertierTraitTest extends TestCase
         $this->registerCompany();
     }
     
+    public function testPropertyIsAvailableForReadingBeforeSaving()
+    {
+        $company = factory(Company::class)->create();
+
+        $company->country = 'foo';
+
+        $this->assertEquals($company->country, 'foo');
+        $this->assertEquals($company->getProperty('country'), 'foo');
+        $this->assertEquals($company->getProperty('country'), $company->country);
+    }
+    
     public function testPropertyAttributesAreIdentificable()
     {
         $this->assertTrue($this->company->isProperty('option'));

@@ -1,14 +1,13 @@
 <?php
 namespace Devio\Propertier\Observers;
 
-use Devio\Propertier\ValueSetter;
 use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Services\ValueSetter;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Devio\Propertier\Jobs\ClearPreviousValues;
 
 class PropertyObserver
 {
-
     use DispatchesJobs;
 
     /**

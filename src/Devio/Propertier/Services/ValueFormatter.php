@@ -1,9 +1,8 @@
 <?php
-namespace Devio\Propertier;
+namespace Devio\Propertier\Services;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Devio\Propertier\Models\Property;
+use Devio\Propertier\Contracts\Formatable;
 use Devio\Propertier\Properties\Factory as PropertyFactory;
 
 class ValueFormatter
@@ -17,22 +16,25 @@ class ValueFormatter
 
     /**
      * Creates a ValueFormatter instance.
-     *
-     * @param $model
-     * @param PropertyFactory $property
      */
-    public function __construct(PropertyFactory $property)
+    public function __construct()
     {
-        $this->property = $property;
+        $this->property = new PropertyFactory;
     }
 
     /**
      * Format the property value model set.
      *
+     * @param $model
      * @return Collection
      */
     public function format($model)
     {
+        if (is_null($model)) return null;
+
+        // If null is passed as argument, it means that no values were found for
+        // a non multivalue property. If it were an empty collection instead,
+        // the formatMany method will return an empty collection as well.
         if (is_array($model) || $model instanceof Collection)
         {
             return $this->formatMany($model);

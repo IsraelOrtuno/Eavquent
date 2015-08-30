@@ -6,7 +6,6 @@ use Devio\Propertier\Properties\PropertyFactory;
 
 class PropertyValueObserver
 {
-
     /**
      * Will only allow saving in if the value passes validation.
      *
