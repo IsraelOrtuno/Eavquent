@@ -52,13 +52,20 @@ class PropertyObserver
      */
     public function saved(Model $model)
     {
-//        $model->push();
         // Will iterate through every model property and save any change made
         // We are iterating the entity properties due the "push" method is
         // causing infinite loop as every property is also related to an
         // entity. After saving, we'll clear the old values if needed.
         foreach ($model->properties as $property)
         {
+            // Iterating every value to check if it is related to the model we
+            // are going to save. This will handle the relation between new
+            // created models that do not have an id assigned till saved.
+            $property->values->map(function($item, $key) use ($model)
+            {
+                $item->relatedOrRelateTo($model->id);
+            });
+
             $property->push();
         }
 

@@ -71,27 +71,15 @@ class PropertyValue extends Model
     }
 
     /**
-     * The property relation.
+     * Will relate the value to the ID passed if it's not already set.
      *
-     * @return Property
+     * @param $id
      */
-//    public function getPropertyRelation()
-//    {
-//        if ($this->propertyRelation)
-//        {
-//            return $this->propertyRelation;
-//        }
-//
-//        return $this->property;
-//    }
-//
-//    /**
-//     * Sets the property relation.
-//     *
-//     * @param Property $propertyRelation
-//     */
-//    public function setPropertyRelation($propertyRelation)
-//    {
-//        $this->propertyRelation = $propertyRelation;
-//    }
+    public function relatedOrRelateTo($id)
+    {
+        if ( ! $this->entity_id)
+        {
+            $this->entity_id = $id;
+        }
+    }
 }
