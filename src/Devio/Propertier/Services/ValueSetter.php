@@ -52,7 +52,7 @@ class ValueSetter
     {
         $property = $this->getProperty($key);
 
-        if ($value instanceof Collection)
+        if ($property->isMultivalue())
         {
             return $this->assignMany($property, $value);
         }
@@ -99,9 +99,9 @@ class ValueSetter
      */
     protected function assignMany(Property $property, $valueCollection)
     {
-        if ( ! $property->isMultivalue())
+        if ( ! $valueCollection instanceof Collection || ! is_array($valueCollection))
         {
-            throw new PropertyIsNotMultivalue;
+            $valueCollection = new Collection($valueCollection);
         }
 
         // Any existing value will be added to the value deletion queue that
@@ -129,10 +129,10 @@ class ValueSetter
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Let's iterate the relation till clear.
-        while ( ! $property->values->isEmpty())
+        $property->values = $property->values->filter(function($item)
         {
-            $property->values->pop();
-        }
+            return false;
+        });
     }
 
     /**
