@@ -1,7 +1,7 @@
 <?php
 namespace Devio\Propertier\Properties;
 
-class String extends PropertyAbstract
+class StringProperty extends PropertyAbstract
 {
 
     public function decorate()

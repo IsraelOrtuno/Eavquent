@@ -4,7 +4,7 @@ namespace Devio\Propertier\Properties;
 use Devio\Propertier\Models\PropertyChoice;
 use Devio\Propertier\Exceptions\PropertyChoiceNotFound;
 
-class Choice extends PropertyAbstract
+class ChoiceProperty extends PropertyAbstract
 {
 
     /**

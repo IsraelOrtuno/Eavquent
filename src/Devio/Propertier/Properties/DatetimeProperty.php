@@ -3,7 +3,7 @@ namespace Devio\Propertier\Properties;
 
 use Carbon\Carbon;
 
-class Datetime extends PropertyAbstract
+class DatetimeProperty extends PropertyAbstract
 {
 
     public function cast($plainValue)
