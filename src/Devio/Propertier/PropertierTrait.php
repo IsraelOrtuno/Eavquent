@@ -2,10 +2,10 @@
 namespace Devio\Propertier;
 
 use Devio\Propertier\Models\Value;
-use Devio\Propertier\Services\ValueSetter;
 use Illuminate\Container\Container;
 use Devio\Propertier\Models\Property;
 use Devio\Propertier\Services\ValueGetter;
+use Devio\Propertier\Services\ValueSetter;
 use Devio\Propertier\Models\PropertyValue;
 use Illuminate\Database\Eloquent\Collection;
 use Devio\Propertier\Observers\PropertyObserver;
@@ -50,6 +50,14 @@ trait PropertierTrait
         if ( ! $this->container)
         {
             $this->container = Container::getInstance();
+        }
+
+        // Also we have to be sure that the relationship has been already
+        // loaded into the entity before checking anything in it. This
+        // also eager loads the properties relation into the entity.
+        if ( ! $this->relationLoaded('properties'))
+        {
+            $this->load('properties');
         }
     }
 
@@ -100,26 +108,18 @@ trait PropertierTrait
         // bootstrapping the trait and simulate a regular constructor.
         $this->bootPropertierIfNotBooted();
 
-        // Also we have to be sure that the relationship has been already
-        // loaded into the entity before checking anything in it. This
-        // also eager loads the properties relation into the entity.
-        if ( ! $this->relationLoaded('properties'))
-        {
-            $this->load('properties');
-        }
-
-        return $this->properties->has($key);
+        return $this->getPropertiesKeyed()->has($key);
     }
 
     /**
-     * Find a property model by key in the properties collection.
+     * Find a property model by type in the properties collection.
      *
-     * @param $key
+     * @param $type
      * @return array
      */
-    public function getPropertyObject($key)
+    public function getPropertyObject($type)
     {
-        return $this->properties->get($key);
+        return $this->getPropertiesKeyed()->get($type);
     }
 
     /**
@@ -150,8 +150,8 @@ trait PropertierTrait
     {
         if ($this->isProperty($key))
         {
-            return (new ValueSetter)->entity($this)
-                                    ->assign($key, $value);
+            (new ValueSetter)->entity($this)
+                             ->assign($key, $value);
         }
 
         return parent::__set($key, $value);
@@ -180,6 +180,17 @@ trait PropertierTrait
     public function queueValueForDeletion($element)
     {
         $this->getValueDeletionQueue()->push($element);
+    }
+
+    /**
+     * Will return the properties collection keyed by name.
+     * This way filtering will be much easier.
+     *
+     * @return mixed
+     */
+    protected function getPropertiesKeyed()
+    {
+        return $this->properties->keyBy('name');
     }
 
     /**

@@ -51,6 +51,7 @@ class ValueSetter
     public function assign($key, $value)
     {
         $property = $this->getProperty($key);
+
         if ($value instanceof Collection)
         {
             return $this->assignMany($property, $value);
@@ -74,7 +75,6 @@ class ValueSetter
         if ($propertyValue = $this->getValues($property, true))
         {
             $propertyValue->value = $value;
-            $propertyValue->setPropertyRelation($property);
         }
         // If the value does not exist into the database, will create
         // a new instance related to the property and add it to the
@@ -83,6 +83,8 @@ class ValueSetter
         {
             $propertyValue = $this->createNewValue($property, $value);
         }
+
+        $this->loadPropertyRelation($propertyValue, $property);
 
         return $propertyValue;
     }
@@ -158,8 +160,10 @@ class ValueSetter
         // pointing loops that the method "relationsToArray" will cause if a model
         // relation is pointing its own parent. This is only for accessing the
         // PropertyValue Property object without making a new database call.
-        $propertyValue->setPropertyRelation($property);
+//        $this->loadPropertyRelation($propertyValue, $property);
         $property->values->push($propertyValue);
+
+        return $propertyValue;
     }
 
     /**
@@ -173,6 +177,13 @@ class ValueSetter
         {
             $this->entity->queueValueForDeletion($value);
         });
+    }
+
+    protected function loadPropertyRelation($propertyValue, $property)
+    {
+        $propertyValue->load(['property' => function() use ($property) {
+            return $property;
+        }]);
     }
 
     /**

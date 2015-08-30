@@ -75,23 +75,23 @@ class PropertyValue extends Model
      *
      * @return Property
      */
-    public function getPropertyRelation()
-    {
-        if ($this->propertyRelation)
-        {
-            return $this->propertyRelation;
-        }
-
-        return $this->property;
-    }
-
-    /**
-     * Sets the property relation.
-     *
-     * @param Property $propertyRelation
-     */
-    public function setPropertyRelation($propertyRelation)
-    {
-        $this->propertyRelation = $propertyRelation;
-    }
+//    public function getPropertyRelation()
+//    {
+//        if ($this->propertyRelation)
+//        {
+//            return $this->propertyRelation;
+//        }
+//
+//        return $this->property;
+//    }
+//
+//    /**
+//     * Sets the property relation.
+//     *
+//     * @param Property $propertyRelation
+//     */
+//    public function setPropertyRelation($propertyRelation)
+//    {
+//        $this->propertyRelation = $propertyRelation;
+//    }
 }

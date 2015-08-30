@@ -22,21 +22,22 @@ class PropertyObserver
         // Dinamically will eager load the entity properties and its values.
         // By iterating them, we will just assign the property values to
         // the property (being this handled by the ValueSetter class).
-        $model = $this->eagerLoadRelations($model);
-        $valueSetter = ValueSetter::make($model);
-
+//        $model = $this->eagerLoadRelations($model);
+//        $valueSetter = ValueSetter::make($model);
+//
         foreach ($model->getAttributes() as $key => $value)
         {
             if ($model->isProperty($key))
             {
-                $valueSetter->assign($key, $value);
-
-                // Unsetting the model property from the model attribute list
-                // to make sure we are not trying to insert or update a db
-                // field that does not exist in the real database schema.
+//                $valueSetter->assign($key, $value);
+//
+//                // Unsetting the model property from the model attribute list
+//                // to make sure we are not trying to insert or update a db
+//                // field that does not exist in the real database schema.
                 unset($model->{$key});
             }
         }
+
 
         return true;
     }
@@ -51,6 +52,7 @@ class PropertyObserver
      */
     public function saved(Model $model)
     {
+//        $model->push();
         // Will iterate through every model property and save any change made
         // We are iterating the entity properties due the "push" method is
         // causing infinite loop as every property is also related to an
@@ -63,7 +65,7 @@ class PropertyObserver
         // We are currently performing this task in a Job class as it is
         // perfectly functional and wanted to try the new queue system
         // that Laravel 5.1 introduced. This might change in future.
-        $this->dispatch(new ClearPreviousValues($model));
+//        $this->dispatch(new ClearPreviousValues($model));
     }
 
     /**
