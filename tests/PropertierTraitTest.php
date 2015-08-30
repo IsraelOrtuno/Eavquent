@@ -27,15 +27,6 @@ class PropertierTraitTest extends TestCase
         $this->assertEquals($companyItem->country, 'foo');
     }
     
-    public function testPropertyAttributesAreIdentificable()
-    {
-        $this->assertTrue($this->company->isProperty('option'));
-        $this->assertTrue($this->company->isProperty('country'));
-
-        $this->assertFalse($this->company->isProperty('state'));
-        $this->assertFalse($this->company->isProperty('region'));
-    }
-
     public function testPropertyCanBeSetAndReadBeforeSaving()
     {
         $company = factory(Company::class)->create();
@@ -45,6 +36,15 @@ class PropertierTraitTest extends TestCase
         $this->assertEquals($company->country, 'foo');
         $this->assertEquals($company->getProperty('country'), 'foo');
         $this->assertEquals($company->getProperty('country'), $company->country);
+    }
+
+    public function testPropertyAttributesAreIdentificable()
+    {
+        $this->assertTrue($this->company->isProperty('option'));
+        $this->assertTrue($this->company->isProperty('country'));
+
+        $this->assertFalse($this->company->isProperty('state'));
+        $this->assertFalse($this->company->isProperty('region'));
     }
 
     public function testPropertiesDoNotInterfiereIfMatchingColumnName()
