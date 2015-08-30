@@ -84,6 +84,10 @@ class ValueSetter
             $propertyValue = $this->createNewValue($property, $value);
         }
 
+        // Will set the property relation property. This will help to avoid infinite
+        // pointing loops that the method "relationsToArray" will cause if a model
+        // relation is pointing its own parent. This is only for accessing the
+        // PropertyValue Property object without making a new database call.
         $this->loadPropertyRelation($propertyValue, $property);
 
         return $propertyValue;
@@ -145,10 +149,6 @@ class ValueSetter
      */
     protected function createNewValue($property, $value)
     {
-        // The relations attributes are set manually instead of using the associate
-        // methods as they also set the relationship and this causes an infinite
-        // loop when saving using the "push" method. A property value would
-        // point to the entity parent. Not elegant but works as expected.
         $propertyValue = new PropertyValue([
             'value'       => $value,
             'entity_type' => $this->entity->getMorphClass(),
@@ -156,11 +156,9 @@ class ValueSetter
             'property_id' => $property->id
         ]);
 
-        // Will set the property relation property. This will help to avoid infinite
-        // pointing loops that the method "relationsToArray" will cause if a model
-        // relation is pointing its own parent. This is only for accessing the
-        // PropertyValue Property object without making a new database call.
-//        $this->loadPropertyRelation($propertyValue, $property);
+        // After creating a new property value, we have to include it manually
+        // into the property values relation collection. The "push" method
+        // inlcuded in the collection will help us to perform this task.
         $property->values->push($propertyValue);
 
         return $propertyValue;
@@ -179,6 +177,13 @@ class ValueSetter
         });
     }
 
+    /**
+     * Will manually set the relationship to the property passed
+     * as argument.
+     *
+     * @param $propertyValue
+     * @param $property
+     */
     protected function loadPropertyRelation($propertyValue, $property)
     {
         $propertyValue->load(['property' => function() use ($property) {
