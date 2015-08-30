@@ -16,24 +16,19 @@ class PropertierTraitTest extends TestCase
         $this->registerCompany();
     }
 
-    public function testPropertyCanBeReadAfterSaved()
+    public function testPropertyIsSavedEvenIfModelIsFresh()
     {
-//        $company = Company::find(1); // factory(Company::class)->create();
-//        $company->country = 'foo';
-//        $company->save();
-//
+        $company = factory(Company::class)->create();
+        $company->country = 'foo';
+        $company->save();
 
-//        $companyItem = Company::find($company->id);
-//        dd($company->country);
-//
-//        $this->assertEquals($company->country, 'foo');
+        $companyItem = Company::find($company->id);
 
+        $this->assertEquals($companyItem->country, 'foo');
     }
     
     public function testPropertyAttributesAreIdentificable()
     {
-//        dd($this->company->properties->keys());
-
         $this->assertTrue($this->company->isProperty('option'));
         $this->assertTrue($this->company->isProperty('country'));
 
