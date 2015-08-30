@@ -2,7 +2,6 @@
 namespace Devio\Propertier\Observers;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class PropertierObserver
 {

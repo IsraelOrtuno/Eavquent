@@ -8,8 +8,8 @@ use Devio\Propertier\Services\ValueGetter;
 use Devio\Propertier\Services\ValueSetter;
 use Devio\Propertier\Models\PropertyValue;
 use Illuminate\Database\Eloquent\Collection;
-use Devio\Propertier\Observers\PropertyObserver;
 use Devio\Propertier\Relations\PropertierHasMany;
+use Devio\Propertier\Observers\PropertierObserver;
 
 trait PropertierTrait
 {
