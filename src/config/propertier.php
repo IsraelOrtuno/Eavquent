@@ -14,8 +14,7 @@ return [
     */
     'properties' => [
         'integer'  => Devio\Propertier\Properties\IntegerProperty::class,
-        'datetime' => Devio\Propertier\Properties\DatetimeProperty::class,
-        'string'   => Devio\Propertier\Properties\StringProperty::class,
+        'string'   => Devio\Propertier\Properties\StringProperty::class
     ]
 
 ];
