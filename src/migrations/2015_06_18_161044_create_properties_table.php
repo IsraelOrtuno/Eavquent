@@ -20,13 +20,9 @@ class CreatePropertiesTable extends Migration {
 
             $table->boolean('multivalue')->default(false);
 
-            $table->boolean('is_required')->nullable();
-
             $table->string('entity');
 
             $table->text('default_value')->nullable();
-
-//            $table->boolean('searchable');
 
             $table->timestamps();
 
