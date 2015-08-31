@@ -32,8 +32,6 @@ class PropertierObserver
      * When the model is actually saved, the save method
      * of the properties values will be performed.
      *
-     * Review: Considder using queues for cleaning existing values.
-     *
      * @param $model
      */
     public function saved(Model $model)
