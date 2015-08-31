@@ -115,6 +115,7 @@ trait PropertierTrait
      * Find a property model by type in the properties collection.
      *
      * @param $type
+     *
      * @return array
      */
     public function getPropertyObject($type)
@@ -127,7 +128,8 @@ trait PropertierTrait
      * will call the regular model get function.
      *
      * @param $key
-     * @return \Illuminate\Support\Collection
+     *
+     * @return Collection
      */
     public function getProperty($key)
     {
@@ -144,6 +146,7 @@ trait PropertierTrait
      *
      * @param $key
      * @param $value
+     *
      * @return mixed
      */
     public function setProperty($key, $value)
@@ -234,6 +237,7 @@ trait PropertierTrait
      *
      * @param $key
      * @param $value
+     *
      * @return mixed
      */
     public function __set($key, $value)
@@ -245,6 +249,7 @@ trait PropertierTrait
      * Dinamically retrive a property or eloquent attribute.
      *
      * @param $key
+     *
      * @return mixed
      */
     public function __get($key)

@@ -10,6 +10,7 @@ class PropertyValueObserver
      * Will only allow saving if the value passes validation.
      *
      * @param PropertyValue $model
+     *
      * @return bool
      */
     public function saving(PropertyValue $model)

@@ -9,6 +9,7 @@ class Factory
      * Get the right property type class based on the property provided.
      *
      * @param Property $property
+     *
      * @return PropertyAbstract
      */
     public function make(Property $property)
@@ -22,6 +23,7 @@ class Factory
      * Resolves the property classpath and returns an instance of it.
      *
      * @param Property $property
+     *
      * @return mixed
      */
     protected function resolve(Property $property)

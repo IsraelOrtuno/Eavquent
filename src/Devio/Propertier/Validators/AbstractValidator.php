@@ -36,6 +36,7 @@ abstract class AbstractValidator
      * Making an object with attributes to validate in a static way.
      *
      * @param array $attributes
+     *
      * @return static
      */
     public static function make(array $attributes = [])
@@ -96,6 +97,7 @@ abstract class AbstractValidator
      * Handle a failed validation attempt.
      *
      * @param Validator $validator
+     *
      * @return mixed
      * @throws ValidationException
      */

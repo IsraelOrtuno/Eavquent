@@ -24,7 +24,8 @@ class ValueGetter
      * Will return the entity property value if any.
      *
      * @param Model $model
-     * @param $key
+     * @param       $key
+     *
      * @return \Illuminate\Support\Collection
      */
     public function obtain(Model $model, $key)

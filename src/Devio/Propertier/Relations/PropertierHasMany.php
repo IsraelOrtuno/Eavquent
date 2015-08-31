@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PropertierHasMany extends HasMany
 {
-
     /**
      * @var string
      */
@@ -16,8 +15,8 @@ class PropertierHasMany extends HasMany
 
     /**
      * @param Builder $query
-     * @param Model $model
-     * @param string $entity
+     * @param Model   $model
+     * @param string  $entity
      */
     public function __construct(Builder $query, Model $model, $entity)
     {
@@ -42,10 +41,11 @@ class PropertierHasMany extends HasMany
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array $models
+     * @param array      $models
      * @param Collection $results
-     * @param string $relation
-     * @param string $type
+     * @param string     $relation
+     * @param string     $type
+     *
      * @return array
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
@@ -67,6 +67,7 @@ class PropertierHasMany extends HasMany
      * Set the constraints for an eager load of the relation.
      *
      * @param  array $models
+     *
      * @return void
      */
     public function addEagerConstraints(array $models)

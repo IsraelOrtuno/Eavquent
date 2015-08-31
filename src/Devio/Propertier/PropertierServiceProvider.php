@@ -1,9 +1,7 @@
 <?php namespace Devio\Propertier;
 
-use Devio\Propertier\Properties\Factory;
-use Devio\Propertier\Services\ValueFormatter;
-use Devio\Propertier\Services\ValueGetter;
 use Illuminate\Support\ServiceProvider;
+use Devio\Propertier\Services\ValueFormatter;
 use Devio\Propertier\Validators\AbstractValidator;
 
 class PropertierServiceProvider extends ServiceProvider
@@ -46,7 +44,7 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerPropertier()
     {
-        $this->app->singleton('propertier', function($app)
+        $this->app->singleton('propertier', function ($app)
         {
             $eventDispatcher = $app->make('Illuminate\Contracts\Events\Dispatcher');
 
@@ -80,7 +78,7 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerValueFormatter()
     {
-        $this->app->singleton('propertier.formatter', function($app)
+        $this->app->singleton('propertier.formatter', function ($app)
         {
             return new ValueFormatter();
         });

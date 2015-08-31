@@ -52,6 +52,7 @@ abstract class PropertyAbstract
      * Will set the PropertyValue assigned to this property.
      *
      * @param $propertyValue
+     *
      * @return $this
      */
     public function value($propertyValue)
@@ -118,6 +119,7 @@ abstract class PropertyAbstract
      * Set the property model object.
      *
      * @param Property $property
+     *
      * @return $this
      */
     public function setProperty($property)

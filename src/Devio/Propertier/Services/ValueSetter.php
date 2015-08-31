@@ -20,6 +20,7 @@ class ValueSetter
      * Returns a new ValueSetter instance.
      *
      * @param Model $entity
+     *
      * @return static
      */
     public static function make(Model $entity)
@@ -31,6 +32,7 @@ class ValueSetter
      * Assign a new entity.
      *
      * @param Model $entity
+     *
      * @return $this
      */
     public function entity(Model $entity)
@@ -98,7 +100,8 @@ class ValueSetter
      * stored will be queued for deletion and replaced for the new ones.
      *
      * @param Property $property
-     * @param $valueCollection
+     * @param          $valueCollection
+     *
      * @throws PropertyIsNotMultivalue
      */
     protected function assignMany(Property $property, $valueCollection)
@@ -133,7 +136,7 @@ class ValueSetter
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Let's iterate the relation till clear.
-        $property->values = $property->values->filter(function($item)
+        $property->values = $property->values->filter(function ($item)
         {
             return false;
         });
@@ -145,6 +148,7 @@ class ValueSetter
      *
      * @param $property
      * @param $value
+     *
      * @return PropertyValue
      */
     protected function createNewValue($property, $value)
@@ -186,7 +190,8 @@ class ValueSetter
      */
     protected function loadPropertyRelation($propertyValue, $property)
     {
-        $propertyValue->load(['property' => function() use ($property) {
+        $propertyValue->load(['property' => function () use ($property)
+        {
             return $property;
         }]);
     }
@@ -194,8 +199,9 @@ class ValueSetter
     /**
      * Provides the property value model as collection or single element.
      *
-     * @param $property
+     * @param      $property
      * @param bool $single
+     *
      * @return mixed
      */
     protected function getValues($property, $single = false)
@@ -209,6 +215,7 @@ class ValueSetter
      * Find a property by key in the properties collection.
      *
      * @param $key
+     *
      * @return Property
      */
     protected function getProperty($key)

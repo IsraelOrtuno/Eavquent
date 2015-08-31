@@ -26,6 +26,7 @@ class ValueFormatter
      * Format the property value model set.
      *
      * @param $model
+     *
      * @return Collection
      */
     public function format($model)
@@ -47,6 +48,7 @@ class ValueFormatter
      * Format a single property value output.
      *
      * @param $model
+     *
      * @return mixed
      */
     protected function formatOne($model)
@@ -61,6 +63,7 @@ class ValueFormatter
      * value item.
      *
      * @param $models
+     *
      * @return Collection
      */
     protected function formatMany($models)
