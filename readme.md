@@ -70,6 +70,18 @@ php artisan vendor:publish --provider="Devio\Propertier\PropertierServiceProvide
 
 ### Usage
 
+#### Registering a new property
+
+#### Setting a property value
+
+#### Setting multivalue property values
+
+#### Deleting an existing property
+
+#### Adding/modifying property types
+
+
+
 #### Important
 
 Do not use the package with eager loading, it already uses it internally. Adding the `properties` relation to a `$with` variable or `with()` method might cause unexpected behaviour.
