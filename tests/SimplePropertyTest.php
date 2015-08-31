@@ -39,5 +39,4 @@ class SimplePropertyTest extends Testcase
         $this->assertEquals($company->getProperty('country'), $company->country);
         $this->assertEquals($this->company->getProperty('country'), $this->company->country);
     }
-    
 }

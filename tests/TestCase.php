@@ -89,6 +89,12 @@ class TestCase extends TestCaseBase
             'type' => 'string',
             'name' => 'employees'
         ]);
+
+        factory(Property::class)->create([
+            'type'       => 'string',
+            'name'       => 'colors',
+            'multivalue' => true
+        ]);
     }
 
     protected function setUpCompany()
