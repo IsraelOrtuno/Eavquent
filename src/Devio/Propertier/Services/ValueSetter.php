@@ -135,16 +135,11 @@ class ValueSetter
 
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
-        // the property relation. Let's iterate the relation till clear.
-        $property->load(['values' => function () use ($property)
+        // the property relation. Just replace with an empty collection.
+        $property->load(['values' => function ()
         {
             return new Collection();
         }]);
-
-//        $property->values = $property->values->filter(function ($item)
-//        {
-//            return false;
-//        });
     }
 
     /**
