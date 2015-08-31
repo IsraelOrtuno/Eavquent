@@ -24,7 +24,6 @@
         "laravel/laravel": "~5.1",
         "laracasts/testdummy": "~2.1",
         "phpunit/phpunit": "~4.7@dev",
-        "phpspec/phpspec": "^2.2",
         "mockery/mockery": "^0.9.4"
     },
     "autoload": {
