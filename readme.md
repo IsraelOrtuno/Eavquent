@@ -105,7 +105,7 @@ $user->country = 'Spain';
 $user->save();
 ```
 
-In this case we are assuming that the entity already exists into the database, `Propertier` also works creating a model from scratch:
+In the example above we are assuming that the entity already exists into the database, `Propertier` also works when creating fresh models:
 
 ```php
 $user = new User(['name' => 'Joe');
@@ -113,7 +113,7 @@ $user->country = 'France';
 $user->save();
 ```
 
-But, what about if we pass the property value into a fillable method as `create()`, `fill()` or even the model constructor itself:
+That is good enough... But what if we pass the property value into a fillable method as `create()`, `fill()` or even the model constructor itself?
 
 ```php
 $user = User::create([
