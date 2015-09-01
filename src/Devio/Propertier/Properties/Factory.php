@@ -28,7 +28,7 @@ class Factory
      */
     protected function resolve(Property $property)
     {
-        $class = __NAMESPACE__ . '\\' . studly_case($property->type) . 'Property';
+        $class = config("propertier.properties.{$property->type}");
 
         return new $class;
     }

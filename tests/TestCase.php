@@ -51,8 +51,6 @@ class TestCase extends TestCaseBase
     protected function setUpServiceprovider()
     {
         $this->app->register('Devio\Propertier\PropertierServiceProvider');
-
-        $this->artisan('vendor:publish');
     }
 
     /**
