@@ -89,7 +89,7 @@ class User extends Eloquent {
 
 That's it! Let's register some properties and our model is ready to go! 
 
-> **Note:** The `$morphClass` property should contain a unique name.
+> **Note:** The `$morphClass` property must be a unique name. It will not work properly if more than a model have the same value here as this is used for instantiating the right model for polymorphic relations.
 
 ## Usage
 
