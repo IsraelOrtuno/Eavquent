@@ -233,19 +233,6 @@ trait PropertierTrait
     }
 
     /**
-     * Dinamically setting a property or eloquent attribute.
-     *
-     * @param $key
-     * @param $value
-     *
-     * @return mixed
-     */
-    public function __set($key, $value)
-    {
-        return $this->setProperty($key, $value);
-    }
-
-    /**
      * Dinamically retrive a property or eloquent attribute.
      *
      * @param $key
