@@ -1,10 +1,10 @@
-## Propertier - EAV modeling for Eloquent
-
+Propertier - EAV modeling for Eloquent
+======================================
 [![Build Status](https://travis-ci.org/IsraelOrtuno/Propertier.svg?branch=master)](https://travis-ci.org/IsraelOrtuno/Propertier)
 
 An EAV modeling package for Eloquent. Handle dynamic attributes as if you were using a regular Eloquent model.
 
-### Introduction
+## Introduction
 
 As Wikipedia describes...
 
@@ -16,13 +16,13 @@ This system may affect performance as it is handling the database relations manu
 
 Before using in large systems, consider performance vs flexibility.
 
-#### Pros
+### Pros
 
-#### Cons
+### Cons
 
-### Installation
+## Installation
 
-#### 1. Require the package with composer
+### 1. Require the package with composer
 
 Using composer you can install the package using the `require` command:
 
@@ -40,7 +40,7 @@ Or simply add it to your `composer.json` dependences and perform an update:
 }
 ```
 
-#### 2. Add the Service Provider
+### 2. Add the Service Provider
 
 Once installed, you should include the `PropertierServiceProvider` to the providers array in `config/app.php`.
 
@@ -52,7 +52,7 @@ Once installed, you should include the `PropertierServiceProvider` to the provid
 ]
 ```
 
-#### 3. Publish the package assets
+### 3. Publish the package assets
 
 The propertier package requires a few tables available in the database schema to work. First let's publish the database migrations:
 
@@ -72,26 +72,26 @@ php artisan migrate
 php artisan vendor:publish --provider="Devio\Propertier\PropertierServiceProvider" --tag="config"
 ```
 
-### Usage
+## Usage
 
-#### Registering a new property
+### Registering a new property
 
-#### Setting a property value
+### Setting a property value
 
-#### Setting multivalue property values
+### Setting multivalue property values
 
-#### Deleting an existing property
+### Deleting an existing property
 
-#### Adding/modifying property types
+### Adding/modifying property types
 
 
 
-#### Important
+### Important
 
 Do not use the package with eager loading, it already uses it internally. Adding the `properties` relation to a `$with` variable or `with()` method might cause unexpected behaviour.
 
 
-### TO-DO
+## TO-DO
 
 - [ ] Clear any null property value to make the database lighter.
 - [ ] Create a queue for insert/update queries to rum then in a row.
