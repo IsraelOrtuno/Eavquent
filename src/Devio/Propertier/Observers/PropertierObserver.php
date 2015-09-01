@@ -1,6 +1,7 @@
 <?php
 namespace Devio\Propertier\Observers;
 
+use Devio\Propertier\Services\ValueSetter;
 use Illuminate\Database\Eloquent\Model;
 
 class PropertierObserver
@@ -19,6 +20,12 @@ class PropertierObserver
         {
             if ($model->isProperty($key))
             {
+                // If the current attribute is a property, we will just pass it
+                // to the value setter class. This will add the values to the
+                // property relations ready to be saved when using push.
+                (new ValueSetter)->entity($model)
+                                 ->assign($key, $value);
+
                 // Unsetting the model property from the model attribute list
                 // to make sure we are not trying to insert or update a db
                 // field that does not exist in the real database schema.
