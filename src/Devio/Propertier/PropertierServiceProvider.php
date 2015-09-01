@@ -19,12 +19,16 @@ class PropertierServiceProvider extends ServiceProvider
             $validator->setContainer($app);
         });
 
-        // Publishes the package configuration file when executing the artisan
-        // command `vendor:publish`. This will create a propertier.php file
-        // into the Laravel config path where can be updated if required.
+        // Publishing the package configuration file and migrations. This
+        // will make them available from the main application folders.
+        // They both are tagged in case they have to run separetely.
         $this->publishes([
             __DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),
-        ]);
+        ], 'config');
+
+        $this->publishes([
+            __DIR__ . '/../../migrations/' => database_path('migrations')
+        ], 'migrations');
     }
 
     /**
