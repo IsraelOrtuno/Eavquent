@@ -97,6 +97,33 @@ That's it! Let's register some properties and our model is ready to go!
 
 ### Setting a property value
 
+Setting a property value will be as easy as setting any regular `Eloquent` attribute. If we have registered a property called `country`, only do:
+
+```php
+$user = User::find(1);
+$user->country = 'Spain';
+$user->save();
+```
+
+In this case we are assuming that the entity already exists into the database, `Propertier` also works creating a model from scratch:
+
+```php
+$user = new User(['name' => 'Joe');
+$user->country = 'France';
+$user->save();
+```
+
+But, what about if we pass the property value into a fillable method as `create()`, `fill()` or even the model constructor itself:
+
+```php
+$user = User::create([
+    'name'      => 'Frank',
+    'country'   => 'Italy'
+);
+```
+
+It will work at any case.
+
 ### Setting multivalue property values
 
 ### Deleting an existing property
@@ -104,7 +131,6 @@ That's it! Let's register some properties and our model is ready to go!
 ### Adding/modifying property types
 
 > **Note:** Do not use the package with eager loading, it already uses it internally. Adding the `properties` relation to a `$with` variable or `with()` method might cause unexpected behaviour.
-
 
 ## TO-DO
 
