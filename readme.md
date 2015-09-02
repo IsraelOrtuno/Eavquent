@@ -186,6 +186,12 @@ If you are overriding any of these method in your model, make sure to call the t
 - [ ] Clear any null property value to make the database lighter.
 - [ ] Create a queue for insert/update queries to rum then in a row.
 - [ ] Chance of caching properties related to an entity.
+- [ ] Reduce Laravel dependence and make it work just with `Eloquent`.
+
+## Future
+
+- [ ] Produce a Framework agnostic version.
+- [ ] Working with NOSQL solutions.
 
 ## License
 
