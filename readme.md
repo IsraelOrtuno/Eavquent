@@ -125,7 +125,13 @@ $user = User::create([
 );
 ```
 
-It will work at any case.
+It will work at any case. Now you can access the property value in two ways:
+
+```php
+echo $user->contry; // Spain
+// or using the method
+echo $user->getProperty('country');
+```
 
 ### Setting multivalue property values
 
