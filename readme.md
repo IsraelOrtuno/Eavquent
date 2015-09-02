@@ -135,7 +135,23 @@ echo $user->getProperty('country');
 
 ### Setting multivalue property values
 
+When registering a property, it can be set as `multivalue`. This means that the property accepts arrays or collections of items as value. Internally, this will create multiple `PropertyValue` models related to a single `Property`. Considering the property `colors` has been registered as `string and marked as `multivalue`, simply do: 
+
+```php
+$car = Car::find(1);
+$car->colors = ['red', 'yellow'];
+$car->save();
+```
+
+This will create 2 rows into the table `property_values`, one for every value passed. 
+
+Of course every array value will be validated through its property class (default `StringProperty` in this case).
+
+> **NOTE:** Previous values stored in the property will be completely destroyed. Consider this as setting any simple value, old value will be lost.
+
 ### Deleting an existing property
+
+...
 
 ### Adding/modifying property types
 
