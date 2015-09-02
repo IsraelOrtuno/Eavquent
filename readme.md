@@ -98,6 +98,8 @@ That's it! Let's register some properties and our model is ready to go!
 
 ### Registering a new property
 
+...
+
 ### Setting a property value
 
 Setting a property value will be as easy as setting any regular `Eloquent` attribute. If we have registered a property called `country`, only do:
@@ -186,3 +188,8 @@ If you are overriding any of these method in your model, make sure to call the t
 - [ ] Chance of caching properties related to an entity.
 
 [1]: https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model
+
+## License
+
+`Propertier` was written by Israel Ortuño for the Laravel Framework. It is free software distributed under the terms of the MIT license.
+
