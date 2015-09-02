@@ -128,7 +128,7 @@ $user = User::create([
 It will work at any case. Now you can access the property value in two ways:
 
 ```php
-echo $user->contry; // Spain
+echo $user->contry;
 // or using the method
 echo $user->getProperty('country');
 ```
@@ -148,6 +148,19 @@ This will create 2 rows into the table `property_values`, one for every value pa
 Of course every array value will be validated through its property class (default `StringProperty` in this case).
 
 > **NOTE:** Previous values stored in the property will be completely destroyed. Consider this as setting any simple value, old value will be lost.
+
+When getting a property that has been set as `multivalue`, it will return a collection of `id`/`values` pairs:
+
+```php
+var_dump($car->colors);
+// will output:
+[
+    '1' => 'red',
+    '2' => 'yellow'
+]
+```
+
+The key values contains the `id` of the `PropertyValue`. This way you could update any of them individually using the `PropertyValue` model and not having to set a new array or collection.
 
 ### Deleting an existing property
 
