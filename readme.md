@@ -91,6 +91,8 @@ That's it! Let's register some properties and our model is ready to go!
 
 > **Note:** The `$morphClass` property must be a unique name. It will not work properly if more than a model has the same value here as it is used for instantiating the right model class for polymorphic relations.
 
+> **Note:** Do not use the package with eager loading, it already uses it internally. Adding the `properties` relation to a `$with` variable or `with()` method might cause unexpected behaviour.
+
 ## Usage
 
 ### Registering a new property
@@ -130,7 +132,16 @@ It will work at any case.
 
 ### Adding/modifying property types
 
-> **Note:** Do not use the package with eager loading, it already uses it internally. Adding the `properties` relation to a `$with` variable or `with()` method might cause unexpected behaviour.
+### Eloquent overridden methods
+
+Some `Eloquent` methods had to be overridden to completely integrate `Propertier` into `Eloquent` and be able to use it as a regular model.
+
+* `isFillable()`
+* `fillableFromAttributes()`
+* `__get()`
+* `__set()`
+
+If you are overriding any of these method in your model, make sure to call the trait methods version. 
 
 ## TO-DO
 
