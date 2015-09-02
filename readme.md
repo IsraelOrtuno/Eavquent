@@ -82,6 +82,7 @@ class User extends Eloquent {
 
     use PropertierTrait;
 
+    // Optional
     protected $morphClass = 'User';
 
 }
