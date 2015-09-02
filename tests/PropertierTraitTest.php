@@ -4,6 +4,20 @@ use Illuminate\Support\Collection;
 
 class PropertierTraitTest extends TestCase
 {
+    public function testPropertiesAreIncludedInFillableProperty()
+    {
+        $this->assertTrue($this->company->isFillable('country'));
+    }
+
+    public function testPropertyNamesCanBeGet()
+    {
+        $properties = ['option', 'country', 'name', 'employees', 'colors'];
+
+        $this->assertEquals(
+            $this->company->getPropertyNames(true),
+            $properties
+        );
+    }
 
     public function testPropertyAttributesAreIdentificable()
     {

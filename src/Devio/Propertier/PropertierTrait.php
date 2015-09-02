@@ -161,6 +161,61 @@ trait PropertierTrait
     }
 
     /**
+     * Will return the properties collection keyed by name.
+     * This way filtering will be much easier.
+     *
+     * @return mixed
+     */
+    protected function getPropertiesKeyed()
+    {
+        return $this->properties->keyBy('name');
+    }
+
+    /**
+     * Will return an array with containing the registered property names.
+     *
+     * @param bool $array
+     *
+     * @return mixed
+     */
+    public function getPropertyNames($array = false)
+    {
+        $properties = $this->properties->pluck('name');
+
+        return $array ? $properties->toArray() : $properties;
+    }
+
+    /**
+     * Overriding Eloquents isFillable. Will return true if the key is a
+     * property, otherwise will use the parents method.
+     *
+     * @param $key
+     *
+     * @return mixed
+     */
+    public function isFillable($key)
+    {
+        return $this->isProperty($key) ?: parent::isFillable($key);
+    }
+
+    /**
+     * For fetching the items that are fillable. Merging properties into the
+     * fillable attributes and calling the parent.
+     *
+     * @param array $attributes
+     *
+     * @return mixed
+     */
+    protected function fillableFromArray(array $attributes)
+    {
+        $this->fillable = array_merge(
+            $this->fillable, $this->getPropertyNames(true)
+        );
+
+        return parent::fillableFromArray($attributes);
+    }
+
+    /**
      * The value deletion queue array.
      *
      * @return array
@@ -205,17 +260,6 @@ trait PropertierTrait
     }
 
     /**
-     * Will return the properties collection keyed by name.
-     * This way filtering will be much easier.
-     *
-     * @return mixed
-     */
-    protected function getPropertiesKeyed()
-    {
-        return $this->properties->keyBy('name');
-    }
-
-    /**
      * Will return the table columns.
      *
      * NOTE: IMPORTANTE. Esto actualmente está generando una consulta
@@ -230,6 +274,19 @@ trait PropertierTrait
         return $this->getConnection()
                     ->getSchemaBuilder()
                     ->getColumnListing($this->getTable());
+    }
+
+    /**
+     * Dinamically setting a property or eloquent attribute.
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function __set($key, $value)
+    {
+        return $this->setProperty($key, $value);
     }
 
     /**

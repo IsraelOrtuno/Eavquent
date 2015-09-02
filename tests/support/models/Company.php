@@ -9,6 +9,8 @@ class Company extends Model
 
     protected $morphClass = 'Company';
 
+    protected $fillable = ['name'];
+
     public function employees()
     {
         return $this->hasMany('Employee');

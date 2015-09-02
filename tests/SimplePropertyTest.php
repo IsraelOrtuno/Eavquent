@@ -2,6 +2,17 @@
 
 class SimplePropertyTest extends Testcase
 {
+    public function testPropertyMayBeSetWithFillMethod()
+    {
+        $company = Company::create([
+            'name' => 'foo',
+            'country' => 'bar'
+        ]);
+
+        $this->assertEquals($company->country, 'bar');
+        $this->assertEquals($company->getProperty('country'), 'bar');
+    }
+
     public function testPropertyMayBeSetIfModelAlreadyExists()
     {
         $this->company->country = 'bar';
