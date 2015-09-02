@@ -145,7 +145,7 @@ $car->colors = ['red', 'yellow'];
 $car->save();
 ```
 
-This will create 2 rows into the table `property_values`, one for every value passed. 
+This will create 2 rows into the table `property_values`, one for every array item. 
 
 Of course every array value will be validated through its property class (default `StringProperty` in this case).
 
