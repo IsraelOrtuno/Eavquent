@@ -187,9 +187,9 @@ If you are overriding any of these method in your model, make sure to call the t
 - [ ] Create a queue for insert/update queries to rum then in a row.
 - [ ] Chance of caching properties related to an entity.
 
-[1]: https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model
-
 ## License
 
-`Propertier` was written by Israel Ortuño for the Laravel Framework. It is free software distributed under the terms of the MIT license.
+`Propertier` was written by Israel Ortuño for the Laravel Framework. It is free software distributed under the terms of the [MIT license][2].
 
+[1]: https://en.wikipedia.org/wiki/Entity%E2%80%93attribute%E2%80%93value_model
+[2]: http://opensource.org/licenses/MIT
