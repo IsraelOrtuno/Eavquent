@@ -7,6 +7,7 @@ class PropertierTraitTest extends TestCase
     public function testPropertiesAreIncludedInFillableProperty()
     {
         $this->assertTrue($this->company->isFillable('country'));
+        $this->assertTrue($this->company->isFillable('colors'));
     }
 
     public function testPropertyNamesCanBeGet()
@@ -21,13 +22,11 @@ class PropertierTraitTest extends TestCase
 
     public function testPropertyAttributesAreIdentificable()
     {
-        $company = factory(Company::class)->create();
+        $this->assertTrue($this->company->isProperty('option'));
+        $this->assertTrue($this->company->isProperty('country'));
 
-        $this->assertTrue($company->isProperty('option'));
-        $this->assertTrue($company->isProperty('country'));
-
-        $this->assertFalse($company->isProperty('state'));
-        $this->assertFalse($company->isProperty('region'));
+        $this->assertFalse($this->company->isProperty('state'));
+        $this->assertFalse($this->company->isProperty('region'));
     }
 
     public function testPropertiesDoNotInterfiereIfMatchingColumnName()
@@ -41,8 +40,6 @@ class PropertierTraitTest extends TestCase
 
     public function testPropertiesDoNotInterfiereIfMatchingRelationName()
     {
-        $company = factory(Company::class)->create();
-
-        $this->assertInstanceOf(Collection::class, $company->employees);
+        $this->assertInstanceOf(Collection::class, $this->company->employees);
     }
 }
