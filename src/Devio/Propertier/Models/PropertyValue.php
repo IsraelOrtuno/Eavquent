@@ -61,16 +61,6 @@ class PropertyValue extends Model
     }
 
     /**
-     * Review: Is this needed?
-     *
-     * @return BelongsTo
-     */
-    public function choice()
-    {
-        return $this->belongsTo(PropertyChoice::class, 'value', 'id');
-    }
-
-    /**
      * Will relate the value to the ID passed if it's not already set.
      *
      * @param $id
