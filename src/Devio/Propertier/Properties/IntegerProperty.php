@@ -4,17 +4,7 @@ namespace Devio\Propertier\Properties;
 class IntegerProperty extends PropertyAbstract
 {
     /**
-     * Casting before setting.
-     *
-     * @param $value
-     */
-    public function setValueAttribute($value)
-    {
-        $this->setValue((string) $value);
-    }
-
-    /**
-     * Casting before getting.
+     * Casting to integer before getting.
      *
      * @param $value
      *

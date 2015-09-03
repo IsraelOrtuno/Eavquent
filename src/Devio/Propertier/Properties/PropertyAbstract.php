@@ -10,14 +10,20 @@ abstract class PropertyAbstract extends PropertyValue
      *
      * @param $value
      */
-    abstract function setValueAttribute($value);
+    public function setValueAttribute($value)
+    {
+        $this->setValue((string) $value);
+    }
 
     /**
      * Casting from database string when getting.
      *
      * @return mixed
      */
-    abstract function getValueAttribute($value);
+    public function getValueAttribute($value)
+    {
+        return $value;
+    }
 
     /**
      * Easy setting the value property.
