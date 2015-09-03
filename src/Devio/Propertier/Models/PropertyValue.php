@@ -9,12 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PropertyValue extends Model
 {
-
-    /**
-     * Value field name.
-     */
-    const VALUE_FIELD = 'value';
-
     /**
      * Property Value fillable attributes.
      *
@@ -37,6 +31,7 @@ class PropertyValue extends Model
     protected static function boot()
     {
         static::observe(new PropertyValueObserver);
+
         parent::boot();
     }
 
