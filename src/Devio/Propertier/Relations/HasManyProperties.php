@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PropertierHasMany extends HasMany
+class HasManyProperties extends HasMany
 {
     /**
      * @var string

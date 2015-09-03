@@ -1,9 +1,9 @@
 <?php
 namespace Devio\Propertier\Properties;
 
-use Devio\Propertier\PropertyAbstract;
+use Devio\Propertier\PropertyValue;
 
-class IntegerProperty extends PropertyAbstract
+class IntegerProperty extends PropertyValue
 {
     /**
      * Casting to integer before getting.

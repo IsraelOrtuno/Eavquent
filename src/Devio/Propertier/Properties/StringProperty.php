@@ -1,8 +1,8 @@
 <?php
 namespace Devio\Propertier\Properties;
 
-use Devio\Propertier\PropertyAbstract;
+use Devio\Propertier\PropertyValue;
 
-class StringProperty extends PropertyAbstract
+class StringProperty extends PropertyValue
 {
 }

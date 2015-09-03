@@ -19,6 +19,13 @@ class PropertyValue extends Model
     ];
 
     /**
+     * The table every value will use.
+     *
+     * @var string
+     */
+    protected $table = 'property_values';
+
+    /**
      * Booting the model.
      */
     protected static function boot()
@@ -46,6 +53,36 @@ class PropertyValue extends Model
     public function entity()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Casting to database string when setting.
+     *
+     * @param $value
+     */
+    public function setValueAttribute($value)
+    {
+        $this->setValue((string) $value);
+    }
+
+    /**
+     * Casting from database string when getting.
+     *
+     * @return mixed
+     */
+    public function getValueAttribute($value)
+    {
+        return $value;
+    }
+
+    /**
+     * Easy setting the value property.
+     *
+     * @param $value
+     */
+    public function setValue($value)
+    {
+        $this->attributes['value'] = $value;
     }
 
     /**

@@ -1,14 +1,12 @@
 <?php
 namespace Devio\Propertier;
 
-use Devio\Propertier\Models\Value;
+use Devio\Propertier\Relations\MorphManyValues;
 use Illuminate\Container\Container;
-use Devio\Propertier\Models\Property;
 use Devio\Propertier\Services\ValueGetter;
 use Devio\Propertier\Services\ValueSetter;
-use Devio\Propertier\Models\PropertyValue;
 use Illuminate\Database\Eloquent\Collection;
-use Devio\Propertier\Relations\PropertierHasMany;
+use Devio\Propertier\Relations\HasManyProperties;
 use Devio\Propertier\Observers\PropertierObserver;
 
 trait PropertierTrait
@@ -71,7 +69,7 @@ trait PropertierTrait
     {
         $instance = new Property;
 
-        return (new PropertierHasMany(
+        return (new HasManyProperties(
             $instance->newQuery(), $this, $this->getMorphClass()
         ));
     }
@@ -83,7 +81,18 @@ trait PropertierTrait
      */
     public function values()
     {
-        return $this->morphMany(PropertyValue::class, 'entity');
+        $instance = new PropertyValue();
+
+        // We are manually creating the relationship object instead of using
+        // the Eloquent methods for this purpose. All these information is
+        // needed for creating our extended MorphMany relation object.
+        list($type, $id) = $this->getMorphs('entity', null, null);
+
+        $table = $instance->getTable();
+
+        return new MorphManyValues(
+            $instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $this->getKeyName()
+        );
     }
 
     /**
@@ -152,7 +161,7 @@ trait PropertierTrait
         if ($this->isProperty($key))
         {
             return (new ValueSetter)->entity($this)
-                             ->set($key, $value);
+                                    ->set($key, $value);
         }
 
         return parent::__set($key, $value);
