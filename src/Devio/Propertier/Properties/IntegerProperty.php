@@ -4,24 +4,24 @@ namespace Devio\Propertier\Properties;
 class IntegerProperty extends PropertyAbstract
 {
     /**
-     * Casting the item before accessing.
+     * Casting before setting.
      *
-     * @param $plainValue
-     *
-     * @return int
+     * @param $value
      */
-    protected function cast($plainValue)
+    public function setValueAttribute($value)
     {
-        return (int) $plainValue;
+        $this->setValue((string) $value);
     }
 
     /**
-     * Validating it is a valid integer.
+     * Casting before getting.
      *
-     * @return bool
+     * @param $value
+     *
+     * @return int
      */
-    public function isValidForStorage()
+    public function getValueAttribute($value)
     {
-        return is_integer($this->plainValue);
+        return (int) $value;
     }
 }
