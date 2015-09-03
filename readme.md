@@ -193,6 +193,10 @@ If you are overriding any of these method in your model, make sure to call the t
 - [ ] Produce a Framework agnostic version.
 - [ ] Working with NOSQL solutions.
 
+## Contributing
+
+Any contribution is more than welcome. Feel free to open an issue if you find and error or just want to discuss about something related to `Propertier`. Also you can make a pull request if you think you can help to improve this package.
+
 ## License
 
 `Propertier` was written by Israel Ortuño for the Laravel Framework. It is free software distributed under the terms of the [MIT license][2].
