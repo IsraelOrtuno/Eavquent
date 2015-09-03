@@ -1,7 +1,7 @@
 <?php
 namespace Devio\Propertier\Observers;
 
-use Devio\Propertier\Models\PropertyValue;
+use Devio\Propertier\Properties\PropertyAbstract;
 use Devio\Propertier\Properties\Factory as PropertyFactory;
 
 class PropertyValueObserver
@@ -9,11 +9,11 @@ class PropertyValueObserver
     /**
      * Will only allow saving if the value passes validation.
      *
-     * @param PropertyValue $model
+     * @param PropertyAbstract $model
      *
      * @return bool
      */
-    public function saving(PropertyValue $model)
+    public function saving(PropertyAbstract $model)
     {
         if ( ! $model->isDirty()) return false;
 

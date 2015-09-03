@@ -90,7 +90,7 @@ class ValueSetter
         // pointing loops that the method "relationsToArray" will cause if a model
         // relation is pointing its own parent. This is only for accessing the
         // PropertyValue Property object without making a new database call.
-        $this->loadPropertyRelation($propertyValue, $property);
+        $propertyValue->setRelation('property', $property);
 
         return $propertyValue;
     }
@@ -136,10 +136,7 @@ class ValueSetter
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Just replace with an empty collection.
-        $property->load(['values' => function ()
-        {
-            return new Collection();
-        }]);
+        $property->setRelation('values', new Collection());
     }
 
     /**
@@ -179,21 +176,6 @@ class ValueSetter
         {
             $this->entity->queueValueForDeletion($value);
         });
-    }
-
-    /**
-     * Will manually set the relationship to the property passed
-     * as argument.
-     *
-     * @param $propertyValue
-     * @param $property
-     */
-    protected function loadPropertyRelation($propertyValue, $property)
-    {
-        $propertyValue->load(['property' => function () use ($property)
-        {
-            return $property;
-        }]);
     }
 
     /**

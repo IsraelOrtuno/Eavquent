@@ -1,5 +1,5 @@
 <?php
-namespace Devio\Propertier\Models;
+namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

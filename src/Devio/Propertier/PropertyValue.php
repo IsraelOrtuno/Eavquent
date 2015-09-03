@@ -1,5 +1,5 @@
 <?php
-namespace Devio\Propertier\Models;
+namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
 use Devio\Propertier\Properties\PropertyFactory;
@@ -17,13 +17,6 @@ class PropertyValue extends Model
     protected $fillable = [
         'value', 'entity_type', 'entity_id', 'property_id'
     ];
-
-    /**
-     * The property relation model.
-     *
-     * @var Property
-     */
-    protected $propertyRelation;
 
     /**
      * Booting the model.

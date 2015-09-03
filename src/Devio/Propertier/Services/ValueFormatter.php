@@ -2,7 +2,6 @@
 namespace Devio\Propertier\Services;
 
 use Illuminate\Support\Collection;
-use Devio\Propertier\Contracts\Formatable;
 use Devio\Propertier\Properties\Factory as PropertyFactory;
 
 class ValueFormatter

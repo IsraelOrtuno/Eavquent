@@ -1,7 +1,5 @@
 <?php
-namespace Devio\Propertier\Properties;
-
-use Devio\Propertier\Models\PropertyValue;
+namespace Devio\Propertier;
 
 abstract class PropertyAbstract extends PropertyValue
 {
