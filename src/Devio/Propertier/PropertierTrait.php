@@ -135,7 +135,7 @@ trait PropertierTrait
     {
         if ($this->isProperty($key))
         {
-            return (new ValueGetter)->obtain($this, $key);
+            return (new ValueGetter)->get($this, $key);
         }
 
         return parent::__get($key);

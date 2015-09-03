@@ -28,7 +28,7 @@ class ValueGetter
      *
      * @return \Illuminate\Support\Collection
      */
-    public function obtain(Model $model, $key)
+    public function get(Model $model, $key)
     {
         $property = $model->getPropertyObject($key);
         $values = $property->values;
