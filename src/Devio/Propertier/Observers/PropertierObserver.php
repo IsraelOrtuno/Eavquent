@@ -24,7 +24,7 @@ class PropertierObserver
                 // to the value setter class. This will add the values to the
                 // property relations ready to be saved when using push.
                 (new ValueSetter)->entity($model)
-                                 ->assign($key, $value);
+                                 ->set($key, $value);
 
                 // Unsetting the model property from the model attribute list
                 // to make sure we are not trying to insert or update a db

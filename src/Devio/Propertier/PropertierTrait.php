@@ -146,15 +146,13 @@ trait PropertierTrait
      *
      * @param $key
      * @param $value
-     *
-     * @return mixed
      */
     public function setProperty($key, $value)
     {
         if ($this->isProperty($key))
         {
-            (new ValueSetter)->entity($this)
-                             ->assign($key, $value);
+            return (new ValueSetter)->entity($this)
+                             ->set($key, $value);
         }
 
         return parent::__set($key, $value);

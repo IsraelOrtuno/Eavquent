@@ -50,7 +50,7 @@ class ValueSetter
      *
      * @return PropertyValue|mixed|void
      */
-    public function assign($key, $value)
+    public function set($key, $value)
     {
         $property = $this->getProperty($key);
 
