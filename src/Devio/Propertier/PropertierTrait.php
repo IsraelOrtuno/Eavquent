@@ -1,11 +1,11 @@
 <?php
 namespace Devio\Propertier;
 
-use Devio\Propertier\Relations\MorphManyValues;
 use Illuminate\Container\Container;
 use Devio\Propertier\Services\ValueGetter;
 use Devio\Propertier\Services\ValueSetter;
 use Illuminate\Database\Eloquent\Collection;
+use Devio\Propertier\Relations\MorphManyValues;
 use Devio\Propertier\Relations\HasManyProperties;
 use Devio\Propertier\Observers\PropertierObserver;
 
@@ -81,6 +81,7 @@ trait PropertierTrait
      */
     public function values()
     {
+//        return $this->morphMany(PropertyValue::class, 'entity');
         $instance = new PropertyValue();
 
         // We are manually creating the relationship object instead of using
@@ -155,6 +156,8 @@ trait PropertierTrait
      *
      * @param $key
      * @param $value
+     *
+     * @return Services\PropertyValue|mixed|void
      */
     public function setProperty($key, $value)
     {

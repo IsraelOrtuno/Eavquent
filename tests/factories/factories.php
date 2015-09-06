@@ -11,7 +11,7 @@
 |
 */
 
-use Devio\Propertier\Models\Property;
+use Devio\Propertier\Property;
 
 $factory->define(Company::class, function ($faker)
 {

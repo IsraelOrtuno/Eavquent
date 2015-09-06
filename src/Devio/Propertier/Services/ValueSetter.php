@@ -1,10 +1,10 @@
 <?php
 namespace Devio\Propertier\Services;
 
+use Devio\Propertier\Property;
+use Devio\Propertier\PropertyBuilder;
 use Illuminate\Support\Collection;
-use Devio\Propertier\Models\Property;
 use Illuminate\Database\Eloquent\Model;
-use Devio\Propertier\Models\PropertyValue;
 use Devio\Propertier\Exceptions\PropertyIsNotMultivalue;
 
 class ValueSetter
@@ -15,6 +15,21 @@ class ValueSetter
      * @var Model
      */
     protected $entity;
+
+    /**
+     * The property builderi nstance.
+     *
+     * @var
+     */
+    protected $propertyBuilder;
+
+    /**
+     * ValueSetter constructor.
+     */
+    public function __construct()
+    {
+        $this->propertyBuilder = new PropertyBuilder();
+    }
 
     /**
      * Returns a new ValueSetter instance.
@@ -150,12 +165,14 @@ class ValueSetter
      */
     protected function createNewValue($property, $value)
     {
-        $propertyValue = new PropertyValue([
+        $attributes = [
             'value'       => $value,
             'entity_type' => $this->entity->getMorphClass(),
             'entity_id'   => $this->entity->id,
             'property_id' => $property->id
-        ]);
+        ];
+
+        $propertyValue = $this->propertyBuilder->make($property, $attributes);
 
         // After creating a new property value, we have to include it manually
         // into the property values relation collection. The "push" method

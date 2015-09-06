@@ -21,6 +21,7 @@ class HasManyProperties extends HasMany
     public function __construct(Builder $query, Model $model, $entity)
     {
         $this->entity = $entity;
+
         parent::__construct($query, $model, 'entity', '');
     }
 

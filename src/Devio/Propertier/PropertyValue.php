@@ -97,4 +97,13 @@ class PropertyValue extends Model
             $this->entity_id = $id;
         }
     }
+
+    public function transformProperty()
+    {
+        $factory = new PropertyBuilder();
+
+        return $factory->make(
+            $this->property, $this->getAttributes()
+        );
+    }
 }
