@@ -22,4 +22,22 @@ abstract class Propertier extends Model
             $instance->newQuery(), $this, $this->getMorphClass()
         );
     }
+
+    public function isProperty($key)
+    {
+        return $this->getPropertiesKeyed()->has($key);
+    }
+
+    /**
+     * Will return the properties collection keyed by name.
+     * This way filtering will be much easier.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    protected function getPropertiesKeyed($key = 'name')
+    {
+        return $this->getRelationValue('properties')->keyBy($key);
+    }
 }

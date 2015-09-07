@@ -1,5 +1,6 @@
 <?php
 
+use Devio\Propertier\Property;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as TestCaseBase;
@@ -10,6 +11,7 @@ class TestCase extends TestCaseBase
     use DatabaseMigrations;
 
     protected $company;
+    protected $employee;
 
     /**
      * Setting up test
@@ -75,5 +77,23 @@ class TestCase extends TestCaseBase
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    public function setUpProperties()
+    {
+        $this->company = factory(Company::class)->create();
+        $this->employee = factory(Employee::class)->create();
+
+        factory(Property::class)->create(['name' => 'foo']);
+        factory(Property::class)->create(['name' => 'bar']);
+        factory(Property::class)->create(['name' => 'baz']);
+        factory(Property::class)->create([
+                'name'   => 'qux',
+                'entity' => 'Employee']
+        );
+        factory(Property::class)->create([
+                'name'   => 'quux',
+                'entity' => 'Employee']
+        );
     }
 }

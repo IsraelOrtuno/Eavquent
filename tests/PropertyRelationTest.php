@@ -1,32 +1,30 @@
 <?php
 
-use Devio\Propertier\Property;
 use Illuminate\Database\Eloquent\Collection;
 
 class PropertyRelationTest extends TestCase
 {
-    protected $company;
-
-    protected $employee;
-
     public function setUp()
     {
         parent::setUp();
 
-        $this->company = factory(Company::class)->create();
-        $this->employee = factory(Employee::class)->create();
+        $this->setUpProperties();
 
-        factory(Property::class)->create(['name' => 'foo']);
-        factory(Property::class)->create(['name' => 'bar']);
-        factory(Property::class)->create(['name' => 'baz']);
-        factory(Property::class)->create([
-                'name'   => 'qux',
-                'entity' => 'Employee']
-        );
-        factory(Property::class)->create([
-                'name'   => 'quux',
-                'entity' => 'Employee']
-        );
+    }
+
+    public function testPropertiesAreIdentifiable()
+    {
+        $company = $this->company;
+        $employee = $this->employee;
+
+        $this->assertTrue($company->isProperty('foo'));
+        $this->assertTrue($company->isProperty('bar'));
+        $this->assertTrue($company->isProperty('baz'));
+        $this->assertFalse($company->isProperty('qux'));
+        $this->assertFalse($company->isProperty('quux'));
+
+        $this->assertTrue($employee->isProperty('qux'));
+        $this->assertTrue($employee->isProperty('quux'));
     }
 
     public function testEntityMayHaveManyProperties()
@@ -48,7 +46,7 @@ class PropertyRelationTest extends TestCase
         $this->assertNotFalse($employeeProperties->search('qux'));
         $this->assertNotFalse($employeeProperties->search('quux'));
     }
-    
+
     public function testEntityMayEagerLoadProperties()
     {
         $company = Company::with('properties')->find($this->company->id);
@@ -59,5 +57,20 @@ class PropertyRelationTest extends TestCase
         );
         $this->assertCount(3, $company->getRelation('properties'));
     }
-    
+
+    public function testCheckingPropertiesExistenceWillRunOnlyOneQuery()
+    {
+        DB::enableQueryLog();
+
+        $company = Company::find($this->company->id);
+
+        $company->isProperty('foo');
+        $company->isProperty('bar');
+        $company->isProperty('baz');
+
+        $queries = DB::getQueryLog();
+
+        $this->assertCount(2, $queries);
+    }
+
 }
