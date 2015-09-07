@@ -9,7 +9,6 @@ class PropertyRelationTest extends TestCase
         parent::setUp();
 
         $this->setUpProperties();
-
     }
 
     public function testPropertiesAreIdentifiable()

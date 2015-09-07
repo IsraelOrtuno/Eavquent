@@ -1,6 +1,6 @@
 <?php
 namespace Devio\Propertier\Services;
 
-class ValueGetter
+class PropertyWriter
 {
 }

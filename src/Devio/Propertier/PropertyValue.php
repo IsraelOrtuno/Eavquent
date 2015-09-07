@@ -24,16 +24,6 @@ class PropertyValue extends Model
     protected $table = 'property_values';
 
     /**
-     * Booting the model.
-     */
-    protected static function boot()
-    {
-        static::observe(new PropertyValueObserver);
-
-        parent::boot();
-    }
-
-    /**
      * Relationship to the properties table.
      *
      * @return BelongsTo

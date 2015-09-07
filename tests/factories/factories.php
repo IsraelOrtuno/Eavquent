@@ -12,6 +12,7 @@
 */
 
 use Devio\Propertier\Property;
+use Devio\Propertier\PropertyValue;
 
 $factory->define(Company::class, function ($faker)
 {
@@ -30,7 +31,14 @@ $factory->define(Employee::class, function ($faker)
 $factory->define(Property::class, function ($faker)
 {
     return [
-        'type' => 'string',
+        'type'   => 'string',
         'entity' => 'Company'
+    ];
+});
+
+$factory->define(PropertyValue::class, function ($faker)
+{
+    return [
+        'value' => $faker->word
     ];
 });
