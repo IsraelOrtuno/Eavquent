@@ -18,13 +18,12 @@ class PropertyRelationTest extends TestCase
         $employee = $this->employee;
 
         $this->assertTrue($company->isProperty('foo'));
-        $this->assertTrue($company->isProperty('bar'));
-        $this->assertTrue($company->isProperty('baz'));
-        $this->assertFalse($company->isProperty('qux'));
         $this->assertFalse($company->isProperty('quux'));
 
         $this->assertTrue($employee->isProperty('qux'));
-        $this->assertTrue($employee->isProperty('quux'));
+        $this->assertFalse($employee->isProperty('bar'));
+
+        $this->assertFalse($company->isProperty('properties'));
     }
 
     public function testEntityMayHaveManyProperties()
@@ -68,9 +67,8 @@ class PropertyRelationTest extends TestCase
         $company->isProperty('bar');
         $company->isProperty('baz');
 
-        $queries = DB::getQueryLog();
-
-        $this->assertCount(2, $queries);
+        // One query for fetching the company and just a query for
+        // fetching properties. They will be stored for future checks.
+        $this->assertCount(2, DB::getQueryLog());
     }
-
 }

@@ -25,7 +25,12 @@ abstract class Propertier extends Model
 
     public function isProperty($key)
     {
-        return $this->getPropertiesKeyed()->has($key);
+        // $key will be property when it does not belong to any relationship
+        // name and it also exists into the entity properties collection.
+        // This way it won't interfiere with the model base behaviour.
+        return $this->getRelationValue($key)
+            ? false
+            : $this->getPropertiesKeyed()->has($key);
     }
 
     /**
