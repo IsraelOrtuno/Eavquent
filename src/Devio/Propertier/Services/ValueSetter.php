@@ -1,10 +1,10 @@
 <?php
 namespace Devio\Propertier\Services;
 
-use Illuminate\Support\Collection;
-use Devio\Propertier\Models\Property;
+use Devio\Propertier\Property;
+use Devio\Propertier\PropertyBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Devio\Propertier\Models\PropertyValue;
 use Devio\Propertier\Exceptions\PropertyIsNotMultivalue;
 
 class ValueSetter
@@ -15,6 +15,21 @@ class ValueSetter
      * @var Model
      */
     protected $entity;
+
+    /**
+     * The property builderi nstance.
+     *
+     * @var
+     */
+    protected $propertyBuilder;
+
+    /**
+     * ValueSetter constructor.
+     */
+    public function __construct()
+    {
+        $this->propertyBuilder = new PropertyBuilder();
+    }
 
     /**
      * Returns a new ValueSetter instance.
@@ -90,7 +105,7 @@ class ValueSetter
         // pointing loops that the method "relationsToArray" will cause if a model
         // relation is pointing its own parent. This is only for accessing the
         // PropertyValue Property object without making a new database call.
-        $this->loadPropertyRelation($propertyValue, $property);
+//        $propertyValue->setRelation('property', $property);
 
         return $propertyValue;
     }
@@ -136,10 +151,7 @@ class ValueSetter
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Just replace with an empty collection.
-        $property->load(['values' => function ()
-        {
-            return new Collection();
-        }]);
+        $this->entity->setRelation('values', new Collection());
     }
 
     /**
@@ -153,17 +165,21 @@ class ValueSetter
      */
     protected function createNewValue($property, $value)
     {
-        $propertyValue = new PropertyValue([
+        $attributes = [
             'value'       => $value,
             'entity_type' => $this->entity->getMorphClass(),
             'entity_id'   => $this->entity->id,
             'property_id' => $property->id
-        ]);
+        ];
+
+        $propertyValue = $this->propertyBuilder->make(
+            $property, $attributes
+        );
 
         // After creating a new property value, we have to include it manually
         // into the property values relation collection. The "push" method
         // inlcuded in the collection will help us to perform this task.
-        $property->values->push($propertyValue);
+        $this->entity->values->push($propertyValue);
 
         return $propertyValue;
     }
@@ -182,21 +198,6 @@ class ValueSetter
     }
 
     /**
-     * Will manually set the relationship to the property passed
-     * as argument.
-     *
-     * @param $propertyValue
-     * @param $property
-     */
-    protected function loadPropertyRelation($propertyValue, $property)
-    {
-        $propertyValue->load(['property' => function () use ($property)
-        {
-            return $property;
-        }]);
-    }
-
-    /**
      * Provides the property value model as collection or single element.
      *
      * @param      $property
@@ -206,7 +207,7 @@ class ValueSetter
      */
     protected function getValues($property, $single = false)
     {
-        $values = $property->values;
+        $values = $this->entity->values->where('property_id', $property->id);
 
         return ! $single ? $values : $values->first();
     }

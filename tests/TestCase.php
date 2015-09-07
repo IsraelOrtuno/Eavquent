@@ -1,6 +1,6 @@
 <?php
 
-use Devio\Propertier\Models\Property;
+use Devio\Propertier\Property;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as TestCaseBase;

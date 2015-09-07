@@ -1,9 +1,7 @@
 <?php
 namespace Devio\Propertier\Services;
 
-use Devio\Propertier\Models\Property;
 use Devio\Propertier\Validators\CreateProperty;
-use Illuminate\Contracts\Events\Dispatcher as Event;
 
 class PropertyCreator
 {
