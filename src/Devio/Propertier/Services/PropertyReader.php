@@ -32,6 +32,9 @@ class PropertyReader
         $property = $this->findProperty($key);
         $values = $this->findValues($property);
 
+        // Once we know what are the PropertyValues related to the property,
+        // we'll decide if returning a collection or just a single value.
+        // The colleciton is implicit due values is a hasMany relation.
         if ( ! $property->isMultivalue())
         {
             $values = $values->count() ? $values->first() : null;
