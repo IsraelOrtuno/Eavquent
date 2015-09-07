@@ -118,7 +118,7 @@ abstract class Propertier extends Model
     /**
      * Will return the table columns.
      *
-     * @return mixed
+     * @return array
      */
     protected function getTableColumns()
     {
@@ -126,7 +126,7 @@ abstract class Propertier extends Model
 
         // Will add to a unique cache key the result of querying the model
         // schema columns. When trying to fetch the table columns, this
-        // will check if there is cache before executing any queries.
+        // will check if there is cache before running any queries.
         return $this->cache->remember($key, $this->cachedColumns, function()
         {
             return $this->getConnection()
@@ -135,6 +135,13 @@ abstract class Propertier extends Model
         });
     }
 
+    /**
+     * Overriding magic method.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
     public function __get($key)
     {
         if ($this->isProperty($key))
