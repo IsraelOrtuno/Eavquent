@@ -1,8 +1,6 @@
 <?php namespace Devio\Propertier;
 
 use Illuminate\Support\ServiceProvider;
-use Devio\Propertier\Services\ValueFormatter;
-use Devio\Propertier\Validators\AbstractValidator;
 
 class PropertierServiceProvider extends ServiceProvider
 {
@@ -11,14 +9,6 @@ class PropertierServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Will set the service container instance to any validator. This way
-        // the full application is accessible from the validators in order
-        // to provide the validation process with much more flexibility.
-        $this->app->resolving(function (AbstractValidator $validator, $app)
-        {
-            $validator->setContainer($app);
-        });
-
         // Publishing the package configuration file and migrations. This
         // will make them available from the main application folders.
         // They both are tagged in case they have to run separetely.
@@ -61,16 +51,5 @@ class PropertierServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/propertier.php', 'propertier'
         );
-    }
-
-    /**
-     * Registering the value formatter.
-     */
-    protected function registerValueFormatter()
-    {
-        $this->app->singleton('propertier.formatter', function ($app)
-        {
-            return new ValueFormatter();
-        });
     }
 }

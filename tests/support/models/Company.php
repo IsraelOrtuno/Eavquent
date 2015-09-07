@@ -1,19 +1,12 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Propertier;
 
-class Company extends Model
+class Company extends Propertier
 {
-
-    use Devio\Propertier\PropertierTrait;
 
     protected $morphClass = 'Company';
 
     protected $fillable = ['name'];
-
-    public function employees()
-    {
-        return $this->hasMany('Employee');
-    }
 
 }

@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Propertier;
 
-class Employee extends Model
+class Employee extends Propertier
 {
-    public function company()
-    {
-        return $this->belongsTo('Company');
-    }
+
+    protected $morphClass = 'Employee';
+
+    protected $fillable = ['name'];
+
 }
