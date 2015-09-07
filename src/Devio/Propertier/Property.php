@@ -16,21 +16,6 @@ class Property extends Model
     ];
 
     /**
-     * Relationship Property Values.
-     *
-     * @return HasMany
-     */
-//    public function values()
-//    {
-////        return $this->hasMany(PropertyValue::class);
-//        $instance = new PropertyValue;
-//
-//        return new HasManyValues(
-//            $instance->newQuery(), $this, $instance->getTable().'.'.$this->getForeignKey(), $this->getKeyName()
-//        );
-//    }
-
-    /**
      * Check if the property accepts multiple values.
      *
      * @return mixed
