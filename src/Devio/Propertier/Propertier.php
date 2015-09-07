@@ -62,6 +62,14 @@ abstract class Propertier extends Model
         return $this->morphMany(PropertyValue::class, 'entity');
     }
 
+    /**
+     * Will find the PropertyValue raw model instance based on
+     * the key passed as argument.
+     *
+     * @param $key
+     *
+     * @return null
+     */
     public function getPropertyRawValue($key)
     {
         return (new PropertyReader($this))->read($key);
