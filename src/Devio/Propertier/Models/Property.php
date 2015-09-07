@@ -1,5 +1,5 @@
 <?php
-namespace Devio\Propertier;
+namespace Devio\Propertier\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,15 +20,10 @@ class Property extends Model
      *
      * @return HasMany
      */
-//    public function values()
-//    {
-////        return $this->hasMany(PropertyValue::class);
-//        $instance = new PropertyValue;
-//
-//        return new HasManyValues(
-//            $instance->newQuery(), $this, $instance->getTable().'.'.$this->getForeignKey(), $this->getKeyName()
-//        );
-//    }
+    public function values()
+    {
+        return $this->hasMany(PropertyValue::class);
+    }
 
     /**
      * Check if the property accepts multiple values.

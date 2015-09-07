@@ -1,29 +1,31 @@
 <?php
 namespace Devio\Propertier;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Models\Value;
+use Illuminate\Container\Container;
+use Devio\Propertier\Models\Property;
 use Devio\Propertier\Services\ValueGetter;
 use Devio\Propertier\Services\ValueSetter;
+use Devio\Propertier\Models\PropertyValue;
 use Illuminate\Database\Eloquent\Collection;
-use Devio\Propertier\Relations\HasManyProperties;
+use Devio\Propertier\Relations\PropertierHasMany;
 use Devio\Propertier\Observers\PropertierObserver;
 
-abstract class Propertier extends Model
+trait PropertierTrait
 {
     /**
-     * Set if eager loading the properties and values automatically.
+     * The container instance.
+     *
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * Properties should be at level 0 when converting to array.
      *
      * @var bool
      */
-    protected $propertierEagerLoad = true;
-
-    /**
-     * Array of property names to be merged with fillable attributes.
-     *
-     * @var array
-     */
-    protected $propertyNames = [];
+    protected $plainProperties = true;
 
     /**
      * Values to be deleted.
@@ -33,32 +35,11 @@ abstract class Propertier extends Model
     protected $valueDeletionQueue;
 
     /**
-     * Propertier constructor.
-     *
-     * @param array $attributes
-     */
-    public function __construct(array $attributes = [])
-    {
-        $this->bootPropertier();
-
-        parent::__construct($attributes);
-    }
-
-    /**
      * Custom trait booter. Will register the observers.
      */
-    protected static function boot()
+    public static function bootPropertierTrait()
     {
         static::observe(new PropertierObserver);
-
-        parent::boot();
-    }
-
-    protected function bootPropertier()
-    {
-        $this->registerWiths();
-
-        $this->registerPropertyNames();
     }
 
     /**
@@ -66,33 +47,18 @@ abstract class Propertier extends Model
      */
     protected function bootPropertierIfNotBooted()
     {
-    }
-
-    /**
-     * Will include the propertier relations into the $with array.
-     */
-    protected function registerWiths()
-    {
-        if ($this->propertierEagerLoad)
+        if ( ! $this->container)
         {
-            $this->with = array_merge(
-                $this->with, ['properties', 'values']
-            );
+            $this->container = Container::getInstance();
         }
-    }
 
-    protected function registerPropertyNames()
-    {
-        $type = $this->getMorphClass();
-
-        $this->propertyNames = Cache::remember("propertier.$type.names", 7200, function () use ($type)
+        // Also we have to be sure that the relationship has been already
+        // loaded into the entity before checking anything in it. This
+        // also eager loads the properties relation into the entity.
+        if ( ! $this->relationLoaded('properties'))
         {
-            $properties = Property::where('entity', $type)
-                                  ->get()
-                                  ->pluck('name');
-
-            return $properties->toArray();
-        });
+            $this->load('properties');
+        }
     }
 
     /**
@@ -105,9 +71,9 @@ abstract class Propertier extends Model
     {
         $instance = new Property;
 
-        return new HasManyProperties(
+        return (new PropertierHasMany(
             $instance->newQuery(), $this, $this->getMorphClass()
-        );
+        ));
     }
 
     /**
@@ -118,19 +84,6 @@ abstract class Propertier extends Model
     public function values()
     {
         return $this->morphMany(PropertyValue::class, 'entity');
-
-        //        $instance = new PropertyValue();
-        //
-        //        // We are manually creating the relationship object instead of using
-        //        // the Eloquent methods for this purpose. All these information is
-        //        // needed for creating our extended MorphMany relation object.
-        //        list($type, $id) = $this->getMorphs('entity', null, null);
-        //
-        //        $table = $instance->getTable();
-        //
-        //        return new MorphManyValues(
-        //            $instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $this->getKeyName()
-        //        );
     }
 
     /**
@@ -153,7 +106,7 @@ abstract class Propertier extends Model
         // As every trait operation will have to cross this function to check
         // if it really needs to be performed, this looks a good place for
         // bootstrapping the trait and simulate a regular constructor.
-        //        $this->bootPropertierIfNotBooted();
+        $this->bootPropertierIfNotBooted();
 
         return $this->getPropertiesKeyed()->has($key);
     }
@@ -193,15 +146,13 @@ abstract class Propertier extends Model
      *
      * @param $key
      * @param $value
-     *
-     * @return Services\PropertyValue|mixed|void
      */
     public function setProperty($key, $value)
     {
         if ($this->isProperty($key))
         {
             return (new ValueSetter)->entity($this)
-                                    ->set($key, $value);
+                             ->set($key, $value);
         }
 
         return parent::__set($key, $value);
@@ -215,8 +166,7 @@ abstract class Propertier extends Model
      */
     protected function getPropertiesKeyed()
     {
-        return $this->getRelationValue('properties')
-                    ->keyBy('name');
+        return $this->properties->keyBy('name');
     }
 
     /**
@@ -226,13 +176,12 @@ abstract class Propertier extends Model
      *
      * @return mixed
      */
-    //    public function getPropertyNames($array = false)
-    //    {
-    //        $properties = $this->getRelationValue('properties')
-    //                           ->pluck('name');
-    //
-    //        return $array ? $properties->toArray() : $properties;
-    //    }
+    public function getPropertyNames($array = false)
+    {
+        $properties = $this->properties->pluck('name');
+
+        return $array ? $properties->toArray() : $properties;
+    }
 
     /**
      * Overriding Eloquents isFillable. Will return true if the key is a
@@ -258,7 +207,7 @@ abstract class Propertier extends Model
     protected function fillableFromArray(array $attributes)
     {
         $this->fillable = array_merge(
-            $this->fillable, $this->propertyNames
+            $this->fillable, $this->getPropertyNames(true)
         );
 
         return parent::fillableFromArray($attributes);

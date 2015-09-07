@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class HasManyProperties extends HasMany
+class PropertierHasMany extends HasMany
 {
     /**
      * @var string
@@ -21,7 +21,6 @@ class HasManyProperties extends HasMany
     public function __construct(Builder $query, Model $model, $entity)
     {
         $this->entity = $entity;
-
         parent::__construct($query, $model, 'entity', '');
     }
 
@@ -35,6 +34,7 @@ class HasManyProperties extends HasMany
         if (static::$constraints)
         {
             $this->query->where($this->foreignKey, '=', $this->getParentKey());
+            $this->query->whereNotNull($this->foreignKey);
         }
     }
 

@@ -2,10 +2,26 @@
 namespace Devio\Propertier\Services;
 
 use Illuminate\Support\Collection;
-use Devio\Propertier\PropertyBuilder;
+use Devio\Propertier\Contracts\Formatable;
+use Devio\Propertier\Properties\Factory as PropertyFactory;
 
 class ValueFormatter
 {
+    /**
+     * The property factory instance.
+     *
+     * @var PropertyFactory
+     */
+    protected $property;
+
+    /**
+     * Creates a ValueFormatter instance.
+     */
+    public function __construct()
+    {
+        $this->property = new PropertyFactory;
+    }
+
     /**
      * Format the property value model set.
      *
@@ -37,7 +53,9 @@ class ValueFormatter
      */
     protected function formatOne($model)
     {
-        return $model->value;
+        return $this->property->make($model->property)
+                              ->value($model)
+                              ->decorate();
     }
 
     /**
