@@ -1,8 +1,8 @@
 <?php
 namespace Devio\Propertier\Observers;
 
-use Devio\Propertier\Services\ValueSetter;
 use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Services\ValueSetter;
 
 class PropertierObserver
 {
@@ -44,23 +44,21 @@ class PropertierObserver
      */
     public function saved(Model $model)
     {
-        // Will iterate through every model property and save any change made
-        // We are iterating the entity properties due the "push" method is
-        // causing infinite loop as every property is also related to an
-        // entity. After saving, we'll clear the old values if needed.
-        foreach ($model->properties as $property)
+        foreach ($model->values as $value)
         {
-            // Iterating every value to check if it is related to the model we
-            // are going to save. This will handle the relation between new
-            // created models that do not have an id assigned till saved.
-            $property->values->map(function ($item, $key) use ($model)
+            // Will iterate thorugh every model value and save any change made.
+            // Just in case the parent model has just been created, we will
+            // force to relate it now as it didn't have an id till saved.
+            if ($value->isDirty())
             {
-                $item->relatedOrRelateTo($model->id);
-            });
-
-            $property->push();
+                $value->relatedOrRelateTo($model->id);
+                $value->save();
+            }
         }
 
+        // Once we have all our values correcly stored, we will clear the old
+        // values corresponding to any previous collection items stored in
+        // the database. This will delete all them. Only for collections.
         $model->executeDeletionQueue();
     }
 }

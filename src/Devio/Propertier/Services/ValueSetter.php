@@ -3,7 +3,7 @@ namespace Devio\Propertier\Services;
 
 use Devio\Propertier\Property;
 use Devio\Propertier\PropertyBuilder;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Devio\Propertier\Exceptions\PropertyIsNotMultivalue;
 
@@ -105,7 +105,7 @@ class ValueSetter
         // pointing loops that the method "relationsToArray" will cause if a model
         // relation is pointing its own parent. This is only for accessing the
         // PropertyValue Property object without making a new database call.
-        $propertyValue->setRelation('property', $property);
+//        $propertyValue->setRelation('property', $property);
 
         return $propertyValue;
     }
@@ -151,7 +151,7 @@ class ValueSetter
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Just replace with an empty collection.
-        $property->setRelation('values', new Collection());
+        $this->entity->setRelation('values', new Collection());
     }
 
     /**
@@ -172,12 +172,14 @@ class ValueSetter
             'property_id' => $property->id
         ];
 
-        $propertyValue = $this->propertyBuilder->make($property, $attributes);
+        $propertyValue = $this->propertyBuilder->make(
+            $property, $attributes
+        );
 
         // After creating a new property value, we have to include it manually
         // into the property values relation collection. The "push" method
         // inlcuded in the collection will help us to perform this task.
-        $property->values->push($propertyValue);
+        $this->entity->values->push($propertyValue);
 
         return $propertyValue;
     }
@@ -205,7 +207,7 @@ class ValueSetter
      */
     protected function getValues($property, $single = false)
     {
-        $values = $property->values;
+        $values = $this->entity->values->where('property_id', $property->id);
 
         return ! $single ? $values : $values->first();
     }

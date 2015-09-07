@@ -22,7 +22,7 @@ class PropertyBuilder
         // provided and relate it to the property, eager loading included.
         $propertyValue = new $class($attributes);
 
-        $propertyValue->setRelation('property', $property);
+//        $propertyValue->setRelation('property', $property);
 
         return $propertyValue;
     }
