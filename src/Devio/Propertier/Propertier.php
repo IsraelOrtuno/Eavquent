@@ -37,19 +37,19 @@ abstract class Propertier extends Model
         // This way it won't interfiere with the model base behaviour.
         return $this->getRelationValue($key)
             ? false
-            : $this->getPropertiesKeyed()->has($key);
+            : $this->getPropertiesKeyedBy()->has($key);
     }
 
     /**
      * Will return the properties collection keyed by name.
      * This way filtering will be much easier.
      *
-     * @param string $key
+     * @param string $keyBy
      *
      * @return mixed
      */
-    protected function getPropertiesKeyed($key = 'name')
+    public function getPropertiesKeyedBy($keyBy = 'name')
     {
-        return $this->getRelationValue('properties')->keyBy($key);
+        return $this->getRelationValue('properties')->keyBy($keyBy);
     }
 }
