@@ -2,7 +2,7 @@
 
 use Devio\Propertier\PropertyValue;
 
-class PropertyAccessTest extends TestCase
+class ReadPropertyTest extends TestCase
 {
     public function setUp()
     {
@@ -17,8 +17,15 @@ class PropertyAccessTest extends TestCase
             'entity_id'   => $this->company->id
         ]);
     }
+
+    public function testReadNonExistingValue()
+    {
+        $company = $this->company;
+
+        $this->assertNull($company->getPropertyRawValue('bar'));
+    }
     
-    public function testGetAnExistingPropertyValue()
+    public function testReadExistingValue()
     {
         $company = $this->company;
 
