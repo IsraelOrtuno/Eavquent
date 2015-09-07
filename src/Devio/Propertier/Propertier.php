@@ -23,6 +23,13 @@ abstract class Propertier extends Model
         );
     }
 
+    /**
+     * Will check if the key exists as registerd property.
+     *
+     * @param $key
+     *
+     * @return bool
+     */
     public function isProperty($key)
     {
         // $key will be property when it does not belong to any relationship
