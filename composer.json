@@ -3,7 +3,6 @@
     "description": "EAV modeling for Eloquent.",
     "keywords": [
         "laravel",
-        "generators",
         "eloquent",
         "eav"
     ],
@@ -18,13 +17,14 @@
         "php": ">=5.4.0",
         "illuminate/support": "~5.1",
         "illuminate/database": "~5.1",
-        "illuminate/bus": "~5.1"
+        "illuminate/cache": "~5.1",
+        "illuminate/filesystem": "~5.1"
     },
     "require-dev": {
-        "laravel/laravel": "~5.1",
-        "laracasts/testdummy": "~2.1",
         "phpunit/phpunit": "~4.7@dev",
-        "mockery/mockery": "^0.9.4"
+        "mockery/mockery": "^0.9.4",
+        "laravel/laravel": "~5.1",
+        "fzaninotto/faker": "~1.4"
     },
     "autoload": {
         "classmap": [
