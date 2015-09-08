@@ -11,7 +11,7 @@ class PropertyBuilder
      * @param       $property
      * @param array $attributes
      *
-     * @return PropertyAbstract
+     * @return PropertyValue
      */
     public function make($property, $attributes = [])
     {
