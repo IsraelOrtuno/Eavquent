@@ -14,4 +14,5 @@ class Propertier extends Facade
     {
         return 'propertier';
     }
+    
 }

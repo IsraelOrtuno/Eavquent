@@ -1,8 +1,10 @@
 <?php
-namespace Devio\Propertier;
+namespace Devio\Propertier\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Properties\PropertyFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Devio\Propertier\Observers\PropertyValueObserver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PropertyValue extends Model
@@ -17,11 +19,21 @@ class PropertyValue extends Model
     ];
 
     /**
-     * The table every value will use.
+     * The property relation model.
      *
-     * @var string
+     * @var Property
      */
-    protected $table = 'property_values';
+    protected $propertyRelation;
+
+    /**
+     * Booting the model.
+     */
+    protected static function boot()
+    {
+        static::observe(new PropertyValueObserver);
+
+        parent::boot();
+    }
 
     /**
      * Relationship to the properties table.
@@ -44,36 +56,6 @@ class PropertyValue extends Model
     }
 
     /**
-     * Casting to database string when setting.
-     *
-     * @param $value
-     */
-    public function setValueAttribute($value)
-    {
-        $this->setValue((string) $value);
-    }
-
-    /**
-     * Casting from database string when getting.
-     *
-     * @return mixed
-     */
-    public function getValueAttribute($value)
-    {
-        return $value;
-    }
-
-    /**
-     * Easy setting the value property.
-     *
-     * @param $value
-     */
-    public function setValue($value)
-    {
-        $this->attributes['value'] = $value;
-    }
-
-    /**
      * Will relate the value to the ID passed if it's not already set.
      *
      * @param $id
@@ -84,14 +66,5 @@ class PropertyValue extends Model
         {
             $this->entity_id = $id;
         }
-    }
-
-    public function transformProperty()
-    {
-        $factory = new PropertyBuilder();
-
-        return $factory->make(
-            $this->property, $this->getAttributes()
-        );
     }
 }

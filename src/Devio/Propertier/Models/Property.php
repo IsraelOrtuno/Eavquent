@@ -1,5 +1,5 @@
 <?php
-namespace Devio\Propertier;
+namespace Devio\Propertier\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +14,16 @@ class Property extends Model
     public $fillable = [
         'type', 'name', 'multivalue', 'entity', 'default_value'
     ];
+
+    /**
+     * Relationship Property Values.
+     *
+     * @return HasMany
+     */
+    public function values()
+    {
+        return $this->hasMany(PropertyValue::class);
+    }
 
     /**
      * Check if the property accepts multiple values.
