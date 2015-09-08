@@ -40,7 +40,22 @@ class PropertyReader
             $values = $values->count() ? $values->first() : null;
         }
 
-        return $values;
+        return is_null($values)
+            ? $values
+            : $this->transformValues($values, $property);
+    }
+
+    /**
+     * Transform the colleciton of values into the right property objects.
+     *
+     * @param $values
+     * @param $property
+     *
+     * @return mixed
+     */
+    protected function transformValues($values, $property)
+    {
+        return (new PropertyTransformer($values, $property))->transform();
     }
 
     /**
