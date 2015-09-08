@@ -1,27 +1,19 @@
 <?php
 namespace Devio\Propertier\Properties;
 
-class IntegerProperty extends PropertyAbstract
+use Devio\Propertier\PropertyValue;
+
+class IntegerProperty extends PropertyValue
 {
     /**
-     * Casting the item before accessing.
+     * Casting to integer before getting.
      *
-     * @param $plainValue
+     * @param $value
      *
      * @return int
      */
-    protected function cast($plainValue)
+    public function getValueAttribute($value)
     {
-        return (int) $plainValue;
-    }
-
-    /**
-     * Validating it is a valid integer.
-     *
-     * @return bool
-     */
-    public function isValidForStorage()
-    {
-        return is_integer($this->plainValue);
+        return (int) $value;
     }
 }
