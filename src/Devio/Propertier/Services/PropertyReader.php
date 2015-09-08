@@ -1,6 +1,7 @@
 <?php
 namespace Devio\Propertier\Services;
 
+use Devio\Propertier\Exceptions\PropertyNotFoundException;
 use Devio\Propertier\Propertier;
 
 class PropertyReader
@@ -13,13 +14,20 @@ class PropertyReader
     protected $entity;
 
     /**
+     * @var PropertyFinder
+     */
+    private $finder;
+
+    /**
      * PropertyReader constructor.
      *
-     * @param Propertier $entity
+     * @param Propertier     $entity
+     * @param PropertyFinder $finder
      */
-    public function __construct(Propertier $entity)
+    public function __construct(Propertier $entity, PropertyFinder $finder)
     {
         $this->entity = $entity;
+        $this->finder = $finder;
     }
 
     /**
@@ -27,7 +35,8 @@ class PropertyReader
      *
      * @param $key
      *
-     * @return null
+     * @return mixed|null
+     * @throws PropertyNotFoundException
      */
     public function read($key)
     {
@@ -69,13 +78,12 @@ class PropertyReader
      */
     protected function findProperty($key)
     {
-        $properties = $this->entity->getPropertiesKeyedBy('name');
-
-        return $properties->get($key);
+        return $this->finder->entity($this->entity)
+                            ->find($key);
     }
 
     /**
-     * Finds the right value based on a property given.
+     * Finds the values based on a property given.
      *
      * @param $property
      *
@@ -83,21 +91,6 @@ class PropertyReader
      */
     protected function findValues($property)
     {
-        // Will filter through the values collection looking for those values that
-        // are matching the property passed as parameter. The where method gets
-        // the current property ID and return the values of same property_id.
-        return $this->getValues()->where(
-            $property->getForeignKey(), $property->getKey()
-        );
-    }
-
-    /**
-     * Will return the entity values collection.
-     *
-     * @return mixed
-     */
-    protected function getValues()
-    {
-        return $this->entity->values;
+        return $this->entity->getValuesOf($property);
     }
 }

@@ -18,14 +18,14 @@ class ReadPropertyTest extends TestCase
         ]);
     }
 
-    public function testReadNonExistingValue()
+    public function test_read_non_existing_value()
     {
         $company = $this->company;
 
         $this->assertNull($company->getPropertyRawValue('bar'));
     }
     
-    public function testReadExistingValue()
+    public function test_read_existing_value()
     {
         $company = $this->company;
 

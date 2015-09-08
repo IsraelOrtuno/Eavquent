@@ -11,7 +11,7 @@ class PropertyRelationTest extends TestCase
         $this->setUpProperties();
     }
 
-    public function testPropertiesAreIdentifiable()
+    public function test_properties_are_identifiable()
     {
         $company = $this->company;
         $employee = $this->employee;
@@ -25,7 +25,7 @@ class PropertyRelationTest extends TestCase
         $this->assertFalse($company->isProperty('properties'));
     }
 
-    public function testEntityMayHaveManyProperties()
+    public function test_entity_may_have_many_properties()
     {
         $companyProperties = $this->company->properties->pluck('name');
         $employeeProperties = $this->employee->properties->pluck('name');
@@ -45,7 +45,7 @@ class PropertyRelationTest extends TestCase
         $this->assertNotFalse($employeeProperties->search('quux'));
     }
 
-    public function testEntityMayEagerLoadProperties()
+    public function test_entity_may_eager_load_properties()
     {
         $company = Company::with('properties')->find($this->company->id);
 
@@ -56,7 +56,7 @@ class PropertyRelationTest extends TestCase
         $this->assertCount(3, $company->getRelation('properties'));
     }
 
-    public function testCheckingPropertiesExistenceWillRunOnlyOneQuery()
+    public function test_checking_properties_existence_will_run_only_one_query()
     {
         DB::enableQueryLog();
 

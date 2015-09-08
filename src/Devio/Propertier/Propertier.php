@@ -1,6 +1,7 @@
 <?php
 namespace Devio\Propertier;
 
+use Devio\Propertier\Services\PropertyFinder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Devio\Propertier\Services\PropertyReader;
@@ -72,7 +73,26 @@ abstract class Propertier extends Model
      */
     public function getPropertyRawValue($key)
     {
-        return (new PropertyReader($this))->read($key);
+        $reader = new PropertyReader($this, new PropertyFinder);
+
+        return $reader->read($key);
+    }
+
+    /**
+     * Gets the values based on a property given.
+     *
+     * @param $property
+     *
+     * @return mixed
+     */
+    public function getValuesOf(Property $property)
+    {
+        // Will filter through the values collection looking for those values that
+        // are matching the property passed as parameter. The where method gets
+        // the current property ID and return the values of same property_id.
+        return $this->getRelationValue('values')->where(
+            $property->getForeignKey(), $property->getKey()
+        );
     }
 
     /**

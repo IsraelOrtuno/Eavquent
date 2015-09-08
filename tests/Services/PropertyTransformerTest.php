@@ -10,7 +10,7 @@ use Mockery as m;
 class PropertyTransformerTest extends TestCase
 {
     
-    public function testTransformOneValue()
+    public function test_transform_one_value()
     {
         list($value, $property) = $this->getMocks();
         $value->shouldReceive('getAttributes')->once()->andReturn([]);
@@ -23,7 +23,7 @@ class PropertyTransformerTest extends TestCase
         $this->assertInstanceOf(StringProperty::class, $result);
     }
 
-    public function testTransformCollection()
+    public function test_transform_collection()
     {
         list($value, $property) = $this->getMocks();
         $value2 = m::mock(PropertyValue::class);
