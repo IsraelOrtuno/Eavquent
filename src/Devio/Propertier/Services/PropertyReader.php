@@ -6,6 +6,8 @@ use Devio\Propertier\Propertier;
 class PropertyReader
 {
     /**
+     * The entity model.
+     *
      * @var Propertier
      */
     protected $entity;
