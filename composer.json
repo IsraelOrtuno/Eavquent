@@ -24,7 +24,8 @@
         "phpunit/phpunit": "~4.7@dev",
         "mockery/mockery": "^0.9.4",
         "laravel/laravel": "~5.1",
-        "fzaninotto/faker": "~1.4"
+        "fzaninotto/faker": "~1.4",
+        "phpspec/phpspec": "^2.3"
     },
     "autoload": {
         "classmap": [
