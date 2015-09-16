@@ -1,7 +1,6 @@
 <?php
-namespace Devio\Propertier\Finders;
+namespace Devio\Propertier;
 
-use Devio\Propertier\Property;
 use Illuminate\Support\Collection;
 
 class PropertyFinder
@@ -58,7 +57,7 @@ class PropertyFinder
 
         return $properties->has($name)
             ? $properties->get($name)
-            : false;
+            : null;
     }
 
     /**
