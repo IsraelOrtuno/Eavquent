@@ -12,15 +12,6 @@ class PropertierTest extends TestCase
         $this->setUpProperties();
     }
 
-    public function test_it_recognizes_an_attribute_is_property_or_not()
-    {
-        $company = Company::find(1);
-//        $this->assertTrue($company->isProperty('foo'));
-//        $this->assertTrue($company->isProperty('bar'));
-        $this->assertFalse($company->isProperty('oof'));
-        $this->assertFalse($company->isProperty('rab'));
-    }
-
     public function test_it_will_get_an_array_of_columns()
     {
         $company = new Company;
