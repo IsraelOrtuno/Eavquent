@@ -21,6 +21,7 @@ class TestCase extends TestCaseBase
         parent::setUp();
 
         $this->artisan('key:generate');
+        $this->artisan('cache:clear');
 
         $this->setUpDatabase();
         $this->setUpFactories();
