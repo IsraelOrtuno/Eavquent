@@ -31,7 +31,7 @@ class CacheResolver
      *
      * @return Repository
      */
-    protected function createDefaultCacheManager()
+    public function createDefaultCacheManager()
     {
         $cachePath = __DIR__ . '/../../storage/cache';
 
