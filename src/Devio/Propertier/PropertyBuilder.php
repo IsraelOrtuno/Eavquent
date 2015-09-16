@@ -12,10 +12,16 @@ class PropertyBuilder
      * @param array $attributes
      *
      * @return PropertyValue
+     * @throws UnresolvedPropertyException
      */
     public function make($property, $attributes = [])
     {
         $class = $this->resolve($property);
+
+        if ( ! class_exists($class))
+        {
+            throw new UnresolvedPropertyException;
+        }
 
         // Will create a new PropertyAbstract model based on the property passed
         // as argument. It will also fill the model if a set of attributes is
@@ -45,7 +51,7 @@ class PropertyBuilder
         }
         else
         {
-            throw new UnresolvedPropertyException;
+            return null;
         }
 
         return config("propertier.properties.$type");
