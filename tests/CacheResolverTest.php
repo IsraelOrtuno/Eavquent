@@ -1,7 +1,8 @@
 <?php
 
-use Devio\Propertier\CacheResolver;
 use Illuminate\Cache\Repository;
+use Illuminate\Cache\CacheManager;
+use Devio\Propertier\CacheResolver;
 
 class CacheResolverTest extends TestCase
 {
@@ -9,7 +10,7 @@ class CacheResolverTest extends TestCase
     public function test_it_will_resolve_the_laravel_cache_manager()
     {
         $resolver = new CacheResolver;
-        $this->assertInstanceOf(\Illuminate\Cache\CacheManager::class, $resolver->resolve());
+        $this->assertInstanceOf(CacheManager::class, $resolver->resolve());
     }
 
     public function test_it_will_resolve_the_default_cache_manager()
