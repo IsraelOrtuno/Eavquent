@@ -50,6 +50,11 @@ class PropertyFinder
      */
     public function find($name)
     {
+        if ( ! $this->properties)
+        {
+            return null;
+        }
+
         // We will key our collection by name, this way will be much easier for
         // filtering. Once keyed, just checking if the property has a key of
         // the name passed as argument will mean that a property exists.
