@@ -1,9 +1,8 @@
 <?php
 namespace Devio\Propertier;
 
-use Devio\Propertier\Services\PropertyFinder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
+use Devio\Propertier\Finders\PropertyFinder;
 use Devio\Propertier\Services\PropertyReader;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 abstract class Propertier extends Model
 {
     /**
-     * Minutes for caching table columns.
+     * Caching time in minutes.
      *
      * @var mixed
      */
@@ -25,6 +24,13 @@ abstract class Propertier extends Model
     protected $cache;
 
     /**
+     * The property reader instance.
+     *
+     * @var PropertyReader
+     */
+    protected $reader;
+
+    /**
      * Propertier constructor.
      *
      * @param array $attributes
@@ -33,6 +39,15 @@ abstract class Propertier extends Model
     {
         parent::__construct($attributes);
 
+        $this->registerServices();
+    }
+
+    /**
+     * Will initialize the basic propertier services.
+     */
+    protected function registerServices()
+    {
+        $this->reader = new PropertyReader(new PropertyFinder);
         $this->cache = $this->resolveCache();
     }
 
@@ -73,26 +88,23 @@ abstract class Propertier extends Model
      */
     public function getPropertyRawValue($key)
     {
-        $reader = new PropertyReader($this, new PropertyFinder);
+        $this->attachValues();
 
-        return $reader->read($key);
+        // This will mix the properties and the values and will decide which values
+        // belong to what property. It will work even when setting elements that
+        // are not persisted as they will be available into the relationships.
+        return $this->reader->properties($this->getRelationValue('properties'))
+                            ->values($this->getRelationValue('values'))
+                            ->read($key);
     }
 
     /**
-     * Gets the values based on a property given.
-     *
-     * @param $property
-     *
-     * @return mixed
+     * Will relate every property with the values it has. This is only useful when
+     * querying.
      */
-    public function getValuesOf(Property $property)
+    protected function linkValues()
     {
-        // Will filter through the values collection looking for those values that
-        // are matching the property passed as parameter. The where method gets
-        // the current property ID and return the values of same property_id.
-        return $this->getRelationValue('values')->where(
-            $property->getForeignKey(), $property->getKey()
-        );
+
     }
 
     /**
@@ -117,20 +129,22 @@ abstract class Propertier extends Model
         // This way it won't interfiere with the model base behaviour.
         return $this->getRelationValue($key)
             ? false
-            : $this->getPropertiesKeyedBy()->has($key);
+            : ! is_null($this->findProperty($key));
     }
 
     /**
-     * Will return the properties collection keyed by name.
-     * This way filtering will be much easier.
+     * Find a property by its name.
      *
-     * @param string $keyBy
+     * @param $name
      *
-     * @return Collection
+     * @return mixed
      */
-    public function getPropertiesKeyedBy($keyBy = 'name')
+    public function findProperty($name)
     {
-        return $this->getRelationValue('properties')->keyBy($keyBy);
+        $properties = $this->getRelationValue('properties');
+
+        return (new PropertyFinder)->properties($properties)
+                                   ->find($name);
     }
 
     /**
@@ -155,7 +169,7 @@ abstract class Propertier extends Model
         // Will add to a unique cache key the result of querying the model
         // schema columns. When trying to fetch the table columns, this
         // will check if there is cache before running any queries.
-        return $this->cache->remember($key, $this->cachedColumns, function()
+        return $this->cache->remember($key, $this->cachedColumns, function ()
         {
             return $this->getConnection()
                         ->getSchemaBuilder()

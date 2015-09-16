@@ -1,33 +1,45 @@
 <?php
 namespace Devio\Propertier\Services;
 
+use Devio\Propertier\Property;
+use Illuminate\Support\Collection;
+use Devio\Propertier\Finders\ValueFinder;
+use Devio\Propertier\Finders\PropertyFinder;
 use Devio\Propertier\Exceptions\PropertyNotFoundException;
-use Devio\Propertier\Propertier;
 
 class PropertyReader
 {
     /**
-     * The entity model.
-     *
-     * @var Propertier
+     * @var Collection
      */
-    protected $entity;
+    protected $properties;
+
+    /**
+     * @var Collection
+     */
+    protected $values;
 
     /**
      * @var PropertyFinder
      */
-    private $finder;
+    private $propertyFinder;
+
+    /**
+     * @var ValueFinder
+     */
+    private $valueFinder;
 
     /**
      * PropertyReader constructor.
      *
-     * @param Propertier     $entity
-     * @param PropertyFinder $finder
+     * @param PropertyFinder $propertyFinder
+     * @param ValueFinder    $valueFinder
      */
-    public function __construct(Propertier $entity, PropertyFinder $finder)
+    public function __construct(PropertyFinder $propertyFinder,
+                                ValueFinder $valueFinder)
     {
-        $this->entity = $entity;
-        $this->finder = $finder;
+        $this->propertyFinder = $propertyFinder;
+        $this->valueFinder = $valueFinder;
     }
 
     /**
@@ -36,7 +48,6 @@ class PropertyReader
      * @param $key
      *
      * @return mixed|null
-     * @throws PropertyNotFoundException
      */
     public function read($key)
     {
@@ -51,22 +62,7 @@ class PropertyReader
             $values = $values->count() ? $values->first() : null;
         }
 
-        return is_null($values)
-            ? $values
-            : $this->transformValues($values, $property);
-    }
-
-    /**
-     * Transform the colleciton of values into the right property objects.
-     *
-     * @param $values
-     * @param $property
-     *
-     * @return mixed
-     */
-    protected function transformValues($values, $property)
-    {
-        return (new PropertyTransformer($values, $property))->transform();
+        return $values;
     }
 
     /**
@@ -74,23 +70,48 @@ class PropertyReader
      *
      * @param $key
      *
-     * @return mixed
+     * @return Property
      */
-    protected function findProperty($key)
+    public function findProperty($key)
     {
-        return $this->finder->entity($this->entity)
-                            ->find($key);
+        return $this->propertyFinder->properties($this->properties)
+                                    ->find($key);
     }
 
     /**
-     * Finds the values based on a property given.
+     * Get the values based on a property given.
      *
      * @param $property
      *
-     * @return mixed
+     * @return Collection
      */
-    protected function findValues($property)
+    public function findValues(Property $property)
     {
-        return $this->entity->getValuesOf($property);
+        return $this->valueFinder->values($this->values)
+                                 ->find($property);
+    }
+
+    /**
+     * @param Collection $properties
+     *
+     * @return $this
+     */
+    public function properties(Collection $properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+    /**
+     * @param Collection $values
+     *
+     * @return $this
+     */
+    public function values(Collection $values)
+    {
+        $this->values = $values;
+
+        return $this;
     }
 }

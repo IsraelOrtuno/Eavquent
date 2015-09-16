@@ -1,9 +1,9 @@
 <?php
-namespace Devio\Propertier\Facades;
+namespace Devio\Propertier;
 
-use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Facade as LaravelFacade;
 
-class Propertier extends Facade
+class Facade extends LaravelFacade
 {
     /**
      * Get the registered name of the component.

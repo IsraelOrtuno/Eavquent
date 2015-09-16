@@ -23,15 +23,18 @@ class PropertyTransformer
     protected $property;
 
     /**
+     * @var PropertyBuilder
+     */
+    private $builder;
+
+    /**
      * PropertyTransformer constructor.
      *
-     * @param $values
-     * @param $property
+     * @param PropertyBuilder $builder
      */
-    public function __construct($values, $property)
+    public function __construct(PropertyBuilder $builder)
     {
-        $this->values = $values;
-        $this->property = $property;
+        $this->builder = $builder;
     }
 
     /**
@@ -58,9 +61,7 @@ class PropertyTransformer
      */
     public function transformOne(PropertyValue $value)
     {
-        $builder = $this->getBuilder();
-
-        return $builder->make($this->property, $value->getAttributes());
+        return $this->builder->make($this->property, $value->getAttributes());
     }
 
     /**
@@ -77,12 +78,31 @@ class PropertyTransformer
     }
 
     /**
-     * Gets the property resolver.
+     * Set the value/es to transform.
      *
-     * @return PropertyBuilder
+     * @param PropertyValue|Collection $values
+     *
+     * @return PropertyTransformer
      */
-    protected function getBuilder()
+    public function values($values)
     {
-        return new PropertyBuilder;
+        $this->values = $values;
+
+        return $this;
     }
+
+    /**
+     * Set the property to transform to.
+     *
+     * @param Property $property
+     *
+     * @return PropertyTransformer
+     */
+    public function property($property)
+    {
+        $this->property = $property;
+
+        return $this;
+    }
+
 }

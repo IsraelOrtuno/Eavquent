@@ -86,7 +86,7 @@ class PropertyValue extends Model
         }
     }
 
-    public function transformProperty()
+    public function transform()
     {
         $factory = new PropertyBuilder();
 
