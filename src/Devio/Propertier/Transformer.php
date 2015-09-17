@@ -106,5 +106,4 @@ class Transformer
 
         return $this;
     }
-
 }

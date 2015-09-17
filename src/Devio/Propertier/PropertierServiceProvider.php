@@ -5,7 +5,7 @@ use Illuminate\Support\ServiceProvider;
 class PropertierServiceProvider extends ServiceProvider
 {
     /**
-     * Botting the service provider.
+     * Booting the service provider.
      */
     public function boot()
     {
