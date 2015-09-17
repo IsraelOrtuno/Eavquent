@@ -1,12 +1,12 @@
 <?php
 
+use Devio\Propertier\Builder;
 use Devio\Propertier\Property;
-use Devio\Propertier\PropertyBuilder;
 use Devio\Propertier\Properties\StringProperty;
 use Devio\Propertier\Properties\IntegerProperty;
 use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 
-class PropertyBuilderTest extends TestCase
+class BuilderTest extends TestCase
 {
 
     protected $builder;
@@ -14,7 +14,7 @@ class PropertyBuilderTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->builder = new PropertyBuilder;
+        $this->builder = new Builder;
     }
     
     public function test_it_creates_a_property_by_model()

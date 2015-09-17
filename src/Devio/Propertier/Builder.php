@@ -3,7 +3,7 @@ namespace Devio\Propertier;
 
 use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 
-class PropertyBuilder
+class Builder
 {
     /**
      * Get the right property type class based on the property provided.
