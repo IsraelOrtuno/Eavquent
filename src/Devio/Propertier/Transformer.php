@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Devio\Propertier\PropertyValue;
 use Devio\Propertier\PropertyBuilder;
 
-class PropertyTransformer
+class Transformer
 {
     /**
      * The value or collection.
