@@ -1,4 +1,5 @@
-<?php namespace Devio\Propertier;
+<?php
+namespace Devio\Propertier;
 
 use Illuminate\Support\ServiceProvider;
 
