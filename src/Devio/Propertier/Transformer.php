@@ -1,5 +1,5 @@
 <?php
-namespace Devio\Propertier\Services;
+namespace Devio\Propertier;
 
 use Devio\Propertier\Property;
 use Illuminate\Support\Collection;
