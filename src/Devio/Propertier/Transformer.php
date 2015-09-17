@@ -23,9 +23,11 @@ class Transformer
     protected $property;
 
     /**
+     * The factory builder
+     *
      * @var PropertyBuilder
      */
-    private $builder;
+    protected $builder;
 
     /**
      * PropertyTransformer constructor.
