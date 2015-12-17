@@ -1,13 +1,12 @@
 <?php
-namespace Devio\Propertier\Services;
+namespace Devio\Propertier;
 
-use Devio\Propertier\Property;
 use Illuminate\Support\Collection;
 use Devio\Propertier\Finders\ValueFinder;
 use Devio\Propertier\Finders\PropertyFinder;
 use Devio\Propertier\Exceptions\PropertyNotFoundException;
 
-class PropertyReader
+class Reader
 {
     /**
      * @var Collection

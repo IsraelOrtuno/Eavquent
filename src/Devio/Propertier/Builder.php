@@ -26,7 +26,8 @@ class Builder
         // Will create a new PropertyAbstract model based on the property passed
         // as argument. It will also fill the model if a set of attributes is
         // provided and relate it to the property, eager loading included.
-        $propertyValue = new $class($attributes);
+        $propertyValue = new $class;
+        $propertyValue->setRawAttributes($attributes);
 
         return $propertyValue;
     }

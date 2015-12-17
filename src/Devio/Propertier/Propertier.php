@@ -2,7 +2,7 @@
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
-use Devio\Propertier\Services\PropertyReader;
+use Devio\Propertier\Relations\MorphManyValues;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -46,7 +46,7 @@ abstract class Propertier extends Model
      */
     protected function registerServices()
     {
-//        $this->reader = new PropertyReader(new PropertyFinder);
+        //        $this->reader = new PropertyReader(new PropertyFinder);
         $this->cache = $this->resolveCache();
     }
 
@@ -74,7 +74,13 @@ abstract class Propertier extends Model
      */
     public function values()
     {
-        return $this->morphMany(PropertyValue::class, 'entity');
+        $instance = new PropertyValue;
+        list($type, $id) = $this->getMorphs('entity', null, null);
+        $table = $instance->getTable();
+
+        return new MorphManyValues(
+            $instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $this->getKeyName()
+        );
     }
 
     /**

@@ -1,10 +1,7 @@
 <?php
 namespace Devio\Propertier;
 
-use Devio\Propertier\Property;
 use Illuminate\Support\Collection;
-use Devio\Propertier\PropertyValue;
-use Devio\Propertier\PropertyBuilder;
 
 class Transformer
 {
@@ -20,24 +17,7 @@ class Transformer
      *
      * @var Property
      */
-    protected $property;
-
-    /**
-     * The factory builder
-     *
-     * @var PropertyBuilder
-     */
-    protected $builder;
-
-    /**
-     * PropertyTransformer constructor.
-     *
-     * @param PropertyBuilder $builder
-     */
-    public function __construct(PropertyBuilder $builder)
-    {
-        $this->builder = $builder;
-    }
+    protected $properties;
 
     /**
      * Perform the transformation either single or collection values.
@@ -46,36 +26,36 @@ class Transformer
      */
     public function transform()
     {
-        if ($this->values instanceof Collection)
+        $this->linkValuesToProperties();
+        $transformed = collect();
+
+        foreach ($this->properties as $property)
         {
-            return $this->transformCollection();
+            $transformed->merge(
+                $this->transformValuesIntoProperty($property->values, $property);
+            );
         }
 
-        return $this->transformOne($this->values);
+        dd($transformed);
+
+        return $transformed;
     }
 
     /**
      * Transform a single property value.
      *
-     * @param PropertyValue $value
+     * @param $values
+     * @param $property
      *
      * @return PropertyValue
      */
-    public function transformOne(PropertyValue $value)
+    public function transformValuesIntoProperty($values, $property)
     {
-        return $this->builder->make($this->property, $value->getAttributes());
-    }
+        $builder = new Builder();
 
-    /**
-     * Trasforming a entire values collection.
-     *
-     * @return Collection
-     */
-    public function transformCollection()
-    {
-        return $this->values->map(function(PropertyValue $item)
+        return $values->map(function($value) use ($property, $builder)
         {
-            return $this->transformOne($item);
+            return $builder->make($property, $value->getAttributes());
         });
     }
 
@@ -94,16 +74,23 @@ class Transformer
     }
 
     /**
-     * Set the property to transform to.
+     * Set the properties to transform to.
      *
-     * @param Property $property
+     * @param Property $properties
      *
      * @return PropertyTransformer
      */
-    public function property($property)
+    public function properties($properties)
     {
-        $this->property = $property;
+        $this->properties = $properties;
 
         return $this;
+    }
+
+    protected function linkValuesToProperties()
+    {
+        (new ValueLinker)->values($this->values)
+                         ->properties($this->properties)
+                         ->link();
     }
 }
