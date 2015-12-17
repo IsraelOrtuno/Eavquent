@@ -16,39 +16,11 @@ abstract class Propertier extends Model
     protected $cachedColumns = 15;
 
     /**
-     * The cache manager.
-     *
-     * @var \Illuminate\Cache\Repository|mixed
-     */
-    protected $cache;
-
-    /**
      * The property reader instance.
      *
      * @var PropertyReader
      */
     protected $reader;
-
-    /**
-     * Propertier constructor.
-     *
-     * @param array $attributes
-     */
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-
-        $this->registerServices();
-    }
-
-    /**
-     * Will initialize the basic propertier services.
-     */
-    protected function registerServices()
-    {
-        //        $this->reader = new PropertyReader(new PropertyFinder);
-        $this->cache = $this->resolveCache();
-    }
 
     /**
      * Relationship to the properties table.
@@ -99,17 +71,8 @@ abstract class Propertier extends Model
         // belong to what property. It will work even when setting elements that
         // are not persisted as they will be available into the relationships.
         return $this->reader->properties($this->getRelationValue('properties'))
-                            ->values($this->getRelationValue('values'))
-                            ->read($key);
-    }
-
-    /**
-     * Will relate every property with the values it has. This is only useful when
-     * querying.
-     */
-    protected function linkValues()
-    {
-
+            ->values($this->getRelationValue('values'))
+            ->read($key);
     }
 
     /**
@@ -124,8 +87,7 @@ abstract class Propertier extends Model
         // Checking if the key corresponds to any comlumn in the main entity
         // table. The table columns will be cached every 15 mins as it is
         // really unlikely to change. Caching will reduce the queries.
-        if (in_array($key, $this->getTableColumns()))
-        {
+        if (in_array($key, $this->getTableColumns())) {
             return false;
         }
 
@@ -134,7 +96,7 @@ abstract class Propertier extends Model
         // This way it won't interfiere with the model base behaviour.
         return $this->getRelationValue($key)
             ? false
-            : ! is_null($this->findProperty($key));
+            : !is_null($this->findProperty($key));
     }
 
     /**
@@ -149,17 +111,7 @@ abstract class Propertier extends Model
         $properties = $this->getRelationValue('properties');
 
         return (new PropertyFinder)->properties($properties)
-                                   ->find($name);
-    }
-
-    /**
-     * Resolves the cache manager to use.
-     *
-     * @return \Illuminate\Cache\Repository|mixed
-     */
-    public function resolveCache()
-    {
-        return (new CacheResolver)->resolve();
+            ->find($name);
     }
 
     /**
@@ -169,17 +121,12 @@ abstract class Propertier extends Model
      */
     public function getTableColumns()
     {
-        $key = "propertier.{$this->getMorphClass()}";
-
         // Will add to a unique cache key the result of querying the model
         // schema columns. When trying to fetch the table columns, this
         // will check if there is cache before running any queries.
-        return $this->cache->remember($key, $this->cachedColumns, function ()
-        {
-            return $this->getConnection()
-                        ->getSchemaBuilder()
-                        ->getColumnListing($this->getTable());
-        });
+        return $this->getConnection()
+            ->getSchemaBuilder()
+            ->getColumnListing($this->getTable());
     }
 
     /**
@@ -191,8 +138,7 @@ abstract class Propertier extends Model
      */
     public function __get($key)
     {
-        if ($this->isProperty($key))
-        {
+        if ($this->isProperty($key)) {
             return $this->getPropertyRawValue($key);
         }
 
