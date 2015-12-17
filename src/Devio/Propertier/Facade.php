@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\Facades\Facade as LaravelFacade;

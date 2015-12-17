@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Devio\Propertier\Exceptions\UnresolvedPropertyException;
@@ -10,7 +11,6 @@ class Builder
      *
      * @param       $property
      * @param array $attributes
-     *
      * @return PropertyValue
      * @throws UnresolvedPropertyException
      */
@@ -18,8 +18,7 @@ class Builder
     {
         $class = $this->resolve($property);
 
-        if ( ! class_exists($class))
-        {
+        if (! class_exists($class)) {
             throw new UnresolvedPropertyException;
         }
 
@@ -36,22 +35,16 @@ class Builder
      * Resolves the property classpath.
      *
      * @param $property
-     *
      * @return PropertyAbstract
      * @throws UnresolvedPropertyException
      */
     protected function resolve($property)
     {
-        if (is_string($property))
-        {
+        if (is_string($property)) {
             $type = $property;
-        }
-        elseif ($property instanceof Property)
-        {
+        } elseif ($property instanceof Property) {
             $type = $property->getAttribute('type');
-        }
-        else
-        {
+        } else {
             return null;
         }
 

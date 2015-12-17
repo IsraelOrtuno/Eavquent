@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\ServiceProvider;
@@ -36,8 +37,7 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerProperties()
     {
-        $this->app->singleton('propertier.properties', function ($app)
-        {
+        $this->app->singleton('propertier.properties', function ($app) {
             return $app['config']->get('propertier.properties');
         });
     }

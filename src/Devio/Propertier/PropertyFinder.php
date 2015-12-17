@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 class PropertyFinder
 {
     /**
-     * Collection of properties to find in.
+     * Collection of properties.
      *
      * @var Collection
      */
@@ -14,8 +14,7 @@ class PropertyFinder
 
     /**
      * PropertyFinder constructor.
-     *
-     * @param $properties
+     * @param null $properties
      */
     public function __construct($properties = null)
     {
@@ -26,13 +25,11 @@ class PropertyFinder
      * Sets the property collection.
      *
      * @param $properties
-     *
      * @return $this
      */
     public function properties($properties)
     {
-        if (is_array($properties))
-        {
+        if (is_array($properties)) {
             $properties = collect($properties);
         }
 
@@ -45,13 +42,11 @@ class PropertyFinder
      * Will return the right property model that matches the key name.
      *
      * @param $name
-     *
      * @return Property
      */
     public function find($name)
     {
-        if ( ! $this->properties)
-        {
+        if (!$this->properties) {
             return null;
         }
 

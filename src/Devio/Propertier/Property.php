@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,11 @@ class Property extends Model
      * @var array
      */
     public $fillable = [
-        'type', 'name', 'multivalue', 'entity', 'default_value'
+        'type',
+        'name',
+        'multivalue',
+        'entity',
+        'default_value'
     ];
 
     /**

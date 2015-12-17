@@ -1,4 +1,6 @@
-<?php namespace Devio\Propertier;
+<?php
+
+namespace Devio\Propertier;
 
 use Illuminate\Cache\FileStore;
 use Illuminate\Cache\Repository;
@@ -18,8 +20,7 @@ class CacheResolver
         // If the package is running under a full Laravel application, it will
         // just resolve it out of the Service Container. Otherwise, we will
         // provide a the Illuminate cache manager using the file driver.
-        if (is_a($app, 'Illuminate\Foundation\Application'))
-        {
+        if (is_a($app, 'Illuminate\Foundation\Application')) {
             return $app->make('cache');
         }
 

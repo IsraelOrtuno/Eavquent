@@ -80,8 +80,7 @@ class PropertyValue extends Model
      */
     public function relatedOrRelateTo($id)
     {
-        if ( ! $this->entity_id)
-        {
+        if (! $this->entity_id) {
             $this->entity_id = $id;
         }
     }

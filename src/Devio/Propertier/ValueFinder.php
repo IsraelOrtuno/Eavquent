@@ -32,8 +32,7 @@ class ValueFinder
      */
     public function values($values)
     {
-        if (is_array($values))
-        {
+        if (is_array($values)) {
             $values = collect($values);
         }
 
@@ -51,8 +50,7 @@ class ValueFinder
      */
     public function find($property)
     {
-        if ( ! $property instanceof Model)
-        {
+        if (! $property instanceof Model) {
             // If the value passed is not a model instance, it will be assumed
             // as a property ID. We will just create a dummy property model
             // which will only contain that key value for the condition.

@@ -29,10 +29,9 @@ class Transformer
         $this->linkValuesToProperties();
         $transformed = collect();
 
-        foreach ($this->properties as $property)
-        {
+        foreach ($this->properties as $property) {
             $transformed->merge(
-                $this->transformValuesIntoProperty($property->values, $property);
+                $this->transformValuesIntoProperty($property->values, $property)
             );
         }
 
@@ -53,8 +52,7 @@ class Transformer
     {
         $builder = new Builder();
 
-        return $values->map(function($value) use ($property, $builder)
-        {
+        return $values->map(function ($value) use ($property, $builder) {
             return $builder->make($property, $value->getAttributes());
         });
     }

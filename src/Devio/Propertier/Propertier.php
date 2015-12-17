@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,13 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 abstract class Propertier extends Model
 {
-    /**
-     * Caching time in minutes.
-     *
-     * @var mixed
-     */
-    protected $cachedColumns = 15;
-
     /**
      * The property reader instance.
      *
@@ -60,7 +54,6 @@ abstract class Propertier extends Model
      * the key passed as argument.
      *
      * @param $key
-     *
      * @return null
      */
     public function getPropertyRawValue($key)
@@ -79,14 +72,13 @@ abstract class Propertier extends Model
      * Will check if the key exists as registerd property.
      *
      * @param $key
-     *
      * @return bool
      */
     public function isProperty($key)
     {
         // Checking if the key corresponds to any comlumn in the main entity
-        // table. The table columns will be cached every 15 mins as it is
-        // really unlikely to change. Caching will reduce the queries.
+        // table. If there is a match, means the key is an existing model
+        // attribute which value will be always taken before property.
         if (in_array($key, $this->getTableColumns())) {
             return false;
         }
@@ -103,15 +95,13 @@ abstract class Propertier extends Model
      * Find a property by its name.
      *
      * @param $name
-     *
      * @return mixed
      */
     public function findProperty($name)
     {
         $properties = $this->getRelationValue('properties');
 
-        return (new PropertyFinder)->properties($properties)
-            ->find($name);
+        return (new PropertyFinder($properties))->find($name);
     }
 
     /**
@@ -133,7 +123,6 @@ abstract class Propertier extends Model
      * Overriding magic method.
      *
      * @param string $key
-     *
      * @return mixed
      */
     public function __get($key)

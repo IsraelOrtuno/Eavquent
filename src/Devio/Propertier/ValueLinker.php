@@ -34,8 +34,7 @@ class ValueLinker
      */
     protected function linkOne($property)
     {
-        if ($property->relationLoaded('values'))
-        {
+        if ($property->relationLoaded('values')) {
             throw new ValuesRelationAlreadyLoaded;
         }
 
@@ -52,8 +51,7 @@ class ValueLinker
      */
     protected function linkMany()
     {
-        foreach ($this->properties as $property)
-        {
+        foreach ($this->properties as $property) {
             $this->linkOne($property);
         }
 

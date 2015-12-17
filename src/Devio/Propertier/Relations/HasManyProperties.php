@@ -32,8 +32,7 @@ class HasManyProperties extends HasMany
      */
     public function addConstraints()
     {
-        if (static::$constraints)
-        {
+        if (static::$constraints) {
             $this->query->where($this->foreignKey, '=', $this->getParentKey());
         }
     }
@@ -50,8 +49,7 @@ class HasManyProperties extends HasMany
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
-        foreach ($models as $model)
-        {
+        foreach ($models as $model) {
             // A simple trick will make after filtering easier. Setting
             // the property name as key will help to find the element
             // much easier than having to filter through collection.
