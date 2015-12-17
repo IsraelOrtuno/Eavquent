@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
@@ -45,7 +46,6 @@ class Transformer
      *
      * @param $values
      * @param $property
-     *
      * @return PropertyValue
      */
     public function transformValuesIntoProperty($values, $property)
@@ -61,7 +61,6 @@ class Transformer
      * Set the value/es to transform.
      *
      * @param PropertyValue|Collection $values
-     *
      * @return PropertyTransformer
      */
     public function values($values)
@@ -75,7 +74,6 @@ class Transformer
      * Set the properties to transform to.
      *
      * @param Property $properties
-     *
      * @return PropertyTransformer
      */
     public function properties($properties)

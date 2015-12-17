@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
@@ -62,7 +63,6 @@ class ValueLinker
      * Get the values based on a property given.
      *
      * @param $property
-     *
      * @return Collection
      */
     public function valuesOf($property)
@@ -72,7 +72,6 @@ class ValueLinker
 
     /**
      * @param $property
-     *
      * @return $this
      */
     public function properties($property)
@@ -84,7 +83,6 @@ class ValueLinker
 
     /**
      * @param $values
-     *
      * @return $this
      */
     public function values($values)

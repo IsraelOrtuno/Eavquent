@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
@@ -14,6 +15,7 @@ class PropertyFinder
 
     /**
      * PropertyFinder constructor.
+     *
      * @param null $properties
      */
     public function __construct($properties = null)

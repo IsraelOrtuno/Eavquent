@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,10 @@ class PropertyValue extends Model
      * @var array
      */
     protected $fillable = [
-        'value', 'entity_type', 'entity_id', 'property_id'
+        'value',
+        'entity_type',
+        'entity_id',
+        'property_id'
     ];
 
     /**
@@ -50,12 +54,13 @@ class PropertyValue extends Model
      */
     public function setValueAttribute($value)
     {
-        $this->setValue((string) $value);
+        $this->setValue((string)$value);
     }
 
     /**
      * Casting from database string when getting.
      *
+     * @param $value
      * @return mixed
      */
     public function getValueAttribute($value)
@@ -90,7 +95,8 @@ class PropertyValue extends Model
         $factory = new PropertyBuilder();
 
         return $factory->make(
-            $this->property, $this->getAttributes()
+            $this->property,
+            $this->getAttributes()
         );
     }
 }

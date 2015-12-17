@@ -1,4 +1,5 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
@@ -27,7 +28,6 @@ class ValueFinder
      * Set the values.
      *
      * @param Collection $values
-     *
      * @return ValueFinder
      */
     public function values($values)
@@ -45,7 +45,6 @@ class ValueFinder
      * Get the values based on a property given.
      *
      * @param $property
-     *
      * @return Collection
      */
     public function find($property)

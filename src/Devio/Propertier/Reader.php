@@ -1,9 +1,8 @@
 <?php
+
 namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
-use Devio\Propertier\Finders\ValueFinder;
-use Devio\Propertier\Finders\PropertyFinder;
 use Devio\Propertier\Exceptions\PropertyNotFoundException;
 
 class Reader
@@ -34,9 +33,10 @@ class Reader
      * @param PropertyFinder $propertyFinder
      * @param ValueFinder    $valueFinder
      */
-    public function __construct(PropertyFinder $propertyFinder,
-                                ValueFinder $valueFinder)
-    {
+    public function __construct(
+        PropertyFinder $propertyFinder,
+        ValueFinder $valueFinder
+    ) {
         $this->propertyFinder = $propertyFinder;
         $this->valueFinder = $valueFinder;
     }
@@ -45,7 +45,6 @@ class Reader
      * Will provide the PropertyValue model of the key passed.
      *
      * @param $key
-     *
      * @return mixed|null
      */
     public function read($key)
@@ -67,31 +66,28 @@ class Reader
      * Will return the right property model that matches the key name.
      *
      * @param $key
-     *
      * @return Property
      */
     public function findProperty($key)
     {
         return $this->propertyFinder->properties($this->properties)
-                                    ->find($key);
+            ->find($key);
     }
 
     /**
      * Get the values based on a property given.
      *
      * @param $property
-     *
      * @return Collection
      */
     public function findValues(Property $property)
     {
         return $this->valueFinder->values($this->values)
-                                 ->find($property);
+            ->find($property);
     }
 
     /**
      * @param Collection $properties
-     *
      * @return $this
      */
     public function properties(Collection $properties)
@@ -103,7 +99,6 @@ class Reader
 
     /**
      * @param Collection $values
-     *
      * @return $this
      */
     public function values(Collection $values)
