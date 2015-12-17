@@ -4,7 +4,6 @@ use Mockery as m;
 
 class PropertierTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -14,25 +13,40 @@ class PropertierTest extends TestCase
 
     public function test_it_will_get_an_array_of_columns()
     {
-        $company = new Company;
-        $this->assertInternalType('array', $company->getTableColumns());
+        $cols = ['id', 'name', 'created_at', 'updated_at'];
+        $this->assertEquals($cols, $this->company->fetchModelAttributes());
+        $this->assertEquals($cols, $this->company->getModelAttributes());
     }
 
-    public function test_it_will_cache_the_array_of_columns()
+    public function test_get_magic_method_recognizes_property()
     {
-        DB::enableQueryLog();
-        $company = new Company;
-        $company->getTableColumns();
-        $company->getTableColumns();
-        $this->assertCount(1, DB::getQueryLog());
-        DB::disableQueryLog();
+        $model = m::mock($this->company);
+        $model->shouldReceive('isProperty')->once();
+        $model->name;
     }
 
-    protected function instances()
+    public function test_it_recognizes_an_attribute_is_property()
     {
-        return [
-            new Company
-        ];
+        $this->assertTrue($this->company->isProperty('foo'));
+        $this->assertTrue($this->company->isProperty('bar'));
+    }
+
+    public function test_it_recognizes_an_attribute_is_not_property()
+    {
+        $this->assertFalse($this->company->isProperty('oof'));
+        $this->assertFalse($this->company->isProperty('rab'));
+    }
+
+    public function test_it_if_attribute_is_table_column_is_not_property()
+    {
+        $this->assertFalse($this->company->isProperty('name'));
+        $this->assertFalse($this->company->isProperty('created_at'));
+    }
+
+    public function test_if_attribute_is_relation_is_not_property()
+    {
+        $this->assertFalse($this->company->isProperty('values'));
+        $this->assertFalse($this->company->isProperty('properties'));
     }
 
 }

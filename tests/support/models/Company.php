@@ -1,9 +1,11 @@
 <?php
 
 use Devio\Propertier\Propertier;
+use Illuminate\Database\Eloquent\Model;
 
-class Company extends Propertier
+class Company extends Model
 {
+    use Propertier;
 
     protected $morphClass = 'Company';
 

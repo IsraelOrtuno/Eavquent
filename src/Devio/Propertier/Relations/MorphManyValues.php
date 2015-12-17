@@ -12,14 +12,14 @@ class MorphManyValues extends MorphMany
      *
      * @return mixed
      */
-    public function getResults()
-    {
-        $results = $this->transformValuesIntoProperty(
-            parent::getResults(), $this->getEntityProperties()
-        );
-
-        return $results;
-    }
+//    public function getResults()
+//    {
+//        $results = $this->transformValuesIntoProperty(
+//            parent::getResults(), $this->getEntityProperties()
+//        );
+//
+//        return $results;
+//    }
 
     /**
      * Perform the transformation of the values.
