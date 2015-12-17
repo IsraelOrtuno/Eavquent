@@ -44,7 +44,6 @@ class HasManyProperties extends HasMany
      * @param Collection $results
      * @param string     $relation
      * @param string     $type
-     *
      * @return array
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
@@ -65,7 +64,6 @@ class HasManyProperties extends HasMany
      * Set the constraints for an eager load of the relation.
      *
      * @param  array $models
-     *
      * @return void
      */
     public function addEagerConstraints(array $models)

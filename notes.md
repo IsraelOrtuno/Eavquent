@@ -9,3 +9,7 @@
 ### Caution
 
 - Do not use with eager loading. It already uses it internally. Adding it manually to the entity might cause unexpected behaviour.
+
+### Docs
+
+- Include an example of caching the $modelAttributes variable.

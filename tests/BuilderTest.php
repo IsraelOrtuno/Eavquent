@@ -8,7 +8,6 @@ use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 
 class BuilderTest extends TestCase
 {
-
     protected $builder;
 
     public function setUp()
@@ -16,13 +15,13 @@ class BuilderTest extends TestCase
         parent::setUp();
         $this->builder = new Builder;
     }
-    
+
     public function test_it_creates_a_property_by_model()
     {
         $property = new Property(['type' => 'string']);
         $this->assertInstanceOf(StringProperty::class, $this->builder->make($property));
     }
-    
+
     public function test_it_creates_a_property_by_string()
     {
         $this->assertInstanceOf(StringProperty::class, $this->builder->make('string'));
@@ -35,4 +34,9 @@ class BuilderTest extends TestCase
         $this->builder->make('foo');
     }
 
+    public function test_it_creates_a_property_with_attributes()
+    {
+        $propertyValue = $this->builder->make('string', ['value' => 'foo']);
+        $this->assertEquals(['value' => 'foo'], $propertyValue->toArray());
+    }
 }

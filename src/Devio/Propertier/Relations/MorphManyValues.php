@@ -1,4 +1,6 @@
-<?php namespace Devio\Propertier\Relations;
+<?php
+
+namespace Devio\Propertier\Relations;
 
 use Devio\Propertier\Transformer;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -23,9 +25,7 @@ class MorphManyValues extends MorphMany
      * Perform the transformation of the values.
      *
      * @param $values
-     *
      * @param $property
-     *
      * @return mixed
      */
     protected function transformValuesIntoProperty($values, $property)

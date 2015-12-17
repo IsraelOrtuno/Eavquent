@@ -2,19 +2,18 @@
 
 namespace Devio\Propertier;
 
-use Illuminate\Database\Eloquent\Model;
 use Devio\Propertier\Relations\MorphManyValues;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-abstract class Propertier extends Model
+trait Propertier
 {
     /**
-     * The property reader instance.
+     * Base model attributes.
      *
-     * @var PropertyReader
+     * @var array
      */
-    protected $reader;
+    protected static $modelAttributes = [];
 
     /**
      * Relationship to the properties table.
@@ -50,25 +49,6 @@ abstract class Propertier extends Model
     }
 
     /**
-     * Will find the PropertyValue raw model instance based on
-     * the key passed as argument.
-     *
-     * @param $key
-     * @return null
-     */
-    public function getPropertyRawValue($key)
-    {
-        $this->attachValues();
-
-        // This will mix the properties and the values and will decide which values
-        // belong to what property. It will work even when setting elements that
-        // are not persisted as they will be available into the relationships.
-        return $this->reader->properties($this->getRelationValue('properties'))
-            ->values($this->getRelationValue('values'))
-            ->read($key);
-    }
-
-    /**
      * Will check if the key exists as registerd property.
      *
      * @param $key
@@ -79,16 +59,16 @@ abstract class Propertier extends Model
         // Checking if the key corresponds to any comlumn in the main entity
         // table. If there is a match, means the key is an existing model
         // attribute which value will be always taken before property.
-        if (in_array($key, $this->getTableColumns())) {
+        if (in_array($key, $this->getModelAttributes())) {
             return false;
         }
 
         // $key will be property when it does not belong to any relationship
         // name and it also exists into the entity properties collection.
-        // This way it won't interfiere with the model base behaviour.
+        // This way it won't interfiere with the base model behaviour.
         return $this->getRelationValue($key)
             ? false
-            : !is_null($this->findProperty($key));
+            : ! is_null($this->getProperty($key));
     }
 
     /**
@@ -97,7 +77,7 @@ abstract class Propertier extends Model
      * @param $name
      * @return mixed
      */
-    public function findProperty($name)
+    public function getProperty($name)
     {
         $properties = $this->getRelationValue('properties');
 
@@ -105,20 +85,54 @@ abstract class Propertier extends Model
     }
 
     /**
-     * Will return the table columns.
+     * Will find the PropertyValue raw model instance based on
+     * the key passed as argument.
+     *
+     * @param $key
+     * @return null
+     */
+    public function getPropertyValue($key)
+    {
+        $this->attachValues();
+        $reader = new Reader();
+
+        // This will mix the properties and the values and will decide which values
+        // belong to what property. It will work even when setting elements that
+        // are not persisted as they will be available into the relationships.
+        return $reader->properties($this->getRelationValue('properties'))
+            ->values($this->getRelationValue('values'))
+            ->read($key);
+    }
+
+    /**
+     * Get the model main attributes.
      *
      * @return array
      */
-    public function getTableColumns()
+    public function getModelAttributes()
     {
-        // Will add to a unique cache key the result of querying the model
-        // schema columns. When trying to fetch the table columns, this
-        // will check if there is cache before running any queries.
+        // If no attributes are listed in $modelAttributes property, we will
+        // fetch them from database. This could result into a performance
+        // issue so it should be set manually or when booting the model.
+        if (empty(static::$modelAttributes)) {
+            static::$modelAttributes = $this->fetchModelAttributes();
+        }
+
+        return static::$modelAttributes;
+    }
+
+    /**
+     * Get the names of the model columns.
+     *
+     * @return mixed
+     */
+    public function fetchModelAttributes()
+    {
         return $this->getConnection()
             ->getSchemaBuilder()
             ->getColumnListing($this->getTable());
     }
-
+    
     /**
      * Overriding magic method.
      *
@@ -128,7 +142,7 @@ abstract class Propertier extends Model
     public function __get($key)
     {
         if ($this->isProperty($key)) {
-            return $this->getPropertyRawValue($key);
+            return $this->getPropertyValue($key);
         }
 
         return parent::__get($key);

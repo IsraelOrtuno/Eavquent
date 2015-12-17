@@ -22,8 +22,8 @@ class Builder
             throw new UnresolvedPropertyException;
         }
 
-        // Will create a new PropertyAbstract model based on the property passed
-        // as argument. It will also fill the model if a set of attributes is
+        // Will create a new PropertyValue model based on the property passed as
+        // argument. It will also fill the model attributes if they have been
         // provided and relate it to the property, eager loading included.
         $propertyValue = new $class;
         $propertyValue->setRawAttributes($attributes);
