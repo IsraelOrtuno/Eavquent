@@ -132,7 +132,7 @@ trait Propertier
             ->getSchemaBuilder()
             ->getColumnListing($this->getTable());
     }
-    
+
     /**
      * Overriding magic method.
      *

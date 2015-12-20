@@ -48,7 +48,7 @@ class PropertyFinder
      */
     public function find($name)
     {
-        if (!$this->properties) {
+        if (! $this->properties) {
             return null;
         }
 

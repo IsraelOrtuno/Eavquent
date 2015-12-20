@@ -52,9 +52,11 @@ class Transformer
     {
         $builder = new Builder();
 
-        return $values->map(function ($value) use ($property, $builder) {
-            return $builder->make($property, $value->getAttributes());
-        });
+        return $values->map(
+            function ($value) use ($property, $builder) {
+                return $builder->make($property, $value->getAttributes());
+            }
+        );
     }
 
     /**
@@ -86,7 +88,7 @@ class Transformer
     protected function linkValuesToProperties()
     {
         (new ValueLinker)->values($this->values)
-                         ->properties($this->properties)
-                         ->link();
+            ->properties($this->properties)
+            ->link();
     }
 }

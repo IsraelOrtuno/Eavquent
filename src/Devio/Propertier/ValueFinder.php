@@ -62,7 +62,8 @@ class ValueFinder
         // are matching the property passed as parameter. The where method gets
         // the current property ID and return the values of same property_id.
         return $this->values->where(
-            $property->getForeignKey(), $property->getKey()
+            $property->getForeignKey(),
+            $property->getKey()
         );
     }
 

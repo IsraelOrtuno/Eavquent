@@ -14,13 +14,15 @@ class PropertierServiceProvider extends ServiceProvider
         // Publishing the package configuration file and migrations. This
         // will make them available from the main application folders.
         // They both are tagged in case they have to run separetely.
-        $this->publishes([
-            __DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),
-        ], 'config');
+        $this->publishes(
+            [__DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),],
+            'config'
+        );
 
-        $this->publishes([
-            __DIR__ . '/../../migrations/' => database_path('migrations')
-        ], 'migrations');
+        $this->publishes(
+            [__DIR__ . '/../../migrations/' => database_path('migrations')],
+            'migrations'
+        );
     }
 
     /**
@@ -48,7 +50,8 @@ class PropertierServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/propertier.php', 'propertier'
+            __DIR__ . '/../../config/propertier.php',
+            'propertier'
         );
     }
 }
