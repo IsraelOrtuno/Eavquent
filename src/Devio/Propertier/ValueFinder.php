@@ -49,22 +49,14 @@ class ValueFinder
      */
     public function find($property)
     {
-        if (! $property instanceof Model) {
-            // If the value passed is not a model instance, it will be assumed
-            // as a property ID. We will just create a dummy property model
-            // which will only contain that key value for the condition.
-            $abstract = new Property;
-            $abstract->setAttribute($abstract->getKeyName(), $property);
-            $property = $abstract;
+        if ($property instanceof Model) {
+            $property = $property->getKey();
         }
 
         // Will filter through the values collection looking for those values that
         // are matching the property passed as parameter. The where method gets
         // the current property ID and return the values of same property_id.
-        return $this->values->where(
-            $property->getForeignKey(),
-            $property->getKey()
-        );
+        return $this->values->where((new Property)->getForeignKey(), $property);
     }
 
     /**
