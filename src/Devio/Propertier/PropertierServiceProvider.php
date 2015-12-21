@@ -39,9 +39,9 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerProperties()
     {
-        $this->app->singleton('propertier.properties', function ($app) {
-            return $app['config']->get('propertier.properties');
-        });
+        $properties = $this->app['config']->get('propertier.properties');
+
+        PropertyResolver::register($properties);
     }
 
     /**
