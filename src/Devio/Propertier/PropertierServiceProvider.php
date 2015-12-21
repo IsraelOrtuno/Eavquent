@@ -41,7 +41,7 @@ class PropertierServiceProvider extends ServiceProvider
     {
         $properties = $this->app['config']->get('propertier.properties');
 
-        PropertyResolver::register($properties);
+        Resolver::register($properties);
     }
 
     /**

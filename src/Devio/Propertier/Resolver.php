@@ -5,7 +5,7 @@ namespace Devio\Propertier;
 use RuntimeException;
 use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 
-class PropertyResolver
+class Resolver
 {
     /**
      * All of the registered properties.

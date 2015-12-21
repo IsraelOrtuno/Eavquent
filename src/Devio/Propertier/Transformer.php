@@ -50,7 +50,7 @@ class Transformer
      */
     public function transformValuesIntoProperty($values, $property)
     {
-        $resolver = new PropertyResolver();
+        $resolver = new Resolver();
 
         return $values->map(
             function ($value) use ($property, $resolver) {
