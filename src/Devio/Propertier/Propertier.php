@@ -39,7 +39,7 @@ trait Propertier
      */
     public function values()
     {
-        $instance = new PropertyValue;
+        $instance = new Value;
         list($type, $id) = $this->getMorphs('entity', null, null);
         $table = $instance->getTable();
 
