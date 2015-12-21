@@ -2,8 +2,8 @@
 
 namespace Devio\Propertier;
 
-use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 use RuntimeException;
+use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 
 class PropertyResolver
 {
