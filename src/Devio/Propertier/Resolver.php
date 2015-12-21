@@ -43,9 +43,7 @@ class Resolver
         // Will create a new PropertyValue model based on the property passed as
         // argument. It will also fill the model attributes if they have been
         // provided and relate it to the property, eager loading included.
-        $propertyValue = new $class($attributes);
-
-        return $propertyValue;
+        return new $class($attributes);
     }
 
     /**
