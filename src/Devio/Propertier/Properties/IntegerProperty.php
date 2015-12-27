@@ -14,6 +14,6 @@ class IntegerProperty extends PropertyValue
      */
     public function getValueAttribute($value)
     {
-        return (int) $value;
+        return (int)$value;
     }
 }

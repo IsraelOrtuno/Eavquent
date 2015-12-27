@@ -31,7 +31,7 @@ class Reader
      * PropertyReader constructor.
      *
      * @param PropertyFinder $propertyFinder
-     * @param ValueFinder    $valueFinder
+     * @param ValueFinder $valueFinder
      */
     public function __construct(
         PropertyFinder $propertyFinder,

@@ -15,8 +15,8 @@ class HasManyProperties extends HasMany
 
     /**
      * @param Builder $query
-     * @param Model   $model
-     * @param string  $entity
+     * @param Model $model
+     * @param string $entity
      */
     public function __construct(Builder $query, Model $model, $entity)
     {
@@ -40,10 +40,10 @@ class HasManyProperties extends HasMany
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array      $models
+     * @param array $models
      * @param Collection $results
-     * @param string     $relation
-     * @param string     $type
+     * @param string $relation
+     * @param string $type
      * @return array
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)

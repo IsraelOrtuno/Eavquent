@@ -33,8 +33,8 @@ class MorphManyValues extends MorphMany
         $transformer = new Transformer;
 
         $transformer->properties($this->getEntityProperties())
-                    ->values($values)
-                    ->transform();
+            ->values($values)
+            ->transform();
 
         return $transformer->transformValuesIntoProperty($values, $property);
     }
@@ -45,6 +45,6 @@ class MorphManyValues extends MorphMany
     protected function getEntityProperties()
     {
         return $this->getParent()
-                    ->getRelationValue('properties');
+            ->getRelationValue('properties');
     }
 }
