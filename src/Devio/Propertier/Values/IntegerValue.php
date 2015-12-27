@@ -1,10 +1,10 @@
 <?php
 
-namespace Devio\Propertier\Properties;
+namespace Devio\Propertier\Values;
 
 use Devio\Propertier\Value as PropertyValue;
 
-class IntegerProperty extends PropertyValue
+class IntegerValue extends PropertyValue
 {
     /**
      * Casting to integer before getting.

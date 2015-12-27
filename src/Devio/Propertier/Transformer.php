@@ -31,12 +31,8 @@ class Transformer
         $transformed = collect();
 
         foreach ($this->properties as $property) {
-            $transformed->merge(
-                $this->transformValuesIntoProperty($property->values, $property)
-            );
+            $transformed->push($this->transformValues($property->values, $property));
         }
-
-        dd($transformed);
 
         return $transformed;
     }
@@ -48,15 +44,25 @@ class Transformer
      * @param $property
      * @return PropertyValue
      */
-    public function transformValuesIntoProperty($values, $property)
+    public function transformValues($values, $property)
     {
         $resolver = new Resolver();
 
-        return $values->map(
+        // We have to iterate every value in the collection to transform it from
+        // Value to the right [Property]Value object. It will return an object
+        // of a different type with the same attributes as the original item.
+        $result = $values->map(
             function ($value) use ($property, $resolver) {
-                return $resolver->make($property, $value->getAttributes());
+                return $resolver->property($property, $value->getAttributes());
             }
         );
+
+        // If the property we are transforming can store has been set as multi-
+        // value, we can return the full collection. Otherwise we'll extract
+        // the first value of the collection and will omit if any other.
+        return $property->isMultivalue()
+            ? $result
+            : $result->first();
     }
 
     /**

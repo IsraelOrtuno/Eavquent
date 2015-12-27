@@ -79,7 +79,7 @@ trait Propertier
      */
     public function getProperty($name)
     {
-        $properties = $this->getRelationValue('properties');
+        $properties = $this->getPropertiesRelationValue();
 
         return (new PropertyFinder($properties))->find($name);
     }
@@ -93,15 +93,20 @@ trait Propertier
      */
     public function getPropertyValue($key)
     {
-        $this->attachValues();
+//        $this->attachValues();
         $reader = new Reader();
 
         // This will mix the properties and the values and will decide which values
         // belong to what property. It will work even when setting elements that
         // are not persisted as they will be available into the relationships.
-        return $reader->properties($this->getRelationValue('properties'))
+        return $reader->properties($this->getPropertiesRelationValue())
             ->values($this->getRelationValue('values'))
             ->read($key);
+    }
+
+    public function getPropertiesRelationValue()
+    {
+        return $this->getRelationValue('properties');
     }
 
     /**

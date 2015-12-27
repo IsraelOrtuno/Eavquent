@@ -13,8 +13,8 @@ return [
     |
     */
     'properties' => [
-        'integer'  => Devio\Propertier\Properties\IntegerProperty::class,
-        'string'   => Devio\Propertier\Properties\StringProperty::class
+        'integer'  => Devio\Propertier\Values\IntegerValue::class,
+        'string'   => Devio\Propertier\Values\StringValue::class
     ]
 
 ];

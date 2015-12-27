@@ -18,30 +18,6 @@ class Reader
     protected $values;
 
     /**
-     * @var PropertyFinder
-     */
-    private $propertyFinder;
-
-    /**
-     * @var ValueFinder
-     */
-    private $valueFinder;
-
-    /**
-     * PropertyReader constructor.
-     *
-     * @param PropertyFinder $propertyFinder
-     * @param ValueFinder $valueFinder
-     */
-    public function __construct(
-        PropertyFinder $propertyFinder,
-        ValueFinder $valueFinder
-    ) {
-        $this->propertyFinder = $propertyFinder;
-        $this->valueFinder = $valueFinder;
-    }
-
-    /**
      * Will provide the PropertyValue model of the key passed.
      *
      * @param $key
@@ -50,16 +26,19 @@ class Reader
     public function read($key)
     {
         $property = $this->findProperty($key);
-        $values = $this->findValues($property);
+
+        return $property->values;
+//        dd($property->values->where('property_id', 2));
+//        $values = $this->findValues($property);
 
         // Once we know what are the PropertyValues related to the property,
         // we'll decide if returning a collection or just a single value.
         // The colleciton is implicit due values is a hasMany relation.
-        if (! $property->isMultivalue()) {
-            $values = $values->count() ? $values->first() : null;
-        }
+//        if (! $property->isMultivalue()) {
+//            $values = $values->count() ? $values->first() : null;
+//        }
 
-        return $values;
+//        return $values;
     }
 
     /**
@@ -70,8 +49,9 @@ class Reader
      */
     public function findProperty($key)
     {
-        return $this->propertyFinder->properties($this->properties)
-            ->find($key);
+        $finder = new PropertyFinder($this->properties);
+
+        return $finder->find($key);
     }
 
     /**
@@ -80,11 +60,12 @@ class Reader
      * @param $property
      * @return Collection
      */
-    public function findValues(Property $property)
-    {
-        return $this->valueFinder->values($this->values)
-            ->find($property);
-    }
+//    public function findValues(Property $property)
+//    {
+//        $finder = new ValueFinder($this->values);
+//
+//        return $finder->find($property);
+//    }
 
     /**
      * @param Collection $properties

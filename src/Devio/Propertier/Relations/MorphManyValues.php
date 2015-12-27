@@ -12,31 +12,24 @@ class MorphManyValues extends MorphMany
      *
      * @return mixed
      */
-//    public function getResults()
-//    {
-//        $results = $this->transformValuesIntoProperty(
-//            parent::getResults(), $this->getEntityProperties()
-//        );
-//
-//        return $results;
-//    }
+    public function getResults()
+    {
+        return $this->transformValues(parent::getResults());
+    }
 
     /**
      * Perform the transformation of the values.
      *
      * @param $values
-     * @param $property
      * @return mixed
      */
-    protected function transformValuesIntoProperty($values, $property)
+    protected function transformValues($values)
     {
         $transformer = new Transformer;
 
-        $transformer->properties($this->getEntityProperties())
+        return $transformer->properties($this->getEntityProperties())
             ->values($values)
             ->transform();
-
-        return $transformer->transformValuesIntoProperty($values, $property);
     }
 
     /**
@@ -45,6 +38,6 @@ class MorphManyValues extends MorphMany
     protected function getEntityProperties()
     {
         return $this->getParent()
-            ->getRelationValue('properties');
+            ->getPropertiesRelationValue();
     }
 }

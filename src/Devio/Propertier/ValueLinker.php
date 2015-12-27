@@ -29,7 +29,6 @@ class ValueLinker
 
     /**
      * @param $property
-     *
      * @return mixed
      * @throws ValuesRelationAlreadyLoaded
      */
@@ -60,7 +59,7 @@ class ValueLinker
     }
 
     /**
-     * Get the values based on a property given.
+     * Get the values based on a given property.
      *
      * @param $property
      * @return Collection
