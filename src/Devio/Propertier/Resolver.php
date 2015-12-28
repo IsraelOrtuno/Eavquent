@@ -3,7 +3,6 @@
 namespace Devio\Propertier;
 
 use RuntimeException;
-use Devio\Propertier\Exceptions\UnresolvedPropertyException;
 
 class Resolver
 {
@@ -58,7 +57,7 @@ class Resolver
         $type = $this->getPropertyType($property);
 
         if (is_null($type) || ! isset(static::$properties[$type])) {
-            throw new RuntimeException('Error getting an unregisterd property type');
+            throw new RuntimeException('Error when resolving unregisterd property type');
         }
 
         return static::$properties[$type];

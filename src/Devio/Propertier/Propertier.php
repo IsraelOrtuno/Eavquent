@@ -74,8 +74,6 @@ trait Propertier
     /**
      * Find a property object by name.
      *
-     * TODO: [PRE-RELEASE] Think about how performance could be improved here
-     *
      * @param $key
      * @return mixed
      */
@@ -86,11 +84,9 @@ trait Propertier
         // We will key our collection by name, this way will be much easier for
         // filtering. Once keyed, just checking if the property has a key of
         // the name passed as argument will mean that a property exists.
-        $keyedProperties = $properties->keyBy('name');
+        $keyed = $properties->keyBy('name');
 
-        return $keyedProperties->has($key)
-            ? $keyedProperties->get($key)
-            : null;
+        return $keyed->get($key, null);
     }
 
     /**
@@ -109,8 +105,16 @@ trait Propertier
         return $property->values;
     }
 
+    /**
+     * Get the properties relation.
+     *
+     * @return mixed
+     */
     public function getPropertiesRelation()
     {
+        // This way we can easily swap the name of the relation if needed just
+        // in case this relationship name is being used by the parent model
+        // as an attribute or even as relationship.
         return $this->getRelationValue('properties');
     }
 

@@ -38,6 +38,6 @@ class MorphManyValues extends MorphMany
     protected function getEntityProperties()
     {
         return $this->getParent()
-            ->getPropertiesRelationValue();
+            ->getPropertiesRelation();
     }
 }
