@@ -72,39 +72,44 @@ trait Propertier
     }
 
     /**
-     * Find a property by its name.
+     * Find a property object by name.
      *
-     * @param $name
+     * TODO: [PRE-RELEASE] Think about how performance could be improved here
+     *
+     * @param $key
      * @return mixed
      */
-    public function getProperty($name)
+    public function getProperty($key)
     {
-        $properties = $this->getPropertiesRelationValue();
+        $properties = $this->getPropertiesRelation();
 
-        return (new PropertyFinder($properties))->find($name);
+        // We will key our collection by name, this way will be much easier for
+        // filtering. Once keyed, just checking if the property has a key of
+        // the name passed as argument will mean that a property exists.
+        $keyedProperties = $properties->keyBy('name');
+
+        return $keyedProperties->has($key)
+            ? $keyedProperties->get($key)
+            : null;
     }
 
     /**
-     * Will find the PropertyValue raw model instance based on
-     * the key passed as argument.
+     * Will get the values of a property.
      *
-     * @param $key
-     * @return null
+     * @param       $key  Property name
+     * @return mixed
      */
     public function getPropertyValue($key)
     {
-//        $this->attachValues();
-        $reader = new Reader();
+        $property = $this->getProperty($key);
+        // We will first grab the property object which contains a collection of
+        // values linked to it. It will work even when setting elements that
+        // are no yet persisted as they will be set into the relationship.
 
-        // This will mix the properties and the values and will decide which values
-        // belong to what property. It will work even when setting elements that
-        // are not persisted as they will be available into the relationships.
-        return $reader->properties($this->getPropertiesRelationValue())
-            ->values($this->getRelationValue('values'))
-            ->read($key);
+        return $property->values;
     }
 
-    public function getPropertiesRelationValue()
+    public function getPropertiesRelation()
     {
         return $this->getRelationValue('properties');
     }
