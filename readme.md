@@ -5,5 +5,3 @@ Propertier - EAV modeling for Eloquent
 #### Current status
 
 **28/12/2015** - First alpha will be tagged in a few days.
-
-> CURRENTLY BEING REWRITTEN
