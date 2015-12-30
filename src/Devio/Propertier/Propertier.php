@@ -24,7 +24,9 @@ trait Propertier
         // We are using a self coded relation as there is no foreign key into
         // the properties table. The entity name will be used as a foreign
         // key to find the properties which belong to this entity item.
-        return new HasManyProperties((new Property)->newQuery(), $this, $this->getMorphClass());
+        return new HasManyProperties(
+            (new Property)->newQuery(), $this, $this->getMorphClass()
+        );
     }
 
     /**
