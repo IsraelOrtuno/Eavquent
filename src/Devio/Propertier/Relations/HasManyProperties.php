@@ -38,7 +38,9 @@ class HasManyProperties extends HasMany
         // The collection of values related to the parent entity model will be
         // linked to the property models that are registered to the entity.
         // We can now return the properties collection with its values.
-        return $this->linkValues(parent::getResults(), $this->getParent()->values);
+        $results = $this->keyBy(parent::results());
+        
+        return $this->linkValues($results, $this->getParent()->values);
     }
 
     /**
@@ -51,6 +53,17 @@ class HasManyProperties extends HasMany
     protected function linkValues($properties, $values)
     {
         return ValueLinker::make($properties, $values)->linkAndTransform();
+    }
+
+    /**
+     * Key relationship collection by tag.
+     *
+     * @param $properties
+     * @return mixed
+     */
+    protected function keyBy($properties)
+    {
+        return $properties->keyBy('name');
     }
 
     /**
@@ -88,6 +101,7 @@ class HasManyProperties extends HasMany
             $linked = $results->map(function ($result) {
                 return $result->replicateExisting();
             });
+            $linked = $this->keyBy($linked);
 
             $model->setRelation($relation, $linked);
 
