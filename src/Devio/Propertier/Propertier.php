@@ -69,11 +69,10 @@ trait Propertier
      */
     public function getProperty($key)
     {
-        $properties = $this->getPropertiesRelation();
         // We will key our collection by name, this way will be much easier for
         // filtering. Once keyed, just checking if the property has a key of
         // the name passed as argument will mean that a property exists.
-        $keyed = $properties->keyBy('name');
+        $keyed = $this->properties->keyBy('name');
 
         return $keyed->get($key, null);
     }
@@ -91,19 +90,6 @@ trait Propertier
         // values linked to it. It will work even when setting elements that
         // are no yet persisted as they will be set into the relationship.
         return $property->values;
-    }
-
-    /**
-     * Get the properties relation.
-     *
-     * @return mixed
-     */
-    public function getPropertiesRelation()
-    {
-        // This way we can easily swap the name of the relation if needed just
-        // in case this relationship name is being used by the parent model
-        // as an attribute, relationship or other thing that could crash.
-        return $this->getRelationValue('properties');
     }
 
     /**
