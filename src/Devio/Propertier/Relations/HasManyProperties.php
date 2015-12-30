@@ -39,7 +39,7 @@ class HasManyProperties extends HasMany
         // linked to the property models that are registered to the entity.
         // We can now return the properties collection with its values.
         $results = $this->keyBy(parent::results());
-        
+
         return $this->linkValues($results, $this->getParent()->values);
     }
 
