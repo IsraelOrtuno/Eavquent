@@ -25,6 +25,17 @@ class ValueFinder
     }
 
     /**
+     * Make a new instance.
+     *
+     * @param $values
+     * @return static
+     */
+    public static function make($values)
+    {
+        return new static($values);
+    }
+
+    /**
      * Set the values.
      *
      * @param Collection $values

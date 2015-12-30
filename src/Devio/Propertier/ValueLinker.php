@@ -8,11 +8,15 @@ use Devio\Propertier\Exceptions\ValuesRelationAlreadyLoaded;
 class ValueLinker
 {
     /**
+     * The properties collection.
+     *
      * @var Collection
      */
     protected $properties;
 
     /**
+     * The values collection.
+     *
      * @var Collection
      */
     protected $values;
@@ -42,6 +46,8 @@ class ValueLinker
     }
 
     /**
+     * Perform the link action.
+     *
      * @return mixed
      */
     public function link()
@@ -52,6 +58,8 @@ class ValueLinker
     }
 
     /**
+     * Link the values of a property.
+     *
      * @param $property
      * @return mixed
      * @throws ValuesRelationAlreadyLoaded
@@ -61,16 +69,17 @@ class ValueLinker
         if ($property->relationLoaded('values')) {
             throw new ValuesRelationAlreadyLoaded;
         }
-
         // If the property already contains a values relationship, we do not
         // want to interfiere, this will be a breaking error. If not will
         // initialize the relation with the values that belong to it.
-        $property->setRelation('values', $this->valuesOf($property));
+        $property->setRelation('values', $this->getValuesOfProperty($property));
 
         return $property;
     }
 
     /**
+     * Link the values of many properties.
+     *
      * @return mixed
      */
     protected function linkMany()
@@ -88,30 +97,8 @@ class ValueLinker
      * @param $property
      * @return Collection
      */
-    public function valuesOf($property)
+    public function getValuesOfProperty($property)
     {
-        return (new ValueFinder($this->values))->find($property);
-    }
-
-    /**
-     * @param $property
-     * @return $this
-     */
-    public function properties($property)
-    {
-        $this->properties = $property;
-
-        return $this;
-    }
-
-    /**
-     * @param $values
-     * @return $this
-     */
-    public function values($values)
-    {
-        $this->values = $values;
-
-        return $this;
+        return ValueFinder::make($this->values)->find($property);
     }
 }
