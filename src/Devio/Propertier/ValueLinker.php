@@ -10,12 +10,36 @@ class ValueLinker
     /**
      * @var Collection
      */
-    protected $values;
+    protected $properties;
 
     /**
      * @var Collection
      */
-    protected $properties;
+    protected $values;
+
+    /**
+     * ValueLinker constructor.
+     *
+     * @param Collection $properties
+     * @param Collection $values
+     */
+    public function __construct(Collection $properties, Collection $values)
+    {
+        $this->properties = $properties;
+        $this->values = $values;
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param $properties
+     * @param $values
+     * @return static
+     */
+    public static function make($properties, $values)
+    {
+        return new static($properties, $values);
+    }
 
     /**
      * @return mixed
