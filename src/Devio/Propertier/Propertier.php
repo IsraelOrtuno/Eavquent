@@ -69,12 +69,10 @@ trait Propertier
      */
     public function getProperty($key)
     {
-        // We will key our collection by name, this way will be much easier for
-        // filtering. Once keyed, just checking if the property has a key of
-        // the name passed as argument will mean that a property exists.
-        $keyed = $this->properties->keyBy('name');
-
-        return $keyed->get($key, null);
+        // We will assume our collection is keyed by name as it is supposed to
+        // happen into the relationship process. If the property has the key
+        // we are looking for, will return it meaning the property exists.
+        return $this->properties->get($key, null);
     }
 
     /**
