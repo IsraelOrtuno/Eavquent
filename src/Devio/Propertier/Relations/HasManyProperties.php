@@ -1,6 +1,8 @@
 <?php
+
 namespace Devio\Propertier\Relations;
 
+use Devio\Propertier\ValueLinker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -9,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class HasManyProperties extends HasMany
 {
     /**
+     * The entity class.
+     *
      * @var string
      */
     protected $entity;
@@ -21,7 +25,6 @@ class HasManyProperties extends HasMany
     public function __construct(Builder $query, Model $model, $entity)
     {
         $this->entity = $entity;
-
         parent::__construct($query, $model, 'entity', '');
     }
 
@@ -48,13 +51,22 @@ class HasManyProperties extends HasMany
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
+        // We first have to load the entity values relation which will fetch
+        // all the values available for every entity model. We can now use
+        // these values to link them to the right property of the model.
+        with(new Collection($models))->load('values');
+
         foreach ($models as $model) {
-            // A simple trick will make after filtering easier. Setting
-            // the property name as key will help to find the element
-            // much easier than having to filter through collection.
-            $model->setRelation(
-                $relation, $results->keyBy('name')
-            );
+            // We have to get a clone of every property and get its values linked
+            // for loop iteration. The relation we are setting will include the
+            // property and its values already linked simulating eagerloading.
+            $linked = $results->map(function ($result) {
+                return $result->replicateExisting();
+            });
+
+            $model->setRelation($relation, $linked);
+
+            ValueLinker::make($model->properties, $model->values)->link();
         }
 
         return $models;
