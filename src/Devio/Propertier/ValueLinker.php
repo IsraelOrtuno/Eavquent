@@ -79,7 +79,7 @@ class ValueLinker
     protected function linkOne($property)
     {
         if ($property->relationLoaded('values')) {
-            throw new ValuesRelationAlreadyLoaded;
+            throw new \RuntimeException('Values relation is already loaded.');
         }
         // If the property already contains a values relationship, we do not
         // want to interfiere, this will be a breaking error. If not will
