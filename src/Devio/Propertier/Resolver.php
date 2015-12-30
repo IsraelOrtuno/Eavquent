@@ -24,14 +24,14 @@ class Resolver
     }
 
     /**
-     * Get the right property type class based on the property provided.
+     * Get the right value type class based on the property provided.
      *
      * @param       $property
      * @param array $attributes
+     * @param bool $exists
      * @return PropertyValue
-     * @throws UnresolvedPropertyException
      */
-    public function property($property, $attributes = [])
+    public function value($property, $attributes = [], $exists = true)
     {
         $class = $this->getClassName($property);
 
@@ -39,10 +39,7 @@ class Resolver
             throw new RuntimeException("Property class {$class} not found");
         }
 
-        // Will create a new PropertyValue model based on the property passed as
-        // argument. It will also fill the model attributes if they have been
-        // provided and relate it to the property, eager loading included.
-        return new $class($attributes);
+        return $class::createInstance($attributes, $exists);
     }
 
     /**

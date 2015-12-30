@@ -13,12 +13,7 @@ class Value extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'value',
-        'entity_type',
-        'entity_id',
-        'property_id'
-    ];
+    protected $fillable = ['value', 'entity_type', 'entity_id', 'property_id'];
 
     /**
      * The table every value will use.
@@ -45,6 +40,21 @@ class Value extends Model
     public function entity()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param array $attributes
+     * @param $exists
+     * @return static
+     */
+    public static function createInstance(array $attributes, $exists)
+    {
+        with($instance = new static)->setRawAttributes($attributes);
+        $instance->exists = $exists;
+
+        return $instance;
     }
 
     /**
@@ -76,27 +86,5 @@ class Value extends Model
     public function setValue($value)
     {
         $this->attributes['value'] = $value;
-    }
-
-    /**
-     * Will relate the value to the ID passed if it's not already set.
-     *
-     * @param $id
-     */
-    public function relatedOrRelateTo($id)
-    {
-        if (! $this->entity_id) {
-            $this->entity_id = $id;
-        }
-    }
-
-    public function transform()
-    {
-        $factory = new PropertyBuilder();
-
-        return $factory->make(
-            $this->property,
-            $this->getAttributes()
-        );
     }
 }
