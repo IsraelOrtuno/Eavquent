@@ -29,6 +29,19 @@ class HasManyProperties extends HasMany
     }
 
     /**
+     * Get the relation results with linked values.
+     *
+     * @return mixed
+     */
+    public function getResults()
+    {
+        // The collection of values related to the parent entity model will be
+        // linked to the property models that are registered to the entity.
+        // We can now return the properties collection with its values.
+        return ValueLinker::make(parent::getResults(), $this->getParent()->values)->link();
+    }
+
+    /**
      * Set the base constraints on the relation query.
      *
      * @return void
