@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait Propertier
 {
     /**
+     * Model schema columns.
+     *
      * @var array
      */
     public static $modelColumns = [];
@@ -34,21 +36,6 @@ trait Propertier
     {
         return $this->morphMany(Value::class, 'entity');
     }
-    /*public function values()
-    {
-        $this->addHidden('values');
-
-        $instance = new Value;
-        $table = $instance->getTable();
-        list($type, $id) = $this->getMorphs('entity', null, null);
-        // We will add the values relationship to the list of hidden attributes
-        // as do not want it to be included into any array or json conversion.
-        // We will now just create our custom relation for fetching values.
-
-        return new MorphManyValues(
-            $instance->newQuery(), $this, "{$table}.{$type}", "{$table}.{$id}", $this->getKeyName()
-        );
-    }*/
 
     /**
      * Will check if the key exists as registerd property.
