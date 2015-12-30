@@ -2,60 +2,43 @@
 
 namespace Devio\Propertier;
 
-use Illuminate\Support\Collection;
-
 class Transformer
 {
     /**
-     * The value or collection.
-     *
-     * @var Collection|PropertyValue
-     */
-    protected $values;
-
-    /**
-     * The property object.
-     *
-     * @var Property
-     */
-    protected $properties;
-
-    /**
      * Perform the transformation either single or collection values.
      *
-     * @return Collection|PropertyValue
+     * @param $properties
      */
-    public function transform()
+    public function transform($properties)
     {
-        $this->linkValuesToProperties();
-        $transformed = collect();
-
-        foreach ($this->properties as $property) {
-            $transformed->push($this->transformValues($property->values, $property));
+        // We will iterate throught every given property replacing the values
+        // relation with the transformed elements. These transformed values
+        // might result into a collection (if multiple) or simple object.
+        foreach ($properties as $property) {
+            $transformed = $this->transformValues($property->values, $property);
+            $property->setRelation('values', $transformed);
         }
 
-        return $transformed;
+        return $properties;
     }
 
     /**
-     * Transform a single property value.
+     * Transform a raw value into a property type value.
      *
      * @param $values
      * @param $property
      * @return PropertyValue
      */
-    public function transformValues($values, $property)
+    protected function transformValues($values, $property)
     {
         $resolver = new Resolver();
 
         // We have to iterate every value in the collection to transform it from
         // Value to the right [Property]Value object. It will return an object
         // of a different type with the same attributes as the original item.
-        $result = $values->map(
-            function ($value) use ($property, $resolver) {
-                return $resolver->property($property, $value->getAttributes());
-            }
-        );
+        $result = $values->map(function ($value) use ($property, $resolver) {
+            return $resolver->value($property, $value->getAttributes(), true);
+        });
 
         // If the property we are transforming can store has been set as multi-
         // value, we can return the full collection. Otherwise we'll extract
@@ -64,37 +47,4 @@ class Transformer
             ? $result
             : $result->first();
     }
-
-    /**
-     * Set the value/es to transform.
-     *
-     * @param PropertyValue|Collection $values
-     * @return PropertyTransformer
-     */
-    public function values($values)
-    {
-        $this->values = $values;
-
-        return $this;
-    }
-
-    /**
-     * Set the properties to transform to.
-     *
-     * @param Property $properties
-     * @return PropertyTransformer
-     */
-    public function properties($properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-//    protected function linkValuesToProperties()
-//    {
-//        (new ValueLinker)->values($this->values)
-//            ->properties($this->properties)
-//            ->link();
-//    }
 }

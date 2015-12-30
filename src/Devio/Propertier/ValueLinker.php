@@ -52,9 +52,21 @@ class ValueLinker
      */
     public function link()
     {
-        return $this->properties instanceof Collection
-            ? $this->linkMany()
-            : $this->linkOne($this->properties);
+        foreach ($this->properties as $property) {
+            $this->linkOne($property);
+        }
+
+        return $this->properties;
+    }
+
+    /**
+     * Link and also transform the values.
+     *
+     * @return mixed
+     */
+    public function linkAndTransform()
+    {
+        return with(new Transformer)->transform($this->link());
     }
 
     /**
@@ -75,20 +87,6 @@ class ValueLinker
         $property->setRelation('values', $this->getValuesOfProperty($property));
 
         return $property;
-    }
-
-    /**
-     * Link the values of many properties.
-     *
-     * @return mixed
-     */
-    protected function linkMany()
-    {
-        foreach ($this->properties as $property) {
-            $this->linkOne($property);
-        }
-
-        return $this->properties;
     }
 
     /**

@@ -31,7 +31,7 @@ class Resolver
      * @param bool $exists
      * @return PropertyValue
      */
-    public function value($property, $attributes = [], $exists = true)
+    public function value($property, $attributes = [], $exists = false)
     {
         $class = $this->getClassName($property);
 
