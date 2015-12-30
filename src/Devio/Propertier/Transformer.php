@@ -91,10 +91,10 @@ class Transformer
         return $this;
     }
 
-    protected function linkValuesToProperties()
-    {
-        (new ValueLinker)->values($this->values)
-            ->properties($this->properties)
-            ->link();
-    }
+//    protected function linkValuesToProperties()
+//    {
+//        (new ValueLinker)->values($this->values)
+//            ->properties($this->properties)
+//            ->link();
+//    }
 }
