@@ -81,9 +81,30 @@ trait Propertier
      * @param  $key Property name
      * @return mixed
      */
-    public function getPropertyValue($key)
+    public function getValue($key)
+    {
+        if (is_null($property = $this->getProperty($key))) {
+            return null;
+        }
+
+        $values = $property->values;
+
+        // Will return null if the property does not exist. If the property is
+        // registerd as a multi value property, we will return a collection
+        // of values, otherwise we can return the plain object instead.
+        return $property->isMultivalue()
+            ? $values->pluck('values')
+            : $values->getAttribute('value');
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getRawValue($key)
     {
         $property = $this->getProperty($key);
+
         // We will first grab the property object which contains a collection of
         // values linked to it. It will work even when setting elements that
         // are no yet persisted as they will be set into the relationship.
@@ -100,6 +121,7 @@ trait Propertier
         if (empty(static::$modelColumns)) {
             static::$modelColumns = $this->fetchModelColumns();
         }
+
         // If no attributes are listed into $modelColumns property, we will
         // fetch them from database. This could result into a performance
         // issue so it should be set manually or when booting the model.
@@ -127,9 +149,12 @@ trait Propertier
     public function __get($key)
     {
         if ($this->isProperty($key)) {
-            return $this->getPropertyValue($key);
+            return $this->getValue($key);
         }
 
+        // If the property we are accesing corresponds to a any registered property
+        // we will provide the value of this property if any. Otherwise, we will
+        // access the parent Eloquent model and return its default behaviour.
         return parent::__get($key);
     }
 }
