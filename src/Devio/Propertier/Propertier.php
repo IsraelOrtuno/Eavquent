@@ -86,7 +86,7 @@ trait Propertier
         if (is_null($property = $this->getProperty($key))) {
             return null;
         }
-        
+
         $values = $property->values;
 
         // Will return null if the property does not exist. If the property is
