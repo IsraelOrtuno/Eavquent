@@ -114,6 +114,22 @@ trait Propertier
     }
 
     /**
+     * Setting a property or a regular eloquent attribute.
+     *
+     * @param $key
+     * @param $value
+     */
+    public function setValue($key, $value)
+    {
+        if ($this->isProperty($key)) {
+            return (new ValueSetter)->entity($this)
+                ->set($key, $value);
+        }
+
+        return parent::__set($key, $value);
+    }
+
+    /**
      * Get the base model attribute names.
      *
      * @return array
@@ -131,6 +147,17 @@ trait Propertier
     }
 
     /**
+     * Check if an attribute corresponds to a model column name.
+     *
+     * @param $attribute
+     * @return bool
+     */
+    public function isModelColumn($attribute)
+    {
+        return in_array($attribute, $this->getModelColumns());
+    }
+
+    /**
      * Get the model column names.
      *
      * @return mixed
@@ -143,7 +170,7 @@ trait Propertier
     }
 
     /**
-     * Overriding magic method.
+     * Overriding property reading.
      *
      * @param string $key
      * @return mixed
@@ -158,5 +185,24 @@ trait Propertier
         // we will provide the value of this property if any. Otherwise, we will
         // access the parent Eloquent model and return its default behaviour.
         return parent::__get($key);
+    }
+
+    /**
+     * Override property setting.
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function __set($key, $value)
+    {
+        if ($this->isProperty($key) && ! $this->isModelColumn($key)) {
+            return $this->setValue($key, $value);
+        }
+
+        // If the property to set is registered and does not correspond to any
+        // model column we are free to set its value. Otherwise we will let
+        // go the default Eloquent behaviour and return its value if any.
+        return parent::__set($key, $value);
     }
 }
