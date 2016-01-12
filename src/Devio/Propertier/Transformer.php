@@ -5,6 +5,23 @@ namespace Devio\Propertier;
 class Transformer
 {
     /**
+     * The resolver instance.
+     *
+     * @var Resolver
+     */
+    protected $resolver;
+
+    /**
+     * Transformer constructor.
+     *
+     * @param Resolver $resolver
+     */
+    public function __construct($resolver = null)
+    {
+        $this->resolver = $resolver;
+    }
+
+    /**
      * Perform the transformation either single or collection values.
      *
      * @param $properties
@@ -31,8 +48,7 @@ class Transformer
      */
     protected function transformValues($values, $property)
     {
-        $resolver = new Resolver();
-
+        $resolver = $this->getResolver();
         // We have to iterate every value in the collection to transform it from
         // Value to the right [Property]Value object. It will return an object
         // of a different type with the same attributes as the original item.
@@ -46,5 +62,25 @@ class Transformer
         return $property->isMultivalue()
             ? $result
             : $result->first();
+    }
+
+    /**
+     * Get the resolver instance or create new.
+     *
+     * @return Resolver
+     */
+    public function getResolver()
+    {
+        return $this->resolver = $this->resolver ? : new Resolver();
+    }
+
+    /**
+     * Set the resolver instance.
+     *
+     * @param Resolver $resolver
+     */
+    public function setResolver($resolver)
+    {
+        $this->resolver = $resolver;
     }
 }
