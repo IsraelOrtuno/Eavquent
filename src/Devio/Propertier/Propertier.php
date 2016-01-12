@@ -94,7 +94,7 @@ trait Propertier
         // registerd as a multi value property, we will return a collection
         // of values, otherwise we can return the plain object instead.
         return $property->isMultivalue()
-            ? $values->pluck('values')
+            ? $values->pluck('value')
             : $values->getAttribute('value');
     }
 
