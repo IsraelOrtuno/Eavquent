@@ -2,6 +2,7 @@
 
 namespace Devio\Propertier;
 
+use Exception;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -118,15 +119,16 @@ trait Propertier
      *
      * @param $key
      * @param $value
+     * @return PropertyValue|mixed|void
+     * @throws Exception
      */
     public function setValue($key, $value)
     {
-        if ($this->isProperty($key)) {
-            return (new ValueSetter)->entity($this)
-                ->set($key, $value);
+        if (is_null($property = $this->getProperty($key))) {
+            throw new Exception("Setting a {$key} property that does not exist.");
         }
 
-        return parent::__set($key, $value);
+        return Writer::make($property)->set($value);
     }
 
     /**
