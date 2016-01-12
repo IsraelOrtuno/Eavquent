@@ -3,7 +3,6 @@
 namespace Devio\Propertier;
 
 use Illuminate\Support\Collection;
-use Devio\Propertier\Exceptions\ValuesRelationAlreadyLoaded;
 
 class ValueLinker
 {
