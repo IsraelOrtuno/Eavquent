@@ -32,8 +32,9 @@ class Transformer
         // relation with the transformed elements. These transformed values
         // might result into a collection (if multiple) or simple object.
         foreach ($properties as $property) {
-            $transformed = $this->transformValues($property->values, $property);
-            $property->setRelation('values', $transformed);
+            $property->setRelation(
+                'values', $this->transformValues($property->values, $property)
+            );
         }
 
         return $properties;
