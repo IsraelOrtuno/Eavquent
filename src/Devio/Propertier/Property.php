@@ -2,8 +2,8 @@
 
 namespace Devio\Propertier;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 class Property extends Model
 {
@@ -13,6 +13,13 @@ class Property extends Model
      * @var Model
      */
     protected $entity = null;
+
+    /**
+     * Values deletion queue.
+     *
+     * @var array
+     */
+    protected $deletionQueue = [];
 
     /**
      * List of attributes that open to mass assignment.
@@ -78,7 +85,7 @@ class Property extends Model
 
         return ! $this->isMultivalue()
             ? $this->setSingleValue($value)
-            : $this->setMultipleValue($value);
+            : $this->setMultiValue($value);
     }
 
     /**
@@ -102,8 +109,48 @@ class Property extends Model
     }
 
     /**
-     * Creates a new property value related to the given property
-     * and the entity.
+     * Set a multi value collection replacing previous values.
+     *
+     * @param $values
+     */
+    public function setMultiValue($values)
+    {
+        if (! $values instanceof Collection && ! is_array($values)) {
+            $values = func_get_args();
+        }
+
+        // As it is a multivalue property, we will make sure we are getting
+        // an array of values. Also we have to fill up the deletion queue
+        // with any existing values that this property may have linked.
+        $this->enqueueValuesDeletion();
+
+        // Once we have enqueued for deletion all the existing values in the
+        // property, we have to force a reset into the values relationship
+        // collection in order to fill it up again with the new values.
+        $this->initializeValues(true);
+
+        foreach ($values as $value) {
+            $this->createNewValue($value);
+        }
+    }
+
+    /**
+     * Add the current property values to the deletion queue.
+     */
+    protected function enqueueValuesDeletion()
+    {
+        $existing = $this->values->where('exists', true);
+
+        // We will only add the values that already exist in database as not
+        // persisted values do not need to be deleted. Every value will be
+        // added to the deletionQueue to be processed if model is saved.
+        foreach ($existing as $value) {
+            array_push($this->deletionQueue, $value);
+        }
+    }
+
+    /**
+     * Creates a new property value related to the given property and the entity.
      *
      * @param $value
      * @return PropertyValue
@@ -156,11 +203,12 @@ class Property extends Model
     /**
      * Initialize the values relation to an empty collection.
      *
+     * @param bool $force
      * @return $this
      */
-    protected function initializeValues()
+    protected function initializeValues($force = false)
     {
-        if (is_null($this->values)) {
+        if (is_null($this->values) || $force) {
             $this->setRelation('values', new Collection);
         }
 
@@ -198,5 +246,13 @@ class Property extends Model
     public function getEntity()
     {
         return $this->entity;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDeletionQueue()
+    {
+        return $this->deletionQueue;
     }
 }
