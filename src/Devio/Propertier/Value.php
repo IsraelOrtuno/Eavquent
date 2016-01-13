@@ -71,7 +71,6 @@ class Value extends Model
 
         $instance->setAttribute($instance->entity()->getForeignKey(), $entity->getKey());
         $instance->setAttribute($instance->entity()->getMorphType(), $entity->getMorphClass());
-
         $instance->setAttribute($instance->property()->getForeignKey(), $property->getKey());
 
         return $instance;
@@ -85,26 +84,5 @@ class Value extends Model
     public function setValue($value)
     {
         $this->setAttribute('value', $value);
-    }
-
-    /**
-     * Casting to database string when setting.
-     *
-     * @param $value
-     */
-    public function setValueAttribute($value)
-    {
-        $this->setValue((string)$value);
-    }
-
-    /**
-     * Casting from database string when getting.
-     *
-     * @param $value
-     * @return mixed
-     */
-    public function getValueAttribute($value)
-    {
-        return $value;
     }
 }
