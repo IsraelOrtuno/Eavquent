@@ -58,6 +58,36 @@ class Value extends Model
     }
 
     /**
+     * Create a new value instance related to property and entity.
+     *
+     * @param $property
+     * @param $entity
+     * @param $value
+     * @return static
+     */
+    public static function createValue($property, $entity, $value)
+    {
+        with($instance = new static)->setAttribute('value', $value);
+
+        $instance->setAttribute($instance->entity()->getForeignKey(), $entity->getKey());
+        $instance->setAttribute($instance->entity()->getMorphType(), $entity->getMorphClass());
+
+        $instance->setAttribute($instance->property()->getForeignKey(), $property->getKey());
+
+        return $instance;
+    }
+
+    /**
+     * Set the model value.
+     *
+     * @param $value
+     */
+    public function setValue($value)
+    {
+        $this->setAttribute('value', $value);
+    }
+
+    /**
      * Casting to database string when setting.
      *
      * @param $value
@@ -76,15 +106,5 @@ class Value extends Model
     public function getValueAttribute($value)
     {
         return $value;
-    }
-
-    /**
-     * Easy setting the value property.
-     *
-     * @param $value
-     */
-    public function setValue($value)
-    {
-        $this->attributes['value'] = $value;
     }
 }

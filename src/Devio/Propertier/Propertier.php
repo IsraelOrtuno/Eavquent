@@ -87,17 +87,10 @@ trait Propertier
     public function getValue($key)
     {
         if (is_null($property = $this->getProperty($key))) {
-            return null;
+            return $property;
         }
 
-        $values = $property->values;
-
-        // Will return null if the property does not exist. If the property is
-        // registerd as a multi value property, we will return a collection
-        // of values, otherwise we can return the plain object instead.
-        return $property->isMultivalue()
-            ? $values->pluck('value')
-            : $values->getAttribute('value');
+        return $property->getValue();
     }
 
     /**
@@ -130,7 +123,7 @@ trait Propertier
             throw new Exception("Setting a {$key} property that does not exist.");
         }
 
-        return Writer::make($property)->set($value);
+        return Writer::make($this, $property)->set($value);
     }
 
     /**

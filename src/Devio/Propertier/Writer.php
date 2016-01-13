@@ -2,6 +2,8 @@
 
 namespace Devio\Propertier;
 
+use Illuminate\Database\Eloquent\Model;
+
 class Writer
 {
     /**
@@ -12,81 +14,68 @@ class Writer
     protected $entity;
 
     /**
-     * Returns a new ValueSetter instance.
+     * Property instance.
+     *
+     * @var Property
+     */
+    protected $property;
+
+    /**
+     * Writer constructor.
      *
      * @param Model $entity
-     *
-     * @return static
+     * @param Property $property
      */
-    public static function make(Model $entity)
+    public function __construct(Model $entity, Property $property)
     {
-        return (new static)->entity($entity);
+        $this->entity = $entity;
+        $this->property = $property;
     }
 
     /**
-     * Assign a new entity.
+     * Create a Writer instance.
      *
      * @param Model $entity
-     *
-     * @return $this
+     * @param Property $property
+     * @return static
      */
-    public function entity(Model $entity)
+    public static function make(Model $entity, Property $property)
     {
-        $this->entity = $entity;
-
-        return $this;
+        return new static($entity, $property);
     }
 
     /**
      * Assign a value to a property.
      *
-     * @param $key
      * @param $value
-     *
      * @return PropertyValue|mixed|void
      */
-    public function set($key, $value)
+    public function set($value)
     {
-        $property = $this->getProperty($key);
-
-        if ($property->isMultivalue())
-        {
-            return $this->assignMany($property, $value);
+        if ($this->property->isMultivalue()) {
+            return $this->assignMany($value);
         }
 
-        return $this->assignOne($property, $value);
+        return $this->assignSingle($value);
     }
 
     /**
-     * Asign a value to the property value model. First will look
-     * for that value, if it does exist, will change its value,
-     * otherwise it will create a new value model.
+     * Asign a value to the property value model.
      *
-     * @param $property
      * @param $value
-     *
-     * @return PropertyValue|mixed
+     * @return PropertyValue
      */
-    protected function assignOne($property, $value)
+    protected function assignSingle($value)
     {
-        if ($propertyValue = $this->getValues($property, true))
-        {
-            $propertyValue->value = $value;
-        }
-        // If the value does not exist into the database, will create
-        // a new instance related to the property and add it to the
-        // property values collection waiting to be persisted.
-        else
-        {
-            $propertyValue = $this->createNewValue($property, $value);
+        if ($propertyValue = $this->property->values) {
+            $propertyValue->setValue($value);
+        } else {
+            $propertyValue = $this->createNewValue($value);
         }
 
-        // Will set the property relation property. This will help to avoid infinite
-        // pointing loops that the method "relationsToArray" will cause if a model
-        // relation is pointing its own parent. This is only for accessing the
-        // PropertyValue Property object without making a new database call.
-        $this->loadPropertyRelation($propertyValue, $property);
-
+        // We modify the value of the existing property value to the one passed
+        // to the function. If there is no value related to the property, we
+        // will create a new value instance and relate it to the property.
         return $propertyValue;
     }
 
@@ -101,8 +90,7 @@ class Writer
      */
     protected function assignMany(Property $property, $valueCollection)
     {
-        if ( ! $valueCollection instanceof Collection || ! is_array($valueCollection))
-        {
+        if (! $valueCollection instanceof Collection || ! is_array($valueCollection)) {
             $valueCollection = new Collection($valueCollection);
         }
 
@@ -111,8 +99,7 @@ class Writer
         // be created as new and added to the current values relation.
         $this->clearAndQueuePropertyValues($property);
 
-        foreach ($valueCollection as $value)
-        {
+        foreach ($valueCollection as $value) {
             $this->createNewValue($property, $value);
         }
     }
@@ -131,36 +118,30 @@ class Writer
         // Once the current property values are queued to be deleted, we have
         // to remove them from the property as they were already loaded in
         // the property relation. Just replace with an empty collection.
-        $property->load(['values' => function ()
-        {
-            return new Collection();
-        }]);
+        $property->load([
+            'values' => function () {
+                return new Collection();
+            }
+        ]);
     }
 
     /**
      * Creates a new property value related to the given property
      * and the entity.
      *
-     * @param $property
      * @param $value
-     *
      * @return PropertyValue
      */
-    protected function createNewValue($property, $value)
+    protected function createNewValue($value)
     {
-        $propertyValue = new PropertyValue([
-            'value'       => $value,
-            'entity_type' => $this->entity->getMorphClass(),
-            'entity_id'   => $this->entity->id,
-            'property_id' => $property->id
-        ]);
+        $newValue = Value::createValue($this->property, $this->entity, $value);
 
         // After creating a new property value, we have to include it manually
         // into the property values relation collection. The "push" method
         // inlcuded in the collection will help us to perform this task.
-        $property->values->push($propertyValue);
+        $this->property->setOrPushValue($newValue);
 
-        return $propertyValue;
+        return $newValue;
     }
 
     /**
@@ -170,25 +151,9 @@ class Writer
      */
     protected function queueForDeletion($valueCollection)
     {
-        $valueCollection->each(function ($value)
-        {
+        $valueCollection->each(function ($value) {
             $this->entity->queueValueForDeletion($value);
         });
-    }
-
-    /**
-     * Will manually set the relationship to the property passed
-     * as argument.
-     *
-     * @param $propertyValue
-     * @param $property
-     */
-    protected function loadPropertyRelation($propertyValue, $property)
-    {
-        $propertyValue->load(['property' => function () use ($property)
-        {
-            return $property;
-        }]);
     }
 
     /**
@@ -204,17 +169,5 @@ class Writer
         $values = $property->values;
 
         return ! $single ? $values : $values->first();
-    }
-
-    /**
-     * Find a property by key in the properties collection.
-     *
-     * @param $key
-     *
-     * @return Property
-     */
-    protected function getProperty($key)
-    {
-        return $this->entity->getPropertyObject($key);
     }
 }
