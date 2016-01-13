@@ -114,7 +114,7 @@ trait Propertier
      *
      * @param $key
      * @param $value
-     * @return PropertyValue|mixed|void
+     * @return Value
      * @throws Exception
      */
     public function setValue($key, $value)
@@ -123,7 +123,7 @@ trait Propertier
             throw new Exception("Setting a {$key} property that does not exist.");
         }
 
-        return Writer::make($this, $property)->set($value);
+        return $property->entity($this)->setValue($value);
     }
 
     /**
