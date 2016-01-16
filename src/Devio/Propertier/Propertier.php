@@ -56,6 +56,7 @@ trait Propertier
         if (in_array($key, $this->getModelColumns())) {
             return false;
         }
+
         // $key will be property when it does not belong to any relationship
         // name and it also exists into the entity properties collection.
         // This way it won't interfiere with the base model behaviour.
