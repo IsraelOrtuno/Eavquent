@@ -1,4 +1,6 @@
-<?php namespace Devio\Propertier;
+<?php
+
+namespace Devio\Propertier;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
