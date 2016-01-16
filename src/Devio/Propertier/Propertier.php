@@ -2,7 +2,7 @@
 
 namespace Devio\Propertier;
 
-use Exception;
+use ReflectionClass;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -43,128 +43,38 @@ trait Propertier
     }
 
     /**
-     * Will check if the key exists as registerd property.
-     *
-     * @param $key
-     * @return bool
-     */
-    public function isProperty($key)
-    {
-        // Checking if the key corresponds to any comlumn in the main entity
-        // table. If there is a match, means the key is an existing model
-        // attribute which value will be always taken before property.
-        if (in_array($key, $this->getModelColumns())) {
-            return false;
-        }
-
-        // $key will be property when it does not belong to any relationship
-        // name and it also exists into the entity properties collection.
-        // This way it won't interfiere with the base model behaviour.
-        return is_null($this->getRelationValue($key))
-            ? ! is_null($this->getProperty($key))
-            : false;
-    }
-
-    /**
-     * Find a property object by name.
-     *
-     * @param $key
-     * @return mixed
-     */
-    public function getProperty($key)
-    {
-        // We will assume our collection is keyed by name as it is supposed to
-        // happen into the relationship process. If the property has the key
-        // we are looking for, will return it meaning the property exists.
-        return $this->properties->get($key, null);
-    }
-
-    /**
-     * Will get the values of a property.
-     *
-     * @param  $key Property name
-     * @return mixed
-     */
-    public function getValue($key)
-    {
-        if (is_null($property = $this->getProperty($key))) {
-            return $property;
-        }
-
-        return $property->getValue();
-    }
-
-    /**
-     * Get the property raw value object/s.
-     *
-     * @param $key
-     * @return mixed
-     */
-    public function getRawValue($key)
-    {
-        $property = $this->getProperty($key);
-
-        // We will first grab the property object which contains a collection of
-        // values linked to it. It will work even when setting elements that
-        // are no yet persisted as they will be set into the relationship.
-        return $property->values;
-    }
-
-    /**
-     * Setting a property or a regular eloquent attribute.
-     *
-     * @param $key
-     * @param $value
-     * @return Value
-     * @throws Exception
-     */
-    public function setValue($key, $value)
-    {
-        if (is_null($property = $this->getProperty($key))) {
-            throw new Exception("Setting a {$key} property that does not exist.");
-        }
-
-        return $property->entity($this)->setValue($value);
-    }
-
-    /**
-     * Get the base model attribute names.
+     * Get the model columns.
      *
      * @return array
      */
-    public function getModelColumns()
+    public static function getModelColumns()
     {
-        if (empty(static::$modelColumns)) {
-            static::$modelColumns = $this->fetchModelColumns();
-        }
-
-        // If no attributes are listed into $modelColumns property, we will
-        // fetch them from database. This could result into a performance
-        // issue so it should be set manually or when booting the model.
         return static::$modelColumns;
     }
 
     /**
-     * Check if an attribute corresponds to a model column name.
+     * Set the model columns.
      *
-     * @param $attribute
-     * @return bool
+     * @param $columns
+     * @return array
      */
-    public function isModelColumn($attribute)
+    public static function setModelColumns($columns)
     {
-        return in_array($attribute, $this->getModelColumns());
+        if (! is_array($columns)) {
+            $columns = func_get_args();
+        }
+
+        static::$modelColumns = $columns;
     }
 
     /**
-     * Get the model column names.
+     * Get a new manager instance.
      *
-     * @return mixed
+     * @return Manager
      */
-    public function fetchModelColumns()
+    public function newManagerQuery()
     {
-        return $this->getConnection()
-            ->getSchemaBuilder()
-            ->getColumnListing($this->getTable());
+        return new Manager($this);
     }
 
     /**
@@ -175,8 +85,10 @@ trait Propertier
      */
     public function __get($key)
     {
-        if ($this->isProperty($key)) {
-            return $this->getValue($key);
+        $manager = $this->newManagerQuery();
+
+        if ($manager->isProperty($key)) {
+            return $manager->getValue($key);
         }
 
         // If the property we are accesing corresponds to a any registered property
@@ -194,13 +106,59 @@ trait Propertier
      */
     public function __set($key, $value)
     {
-        if ($this->isProperty($key) && ! $this->isModelColumn($key)) {
-            return $this->setValue($key, $value);
+        $manager = $this->newManagerQuery();
+
+        if ($manager->isProperty($key) && ! static::isModelColumn($key)) {
+            return $manager->setValue($key, $value);
         }
 
         // If the property to set is registered and does not correspond to any
         // model column we are free to set its value. Otherwise we will let
         // go the default Eloquent behaviour and return its value if any.
         return parent::__set($key, $value);
+    }
+
+    /**
+     * Handling propertier method calls to the manager class.
+     *
+     * @param $method
+     * @param $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        $reflection = new ReflectionClass(Manager::class);
+
+        // If the method we are trying to call is available in the manager class
+        // we will prevent the default Model call to the Query Builder calling
+        // this method in the Manager class passing this existing instance.
+        if ($reflection->hasMethod($method)) {
+            return call_user_func_array([$this->newManagerQuery(), $method], $parameters);
+        }
+
+        return parent::__call($method, $parameters);
+    }
+
+    /**
+     * Handling dynamic method calls to the manager class.
+     *
+     * @param $method
+     * @param $parameters
+     * @return mixed
+     */
+    public static function __callStatic($method, $parameters)
+    {
+        $reflection = new ReflectionClass(Manager::class);
+
+        // If the method we are trying to call is available in the manager class
+        // we will prevent the default Model call to the Query Builder calling
+        // this method in the Manager class providing a new entity instance.
+        if ($reflection->hasMethod($method)) {
+            $manager = (new static)->newManagerQuery();
+
+            return call_user_func_array([$manager, $method], $parameters);
+        }
+
+        return parent::__callStatic($method, $parameters);
     }
 }
