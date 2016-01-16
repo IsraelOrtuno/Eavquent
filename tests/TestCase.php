@@ -1,18 +1,7 @@
 <?php
 
-use Devio\Propertier\Property;
-use Faker\Generator as FakerGenerator;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\TestCase as TestCaseBase;
-use Illuminate\Database\Eloquent\Factory as EloquentFactory;
-
-class TestCase extends TestCaseBase
+class TestCase extends Orchestra\Testbench\TestCase
 {
-    use DatabaseMigrations;
-
-    protected $company;
-    protected $employee;
-
     /**
      * Setting up test
      */
@@ -20,81 +9,52 @@ class TestCase extends TestCaseBase
     {
         parent::setUp();
 
-        $this->artisan('key:generate');
-        $this->artisan('cache:clear');
-
-        $this->setUpDatabase();
-        $this->setUpFactories();
-        $this->setUpServiceprovider();
+        $this->withFactories(__DIR__ . '/factories');
+        $this->runMigrations();
     }
 
     /**
-     * Setting up database
-     */
-    protected function setUpDatabase()
-    {
-        $this->app['config']->set('database.default', 'sqlite');
-        $this->app['config']->set('database.connections.sqlite.database', ':memory:');
-
-        $this->artisan('migrate', [
-            '--path' => '../../../src/migrations'
-        ]);
-
-        $this->artisan('migrate', [
-            '--path' => '../../../tests/support/migrations'
-        ]);
-    }
-
-    /**
-     * Register the service provider and publishes the config.
-     */
-    protected function setUpServiceprovider()
-    {
-        $this->app->register('Devio\Propertier\PropertierServiceProvider');
-    }
-
-    /**
-     * Will load the model factories.
-     */
-    protected function setUpFactories()
-    {
-        $this->app->singleton(EloquentFactory::class, function ($app)
-        {
-            $faker = $app->make(FakerGenerator::class);
-
-            return EloquentFactory::construct($faker, __DIR__ . '/factories');
-        });
-    }
-
-    /**
-     * Creates the application.
+     * Define environment setup.
      *
-     * @return \Symfony\Component\HttpKernel\HttpKernelInterface
+     * @param  \Illuminate\Foundation\Application $app
+     * @return void
      */
-    public function createApplication()
+    protected function getEnvironmentSetUp($app)
     {
-        $app = require __DIR__ . '/../vendor/laravel/laravel/bootstrap/app.php';
+        // Setup default database to use sqlite :memory:
+        $app['config']->set('database.default', 'propertier-testing');
+        $app['config']->set('database.connections.propertier-testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
 
-        $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
-        return $app;
     }
 
-    public function setUpProperties()
+    /**
+     * Get package providers.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     * @return array
+     */
+    protected function getPackageProviders($app)
     {
-        $this->company = factory(Company::class)->create();
-        $this->employee = factory(Employee::class)->create();
+        return ['Devio\Propertier\PropertierServiceProvider'];
+    }
 
-        factory(Property::class)->create(['name' => 'foo']);
-        factory(Property::class)->create(['name' => 'bar']);
-        factory(Property::class)->create(['name' => 'baz']);
-        factory(Property::class)->create([
-                'name'   => 'qux',
-                'entity' => 'Employee']
+    /**
+     * Run database migrations.
+     */
+    protected function runMigrations()
+    {
+        // Migrating testing tables
+        $this->artisan(
+            'migrate', ['--realpath' => realpath(__DIR__ . '/support/migrations')]
         );
-        factory(Property::class)->create([
-                'name'   => 'quux',
-                'entity' => 'Employee']
+        // Migrating package tables
+        $this->artisan(
+            'migrate', ['--realpath' => realpath(__DIR__ . '/../src/migrations')]
         );
     }
 }
