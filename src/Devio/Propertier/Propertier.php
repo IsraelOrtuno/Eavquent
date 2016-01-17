@@ -78,12 +78,12 @@ trait Propertier
     }
 
     /**
-     * Overriding property reading.
+     * Overriding Eloquent getAttribute method will first read a property.
      *
-     * @param string $key
+     * @param $key
      * @return mixed
      */
-    public function __get($key)
+    public function getAttribute($key)
     {
         $manager = $this->newManagerQuery();
 
@@ -94,28 +94,29 @@ trait Propertier
         // If the property we are accesing corresponds to a any registered property
         // we will provide the value of this property if any. Otherwise, we will
         // access the parent Eloquent model and return its default behaviour.
-        return parent::__get($key);
+        return parent::getAttribute($key);
     }
 
     /**
-     * Override property setting.
+     * Overriding Eloquent setAttribute method will first set a property.
      *
      * @param $key
      * @param $value
-     * @return mixed
+     * @return Value
+     * @throws \Exception
      */
-    public function __set($key, $value)
+    public function setAttribute($key, $value)
     {
         $manager = $this->newManagerQuery();
 
-        if ($manager->isProperty($key) && ! static::isModelColumn($key)) {
+        if ($manager->isProperty($key) && ! $manager->isModelColumn($key)) {
             return $manager->setValue($key, $value);
         }
 
         // If the property to set is registered and does not correspond to any
         // model column we are free to set its value. Otherwise we will let
         // go the default Eloquent behaviour and return its value if any.
-        return parent::__set($key, $value);
+        return parent::setAttribute($key, $value);
     }
 
     /**
