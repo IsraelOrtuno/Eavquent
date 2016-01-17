@@ -106,7 +106,7 @@ class Manager
             throw new Exception("Setting a {$key} property that does not exist.");
         }
 
-        return $property->entity($this)->setValue($value);
+        return $property->entity($this->getEntity())->setValue($value);
     }
 
     /**
