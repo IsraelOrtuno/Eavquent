@@ -195,9 +195,11 @@ class Property extends Model
      */
     public function setOrPushValue($value)
     {
-        return $this->isMultivalue()
-            ? $this->pushValue($value)
-            : $this->setValue($value);
+        if ($this->isMultivalue()) {
+            return $this->pushValue($value);
+        }
+
+        return $this->setRelation('values', $value);
     }
 
     /**
