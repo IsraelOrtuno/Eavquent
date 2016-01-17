@@ -3,6 +3,7 @@
 namespace Devio\Propertier;
 
 use Illuminate\Support\ServiceProvider;
+use Devio\Propertier\Listeners\SavingValues;
 
 class PropertierServiceProvider extends ServiceProvider
 {
@@ -11,17 +12,16 @@ class PropertierServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $basePath = __DIR__ . '/../..';
+
         // Publishing the package configuration file and migrations. This
         // will make them available from the main application folders.
         // They both are tagged in case they have to run separetely.
         $this->publishes(
-            [__DIR__ . '/../../config/propertier.php' => config_path('propertier.php'),],
-            'config'
+            [$basePath . '/config/propertier.php' => config_path('propertier.php')], 'config'
         );
-
         $this->publishes(
-            [__DIR__ . '/../../migrations/' => database_path('migrations')],
-            'migrations'
+            [$basePath . '/migrations/' => database_path('migrations')], 'migrations'
         );
     }
 
@@ -32,6 +32,7 @@ class PropertierServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
         $this->registerProperties();
+        $this->registerEventListeners();
     }
 
     /**
@@ -53,5 +54,16 @@ class PropertierServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/propertier.php',
             'propertier'
         );
+    }
+
+    /**
+     * Register model event listeners.
+     */
+    protected function registerEventListeners()
+    {
+        $events = $this->app['events'];
+
+        // Listening for saving event on value models
+        $events->listen('eloquent.saving: ' . Value::class, [new SavingValues, 'handle']);
     }
 }
