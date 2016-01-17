@@ -249,6 +249,8 @@ class Property extends Model
     }
 
     /**
+     * Get the deletion queue.
+     *
      * @return array
      */
     public function getDeletionQueue()
