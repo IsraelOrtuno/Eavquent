@@ -69,6 +69,9 @@ class Value extends Model
     {
         with($instance = new static)->setAttribute('value', $value);
 
+        // We could use the relation associate() method here instead of setting
+        // every value separately. We are going this way as associate() sets
+        // the entity relation and causes infinite loop when using push().
         $instance->setAttribute($instance->entity()->getForeignKey(), $entity->getKey());
         $instance->setAttribute($instance->entity()->getMorphType(), $entity->getMorphClass());
         $instance->setAttribute($instance->property()->getForeignKey(), $property->getKey());
