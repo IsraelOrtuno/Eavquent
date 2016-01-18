@@ -38,6 +38,7 @@ class HasManyProperties extends HasMany
         // The collection of values related to the parent entity model will be
         // linked to the property models that are registered to the entity.
         // We can now return the properties collection with its values.
+        $values = new Collection;
         $results = parent::getResults()->keyBy('name');
 
         // If the parent is a non persisted model, we will just link an empty
@@ -47,9 +48,7 @@ class HasManyProperties extends HasMany
             $values = $this->getParent()->values;
         }
 
-        return $this->linkValues(
-            $results, isset($values) ? $values : new Collection
-        );
+        return $this->linkValues($results, $values);
     }
 
     /**
