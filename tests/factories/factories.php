@@ -1,7 +1,7 @@
 <?php
 
 use Devio\Propertier\Property;
-use Devio\Propertier\PropertyValue;
+use Devio\Propertier\Value;
 
 $factory->define(Company::class, function ($faker)
 {
@@ -25,7 +25,7 @@ $factory->define(Property::class, function ($faker)
     ];
 });
 
-$factory->define(PropertyValue::class, function ($faker)
+$factory->define(Value::class, function ($faker)
 {
     return [
         'value' => $faker->word
