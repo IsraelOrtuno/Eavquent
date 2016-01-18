@@ -11,16 +11,14 @@ class PropertierServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $basePath = __DIR__ . '/../..';
-
         // Publishing the package configuration file and migrations. This
         // will make them available from the main application folders.
         // They both are tagged in case they have to run separetely.
         $this->publishes(
-            [$basePath . '/config/propertier.php' => config_path('propertier.php')], 'config'
+            [$this->base('config/propertier.php') => config_path('propertier.php')], 'config'
         );
         $this->publishes(
-            [$basePath . '/migrations/' => database_path('migrations')], 'migrations'
+            [$this->base('migrations/') => database_path('migrations')], 'migrations'
         );
     }
 
@@ -48,9 +46,17 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/propertier.php',
-            'propertier'
-        );
+        $this->mergeConfigFrom($this->base('config/propertier.php'), 'propertier');
+    }
+
+    /**
+     * Get the base path.
+     *
+     * @param $path
+     * @return string
+     */
+    protected function base($path)
+    {
+        return __DIR__ . "/../../{$path}";
     }
 }
