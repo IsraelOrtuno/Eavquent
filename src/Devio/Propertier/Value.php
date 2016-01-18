@@ -118,7 +118,7 @@ class Value extends Model
      * @param $property
      * @param $entity
      */
-    protected function setParents($property, $entity)
+    public function setParents($property, $entity)
     {
         $this->parentProperty = $property;
         $this->parentEntity = $entity;
