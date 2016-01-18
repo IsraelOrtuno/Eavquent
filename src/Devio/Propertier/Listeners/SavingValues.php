@@ -10,7 +10,7 @@ class SavingValues
      * Handling before saving.
      *
      * @param $model
-     * @return mixed
+     * @return bool
      */
     public function handle($model)
     {
