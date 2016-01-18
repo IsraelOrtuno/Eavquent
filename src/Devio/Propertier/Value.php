@@ -24,6 +24,20 @@ class Value extends Model
     protected $table = 'property_values';
 
     /**
+     * The parent property.
+     *
+     * @var Property
+     */
+    protected $parentProperty = null;
+
+    /**
+     * The parent entity.
+     *
+     * @var Propertier
+     */
+    protected $parentEntity = null;
+
+    /**
      * Booting the model.
      */
     public static function boot()
@@ -90,7 +104,24 @@ class Value extends Model
         $instance->setAttribute($instance->entity()->getMorphType(), $entity->getMorphClass());
         $instance->setAttribute($instance->property()->getForeignKey(), $property->getKey());
 
+        // In order to avoid the issue mentioned above, we will set the instances
+        // of property and entity as parents of this value model. This will let
+        // us access these objects in future without setting them as relation.
+        $instance->setParents($property, $entity);
+
         return $instance;
+    }
+
+    /**
+     * Set the value parents.
+     *
+     * @param $property
+     * @param $entity
+     */
+    protected function setParents($property, $entity)
+    {
+        $this->parentProperty = $property;
+        $this->parentEntity = $entity;
     }
 
     /**
@@ -101,5 +132,25 @@ class Value extends Model
     public function setValue($value)
     {
         $this->setAttribute('value', $value);
+    }
+
+    /**
+     * Get the parent property.
+     *
+     * @return Property
+     */
+    public function getParentProperty()
+    {
+        return $this->parentProperty;
+    }
+
+    /**
+     * Get the parent entity.
+     *
+     * @return Propertier
+     */
+    public function getParentEntity()
+    {
+        return $this->parentEntity;
     }
 }
