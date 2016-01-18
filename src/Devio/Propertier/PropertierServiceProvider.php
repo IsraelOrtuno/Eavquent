@@ -3,7 +3,6 @@
 namespace Devio\Propertier;
 
 use Illuminate\Support\ServiceProvider;
-use Devio\Propertier\Listeners\SavingValues;
 
 class PropertierServiceProvider extends ServiceProvider
 {
@@ -32,7 +31,6 @@ class PropertierServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
         $this->registerProperties();
-        $this->registerEventListeners();
     }
 
     /**
@@ -54,16 +52,5 @@ class PropertierServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/propertier.php',
             'propertier'
         );
-    }
-
-    /**
-     * Register model event listeners.
-     */
-    protected function registerEventListeners()
-    {
-        $events = $this->app['events'];
-
-        // Listening for saving event on value models
-        $events->listen('eloquent.saving: ' . Value::class, [new SavingValues, 'handle']);
     }
 }

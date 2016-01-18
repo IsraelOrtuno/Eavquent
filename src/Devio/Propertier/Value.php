@@ -3,6 +3,7 @@
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Listeners\SavingValues;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -21,6 +22,19 @@ class Value extends Model
      * @var string
      */
     protected $table = 'property_values';
+
+    /**
+     * Booting the model.
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        // Setting up the model event listeners. Much more elegant would be if
+        // placed into the Service Provider. As this class is considered as
+        // abstract, we have to set up the listeners at children classes.
+        static::saving(SavingValues::class . '@handle');
+    }
 
     /**
      * Relationship to the properties table.
