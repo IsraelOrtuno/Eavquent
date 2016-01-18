@@ -40,7 +40,16 @@ class HasManyProperties extends HasMany
         // We can now return the properties collection with its values.
         $results = parent::getResults()->keyBy('name');
 
-        return $this->linkValues($results, $this->getParent()->values);
+        // If the parent is a non persisted model, we will just link an empty
+        // collection as there it's pointless of fetching the values of an
+        // unexisting entity. If exists we will just link the existing.
+        if ($this->getParent()->exists) {
+            $values = $this->getParent()->values;
+        }
+
+        return $this->linkValues(
+            $results, isset($values) ? $values : new Collection
+        );
     }
 
     /**
