@@ -20,10 +20,8 @@ class ValueTest extends TestCase
     /** @test */
     public function it_resolves_a_value_instance_into_value_type_object()
     {
-        $entity = factory(Company::class)->make();
-        $property = factory(Property::class)->make();
-        $entity->setAttribute('id', 1);
-        $property->setAttribute('id', 1);
+        $entity = factory(Company::class)->make(['id' => 1]);
+        $property = factory(Property::class)->make(['id' => 1]);
 
         $value = Value::resolveValue($property, $entity, 'foo');
 
