@@ -157,12 +157,10 @@ class Property extends Model
      */
     protected function createNewValue($value)
     {
-        // First we need to create a raw Value model instance and fill up all
-        // its values. Once done, we've to transform it to a specific value
-        // type passing the value model and the property to the resolver.
-        $attributes = Value::createValueAttributes($this, $this->getEntity(), $value);
-
-        $newValue = (new Resolver)->value($this, $attributes);
+        // We will create a new Value instance already resolved to the property
+        // it is related to using the value resolver from the abstract Value
+        // class. We set a fully transformed value object to the relation.
+        $newValue = Value::resolveValue($this, $this->getEntity(), $value);
 
         // After creating a new property value, we have to include it manually
         // into the property values relation collection. The "push" method
@@ -170,21 +168,6 @@ class Property extends Model
         $this->setOrPushValue($newValue);
 
         return $newValue;
-    }
-
-    /**
-     * Pushes a new value into the values collection.
-     *
-     * @param Value $value
-     * @return $this
-     */
-    public function pushValue(Value $value)
-    {
-        $this->initializeValues();
-
-        $this->values->push($value);
-
-        return $this;
     }
 
     /**
@@ -200,6 +183,21 @@ class Property extends Model
         }
 
         return $this->setRelation('values', $value);
+    }
+
+    /**
+     * Pushes a new value into the values collection.
+     *
+     * @param Value $value
+     * @return $this
+     */
+    public function pushValue(Value $value)
+    {
+        $this->initializeValues();
+
+        $this->values->push($value);
+
+        return $this;
     }
 
     /**

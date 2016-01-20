@@ -92,14 +92,14 @@ class Value extends Model
      * @param $value
      * @return static
      */
-    public static function createValueAttributes($property, $entity, $value)
+    public static function resolveValue($property, $entity, $value)
     {
         with($instance = new static)->setAttribute('value', $value);
 
         $instance->entity()->associate($entity);
         $instance->property()->associate($property);
 
-        return $instance->getAttributes();
+        return (new Resolver)->value($property, $instance->getAttributes());
     }
 
     /**
