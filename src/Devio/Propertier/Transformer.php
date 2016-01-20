@@ -47,7 +47,7 @@ class Transformer
      * @param $property
      * @return PropertyValue
      */
-    protected function transformValues($values, $property)
+    public function transformValues($values, $property)
     {
         $resolver = $this->getResolver();
         // We have to iterate every value in the collection to transform it from
@@ -72,7 +72,7 @@ class Transformer
      */
     public function getResolver()
     {
-        return $this->resolver = $this->resolver ? : new Resolver();
+        return $this->resolver = $this->resolver ? : new Resolver;
     }
 
     /**

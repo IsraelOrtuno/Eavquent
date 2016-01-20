@@ -2,19 +2,20 @@
 
 namespace Devio\Propertier\Listeners;
 
-use Illuminate\Contracts\Queue\EntityNotFoundException;
+use Devio\Propertier\Exceptions\EntityNotFoundException;
 
-class SavingValues
+class SavingValue
 {
     /**
      * Handling before saving.
      *
      * @param $model
      * @return bool
+     * @throws EntityNotFoundException
      */
     public function handle($model)
     {
-        $foreignKey = $model->entity()->getForeignKey();
+        $foreignKey = 'entity_id'; // $model->entity()->getForeignKey();
 
         // We will stop checking if there is any entity id set into the foreign
         // key that corresponds to the polymorphic relation. If this field is
@@ -26,7 +27,7 @@ class SavingValues
         // In case the entity was no existing before creating this value, we have
         // to manually set the entity id of the polymorphic relationship or we
         // would store a value model that would belong to an unknown entity.
-        if (! is_null($entity = $model->getParentEntity())) {
+        if (! is_null($entity = $model->getEntity())) {
             $model->setAttribute($foreignKey, $entity->getKey());
             return true;
         }

@@ -39,7 +39,7 @@ class Resolver
             throw new RuntimeException("Property class {$class} not found");
         }
 
-        return $class::createInstance($attributes, $exists);
+        return $class::createInstanceFrom($property, $attributes, $exists);
     }
 
     /**

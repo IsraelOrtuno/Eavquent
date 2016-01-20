@@ -58,8 +58,8 @@ class Property extends Model
      */
     public function getValue()
     {
-        if (is_null($values = $this->values)) {
-            return $values;
+        if (! count($values = $this->values)) {
+            return null;
         }
 
         // Will return null if there is no value for the property. If the property
@@ -160,9 +160,9 @@ class Property extends Model
         // First we need to create a raw Value model instance and fill up all
         // its values. Once done, we've to transform it to a specific value
         // type passing the value model and the property to the resolver.
-        $rawValue = Value::createValue($this, $this->getEntity(), $value);
+        $attributes = Value::createValueAttributes($this, $this->getEntity(), $value);
 
-        $newValue = (new Resolver)->value($this, $rawValue->getAttributes());
+        $newValue = (new Resolver)->value($this, $attributes);
 
         // After creating a new property value, we have to include it manually
         // into the property values relation collection. The "push" method

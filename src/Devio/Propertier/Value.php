@@ -3,7 +3,7 @@
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
-use Devio\Propertier\Listeners\SavingValues;
+use Devio\Propertier\Listeners\SavingValue;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -31,13 +31,6 @@ class Value extends Model
     protected $parentProperty = null;
 
     /**
-     * The parent entity.
-     *
-     * @var Propertier
-     */
-    protected $parentEntity = null;
-
-    /**
      * Booting the model.
      */
     public static function boot()
@@ -47,7 +40,7 @@ class Value extends Model
         // Setting up the model event listeners. Much more elegant would be if
         // placed into the Service Provider. As this class is considered as
         // abstract, we have to set up the listeners at children classes.
-        static::saving(SavingValues::class . '@handle');
+        static::saving(SavingValue::class . '@handle');
     }
 
     /**
@@ -73,14 +66,20 @@ class Value extends Model
     /**
      * Creates a new instance.
      *
+     * @param $property
      * @param array $attributes
      * @param $exists
      * @return static
      */
-    public static function createInstance(array $attributes, $exists)
+    public static function createInstanceFrom($property, array $attributes, $exists)
     {
         with($instance = new static)->setRawAttributes($attributes);
         $instance->exists = $exists;
+
+        // In order to avoid the infinite loop problem, we will set the property
+        // instance as parent of this value model. This will help us access to
+        // it in future without having to set it as a regular relationship.
+        $instance->setProperty($property);
 
         return $instance;
     }
@@ -93,35 +92,14 @@ class Value extends Model
      * @param $value
      * @return static
      */
-    public static function createValue($property, $entity, $value)
+    public static function createValueAttributes($property, $entity, $value)
     {
         with($instance = new static)->setAttribute('value', $value);
 
-        // We could use the relation associate() method here instead of setting
-        // every value separately. We are going this way as associate() sets
-        // the entity relation and causes infinite loop when using push().
-        $instance->setAttribute($instance->entity()->getForeignKey(), $entity->getKey());
-        $instance->setAttribute($instance->entity()->getMorphType(), $entity->getMorphClass());
-        $instance->setAttribute($instance->property()->getForeignKey(), $property->getKey());
+        $instance->entity()->associate($entity);
+        $instance->property()->associate($property);
 
-        // In order to avoid the issue mentioned above, we will set the instances
-        // of property and entity as parents of this value model. This will let
-        // us access these objects in future without setting them as relation.
-        $instance->setParents($property, $entity);
-
-        return $instance;
-    }
-
-    /**
-     * Set the value parents.
-     *
-     * @param $property
-     * @param $entity
-     */
-    public function setParents($property, $entity)
-    {
-        $this->parentProperty = $property;
-        $this->parentEntity = $entity;
+        return $instance->getAttributes();
     }
 
     /**
@@ -135,11 +113,21 @@ class Value extends Model
     }
 
     /**
+     * Set the parent property.
+     *
+     * @param $property
+     */
+    public function setProperty($property)
+    {
+        $this->parentProperty = $property;
+    }
+
+    /**
      * Get the parent property.
      *
      * @return Property
      */
-    public function getParentProperty()
+    public function getProperty()
     {
         return $this->parentProperty;
     }
@@ -149,8 +137,8 @@ class Value extends Model
      *
      * @return Propertier
      */
-    public function getParentEntity()
+    public function getEntity()
     {
-        return $this->parentEntity;
+        return $this->getProperty()->getEntity();
     }
 }
