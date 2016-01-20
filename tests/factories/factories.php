@@ -1,7 +1,7 @@
 <?php
 
-use Devio\Propertier\Property;
 use Devio\Propertier\Value;
+use Devio\Propertier\Property;
 
 $factory->define(Company::class, function ($faker)
 {
@@ -17,7 +17,7 @@ $factory->define(Employee::class, function ($faker)
     ];
 });
 
-$factory->define(Property::class, function ($faker)
+$factory->define(Property::class, function ()
 {
     return [
         'type'   => 'string',
