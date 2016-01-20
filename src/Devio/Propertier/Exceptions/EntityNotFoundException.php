@@ -1,5 +1,7 @@
 <?php
 
-class InvalidEntityException extends \Exception
+namespace Devio\Propertier\Exceptions;
+
+class EntityNotFoundException extends \Exception
 {
 }
