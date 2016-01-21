@@ -81,7 +81,7 @@ class Value extends Model
         // Checking if this object is an instance of ::self would let us know
         // it this object has been already casted. A little bit tricky but
         // this will prevent errors if casting is called more than once.
-        if (get_class($this) != Value::class) {
+        if ($this->isCasted()) {
             return $this;
         }
 
@@ -96,6 +96,16 @@ class Value extends Model
         $cast->setProperty($property);
 
         return $cast;
+    }
+
+    /**
+     * Check if the value is already casted.
+     *
+     * @return $this
+     */
+    protected function isCasted()
+    {
+        return get_class($this) != Value::class;
     }
 
     /**
