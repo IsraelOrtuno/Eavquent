@@ -4,6 +4,8 @@ namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Devio\Propertier\Exceptions\EntityNotFoundException;
+use Illuminate\Support\Collection as BaseCollection;
 
 class Property extends Model
 {
@@ -29,16 +31,6 @@ class Property extends Model
     public $fillable = ['type', 'name', 'multivalue', 'entity', 'default_value'];
 
     /**
-     * The property values relationship.
-     *
-     * @return mixed
-     */
-    public function values()
-    {
-        return $this->hasMany(Value::class);
-    }
-
-    /**
      * Replicates a model and set it as existing.
      *
      * @return mixed
@@ -51,6 +43,59 @@ class Property extends Model
         return $instance;
     }
 
+    public function loadValues(Collection $values)
+    {
+        if ($this->relationLoaded('values')) {
+            throw new \RuntimeException('Values relation is already loaded.');
+        }
+
+        $values = $this->cast($values);
+
+        // If the property already contains a values relationship, we do not
+        // want to interfiere, this will be a breaking error. If not will
+        // initialize the relation with the values that belong to it.
+        $values = $this->extractValues($values);
+
+        // If the property is multivalue, we will set the values to the "values"
+        // relation. Otherwise we will pick the first value of the collection
+        // and set it to the "value" relation as it accepts a single value.
+        if ($this->isMultivalue()) {
+            return $this->setRelation('values', $values);
+        } else {
+            return $this->setRelation('value', $values->first());
+        }
+    }
+
+    /**
+     * Cast either a value or a collection.
+     *
+     * @param $values
+     * @return mixed
+     */
+    public function cast($values)
+    {
+        if (! $values instanceof BaseCollection) {
+            return $values->castObjectTo($this);
+        }
+
+        return $values->map(function ($value) {
+            return $value->castObjectTo($this);
+        });
+    }
+
+    /**
+     * Extract only the values of this property.
+     *
+     * @param Collection $values
+     * @return static
+     */
+    protected function extractValues(Collection $values)
+    {
+        return $values->filter(function($item) {
+            return $item->{$this->getForeignKey()} == $this->getKey();
+        });
+    }
+
     /**
      * Get the property value as single value or collection of values.
      *
@@ -58,16 +103,33 @@ class Property extends Model
      */
     public function getValue()
     {
-        if (! count($values = $this->values)) {
-            return null;
+        if (is_null($value = $this->getValueObject())) {
+            return $value;
         }
 
-        // Will return null if there is no value for the property. If the property
-        // is registered as a multi values property, we will return a collection
-        // of values, otherwise we can return the plain object content instead.
-        return $this->isMultivalue()
-            ? $values->pluck('value')
-            : $values->getAttribute('value');
+        // A collection of values means this property is multivalue. As of it
+        // we'll map the collection in to trigger the value casting or its
+        // mutators. Will return a set of plain values in a collection.
+        if ($value instanceof Collection) {
+            return $value->map(function ($item) {
+                return $item->getAttribute('value');
+            });
+        }
+
+        return $value->getAttribute('value');
+    }
+
+    /**
+     * Get the raw value relationship. It could be null, a Collection or
+     * a single value Object.
+     *
+     * @return mixed
+     */
+    public function getValueObject()
+    {
+        $relation = $this->isMultivalue() ? 'values' : 'value';
+
+        return $this->getRelationValue($relation);
     }
 
     /**
@@ -75,17 +137,17 @@ class Property extends Model
      *
      * @param Value $value
      * @return $this
-     * @throws \Exception
+     * @throws EntityNotFoundException
      */
     public function setValue($value)
     {
-        if (is_null($this->getEntity())) {
-            throw new \Exception('No entity defined on property');
-        }
-
-        return ! $this->isMultivalue()
-            ? $this->setSingleValue($value)
-            : $this->setMultiValue($value);
+//        if (is_null($this->getEntity())) {
+//            throw new EntityNotFoundException('No entity defined on property');
+//        }
+//
+//        return ! $this->isMultivalue()
+//            ? $this->setSingleValue($value)
+//            : $this->setMultiValue($value);
     }
 
     /**
@@ -96,8 +158,8 @@ class Property extends Model
      */
     public function setSingleValue($value)
     {
-        if ($propertyValue = $this->values) {
-            $propertyValue->setValue($value);
+        if ($this->values instanceof self) {
+            $this->values->setValue($value);
         } else {
             $propertyValue = $this->createNewValue($value);
         }
