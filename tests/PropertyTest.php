@@ -2,14 +2,20 @@
 
 use Devio\Propertier\Value;
 use Devio\Propertier\Property;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
-class PropertyTest extends TestCase
+class PropertyTest extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        Company::setModelColumns(['name']);
+    }
+
     /** @test */
     public function get_value_provides_null_when_no_values_found()
     {
-        $property = factory(Property::class)->make();
+        $property = new Property;
 
         $this->assertNull($property->getValue());
     }
@@ -17,8 +23,8 @@ class PropertyTest extends TestCase
     /** @test */
     public function get_value_provides_a_plain_value_when_not_multivalue()
     {
-        $property = factory(Property::class)->make();
-        $property->setRelation('values', new Value(['value' => 'foo']));
+        $property = new Property;
+        $property->setRelation('value', new Value(['value' => 'foo']));
 
         $value = $property->getValue();
 
@@ -28,9 +34,10 @@ class PropertyTest extends TestCase
     /** @test */
     public function get_value_provides_an_array_when_multivalue()
     {
-        $property = factory(Property::class)->make(['multivalue' => true]);
-        $property->setRelation('values', collect([
-            ['value' => 'foo'], ['value' => 'bar']
+        $property = new Property(['multivalue' => true]);
+        $property->setRelation('values', new Collection([
+            new Value(['value' => 'foo']),
+            new Value(['value' => 'bar'])
         ]));
 
         $value = $property->getValue();
@@ -43,7 +50,7 @@ class PropertyTest extends TestCase
     /** @test */
     public function it_can_replicate_an_existing_property()
     {
-        $property = factory(Property::class)->make();
+        $property = new Property;
         $property->exists = true;
 
         $result = $property->replicateExisting();
