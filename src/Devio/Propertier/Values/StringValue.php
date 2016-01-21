@@ -6,4 +6,12 @@ use Devio\Propertier\Value as PropertyValue;
 
 class StringValue extends PropertyValue
 {
+    /**
+     * Value casting.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'value' => 'string'
+    ];
 }

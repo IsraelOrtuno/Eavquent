@@ -7,13 +7,11 @@ use Devio\Propertier\Value as PropertyValue;
 class IntegerValue extends PropertyValue
 {
     /**
-     * Casting to integer before getting.
+     * Value casting.
      *
-     * @param $value
-     * @return int
+     * @var array
      */
-    public function getValueAttribute($value)
-    {
-        return (int)$value;
-    }
+    protected $casts = [
+        'value' => 'integer'
+    ];
 }
