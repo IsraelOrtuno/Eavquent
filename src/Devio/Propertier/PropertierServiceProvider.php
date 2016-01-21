@@ -28,17 +28,17 @@ class PropertierServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
-        $this->registerProperties();
+        $this->registerValueTypes();
     }
 
     /**
      * Will register the configured properties into the service container.
      */
-    protected function registerProperties()
+    protected function registerValueTypes()
     {
         $properties = $this->app['config']->get('propertier.properties');
 
-        Resolver::register($properties);
+        Factory::register($properties);
     }
 
     /**
