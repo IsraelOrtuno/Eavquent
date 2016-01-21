@@ -1,8 +1,11 @@
 <?php
 
+use Mockery as m;
 use Devio\Propertier\Value;
 use Devio\Propertier\Property;
+use Devio\Propertier\Values\StringValue;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as BaseCollection;
 
 class PropertyTest extends PHPUnit_Framework_TestCase
 {
@@ -10,6 +13,47 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         Company::setModelColumns(['name']);
+    }
+
+    /** @test */
+    public function it_loads_a_collection_of_values()
+    {
+        with($plainProperty = new Property)->setRawAttributes(['id' => 1]);
+        with($multiProperty = new Property)->setRawAttributes(['id' => 2, 'multivalue' => true]);
+        $plainProperty->loadValues($this->getValuesCollection());
+        $multiProperty->loadValues($this->getValuesCollection());
+
+        // Checking plain
+        $this->assertNull($plainProperty->values);
+        $this->assertInstanceOf(StringValue::class, $plainProperty->value);
+        $this->assertEquals('utah', $plainProperty->getValue());
+
+        // Checking multi
+        $value = $multiProperty->getValue()->toArray();
+        $this->assertNull($multiProperty->value);
+        $this->assertInstanceOf(Collection::class, $multiProperty->values);
+        $this->assertCount(2, $value);
+        $this->assertTrue(in_array('omaha', $value));
+        $this->assertTrue(in_array('gold', $value));
+        $this->assertFalse(in_array('utah', $value));
+    }
+
+//    /** @test */
+    public function it_can_cast_values()
+    {
+        $property = new Property(['type' => 'string']);
+
+        // Single value
+        $value = m::mock(Value::class);
+        $value->shouldReceive('castObjectTo')->with($property)->once();
+        $property->cast($value);
+
+        // Collection of values
+        $value = m::mock(Value::class);
+        $values = collect([$value, $value]);
+        $value->shouldReceive('castObjectTo')->with($property)->twice();
+
+        $property->cast($values);
     }
 
     /** @test */
@@ -24,10 +68,13 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     public function it_can_get_a_single_value()
     {
         $property = new Property;
-        $property->setRelation('value', new Value(['value' => 'foo']));
+        $value = m::mock(Value::class);
+        $value->shouldReceive('getAttribute')->once()->andReturn('foo');
+        $property->setRelation('value', $value);
 
         $value = $property->getValue();
 
+        $this->assertNotInstanceOf(BaseCollection::class, $value);
         $this->assertEquals('foo', $value);
     }
 
@@ -35,10 +82,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     public function it_can_get_a_multivalue()
     {
         $property = new Property(['multivalue' => true]);
-        $property->setRelation('values', new Collection([
-            new Value(['value' => 'foo']),
-            new Value(['value' => 'bar'])
-        ]));
+        $value = m::mock(Value::class);
+        $value->shouldReceive('getAttribute')->twice()->andReturn('foo', 'bar');
+        $property->setRelation('values', new Collection([$value, $value]));
 
         $value = $property->getValue();
 
@@ -57,5 +103,31 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($result, $property);
         $this->assertTrue($result->exists);
+    }
+
+    protected function getValuesCollection()
+    {
+        return new Collection([
+            new ValueCastingStub(['property_id' => 1, 'value' => 'utah']),
+            new ValueCastingStub(['property_id' => 2, 'value' => 'omaha']),
+            new ValueCastingStub(['property_id' => 2, 'value' => 'gold']),
+            new ValueCastingStub(['property_id' => 3, 'value' => 'juno']),
+            new ValueCastingStub(['property_id' => 3, 'value' => 'sword'])
+        ]);
+    }
+}
+
+class ValueCastingStub extends Value
+{
+    public function getFactory()
+    {
+        $mock = m::mock(Factory::class);
+        $mock->shouldReceive('property')->once()->andReturn(StringValue::class);
+        return $mock;
+    }
+
+    protected function isCasted()
+    {
+        return false;
     }
 }
