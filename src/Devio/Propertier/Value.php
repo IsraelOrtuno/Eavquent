@@ -31,6 +31,13 @@ class Value extends Model
     protected $parentProperty = null;
 
     /**
+     * The factory instance.
+     *
+     * @var Factory
+     */
+    protected $factory;
+
+    /**
      * Booting the model.
      */
     public static function boot()
@@ -64,42 +71,31 @@ class Value extends Model
     }
 
     /**
-     * Creates a new instance.
+     * Casting a raw value object to a value type.
      *
-     * @param $property
-     * @param array $attributes
-     * @param $exists
-     * @return static
+     * @param Property $property
+     * @return self
      */
-    public static function createInstanceFrom($property, array $attributes, $exists)
+    public function castObjectTo(Property $property)
     {
-        with($instance = new static)->setRawAttributes($attributes);
-        $instance->exists = $exists;
+        // Checking if this object is an instance of ::self would let us know
+        // it this object has been already casted. A little bit tricky but
+        // this will prevent errors if casting is called more than once.
+        if (get_class($this) != Value::class) {
+            return $this;
+        }
 
-        // In order to avoid the infinite loop problem, we will set the property
-        // instance as parent of this value model. This will help us access to
-        // it in future without having to set it as a regular relationship.
-        $instance->setProperty($property);
+        $cast = $this->getFactory()->property($property);
 
-        return $instance;
-    }
+        // Once we have guessed what's the value object we are casting to, lets
+        // instantiate and make it look like a copy of the current model. It
+        // will be an exact copy of the base model into a different class.
+        with($cast = new $cast)->setRawAttributes($this->getAttributes());
+        $cast->exists = $this->exists;
 
-    /**
-     * Create a new value instance related to property and entity.
-     *
-     * @param $property
-     * @param $entity
-     * @param $value
-     * @return static
-     */
-    public static function resolveValue($property, $entity, $value)
-    {
-        with($instance = new static)->setAttribute('value', $value);
+        $cast->setProperty($property);
 
-        $instance->entity()->associate($entity);
-        $instance->property()->associate($property);
-
-        return (new Resolver)->value($property, $instance->getAttributes());
+        return $cast;
     }
 
     /**
@@ -140,5 +136,25 @@ class Value extends Model
     public function getEntity()
     {
         return $this->getProperty()->getEntity();
+    }
+
+    /**
+     * Set the value factory.
+     *
+     * @param $factory
+     */
+    public function setFactory($factory)
+    {
+        $this->factory = $factory;
+    }
+
+    /**
+     * Get the value factory or a new instance.
+     *
+     * @return Factory
+     */
+    public function getFactory()
+    {
+        return $this->factory ?: new Factory;
     }
 }

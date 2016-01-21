@@ -1,36 +1,38 @@
 <?php
 
+use Mockery as m;
 use Devio\Propertier\Value;
+use Devio\Propertier\Factory;
 use Devio\Propertier\Property;
 use Devio\Propertier\Values\StringValue;
+use Devio\Propertier\Values\IntegerValue;
 
-class ValueTest extends TestCase
+class ValueTest extends PHPUnit_Framework_TestCase
 {
-    /** @test */
-    public function it_creates_a_new_value_linked_to_property()
-    {
-        $property = factory(Property::class)->make();
-        $value = Value::createInstanceFrom($property, ['value' => 'foo'], true);
-
-        $this->assertTrue($value->exists);
-        $this->assertEquals('foo', $value->value);
-        $this->assertEquals($property, $value->getProperty());
+    public function tearDown() {
+        m::close();
     }
 
     /** @test */
-    public function it_resolves_a_value_instance_into_value_type_object()
+    public function it_casts_a_value_to_a_given_value_type_object()
     {
-        $entity = factory(Company::class)->make(['id' => 1]);
-        $property = factory(Property::class)->make(['id' => 1]);
+        $factory = m::mock(Factory::class);
+        $value = new Value();
+        $value->setFactory($factory);
+        $property = new Property(['type' => 'integer']);
 
-        $value = Value::resolveValue($property, $entity, 'foo');
+        $factory->shouldReceive('property')->twice()->andReturn(IntegerValue::class);
 
-        $this->assertInstanceOf(StringValue::class, $value);
+        $this->assertInstanceOf(IntegerValue::class, $value->castObjectTo($property));
+        $this->assertEquals($value->getAttributes(), $value->castObjectTo($property)->getAttributes());
+    }
 
-        $this->assertNotNull($value->getAttribute('entity_type'));
-        $this->assertNotNull($value->getAttribute('entity_id'));
-        $this->assertNotNull($value->getAttribute('property_id'));
-        $this->assertEquals($property, $value->getProperty());
-        $this->assertEquals('foo', $value->getAttribute('value'));
+    /** @test */
+    public function it_does_try_to_cast_a_casted_value()
+    {
+        $value = new StringValue();
+        $property = new Property(['type' => 'integer']);
+
+        $this->assertInstanceOf(StringValue::class, $value->castObjectTo($property));
     }
 }

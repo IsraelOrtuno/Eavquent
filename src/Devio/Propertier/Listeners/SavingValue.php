@@ -15,7 +15,7 @@ class SavingValue
      */
     public function handle($model)
     {
-        $foreignKey = 'entity_id'; // $model->entity()->getForeignKey();
+        $foreignKey = 'entity_id'; // $model->entity()->getForeignKey(); TODO
 
         // We will stop checking if there is any entity id set into the foreign
         // key that corresponds to the polymorphic relation. If this field is
@@ -32,6 +32,6 @@ class SavingValue
             return true;
         }
 
-        throw new EntityNotFoundException;
+        throw new EntityNotFoundException('Storing value without related entity.');
     }
 }

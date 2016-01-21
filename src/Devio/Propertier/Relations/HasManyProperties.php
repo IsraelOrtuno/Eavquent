@@ -2,7 +2,6 @@
 
 namespace Devio\Propertier\Relations;
 
-use Devio\Propertier\ValueLinker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,38 +28,29 @@ class HasManyProperties extends HasMany
     }
 
     /**
-     * Get the relation results with linked values.
+     * Get the relation results with loaded values.
      *
      * @return mixed
      */
     public function getResults()
     {
-        // The collection of values related to the parent entity model will be
-        // linked to the property models that are registered to the entity.
-        // We can now return the properties collection with its values.
-        $values = new Collection;
-        $results = parent::getResults()->keyBy('name');
-
-        // If the parent is a non persisted model, we will just link an empty
-        // collection as there it's pointless of fetching the values of an
-        // unexisting entity. If exists we will just link the existing.
-        if ($this->getParent()->exists) {
-            $values = $this->getParent()->values;
+        // This will avoid loading the values relation when no properties were
+        // found for the current entity. A bit of performance optimization.
+        if (! count($properties = parent::getResults())) {
+            return $properties;
         }
 
-        return $this->linkValues($results, $values);
-    }
+        $values = $this->getParent()->exists ?
+            $this->getParent()->values : new Collection;
 
-    /**
-     * Link transformed values to properties.
-     *
-     * @param $properties
-     * @param $values
-     * @return mixed
-     */
-    protected function linkValues($properties, $values)
-    {
-        return ValueLinker::make($properties, $values)->linkAndTransform();
+        // Loading the values for every property. This task will be automatically
+        // run by the property class. We need to pass the collection of values
+        // this entity. After return the name keyed properties collection.
+        foreach ($properties as $property) {
+            $property->loadValues($values);
+        }
+
+        return $properties->keyby('name');
     }
 
     /**
@@ -86,22 +76,22 @@ class HasManyProperties extends HasMany
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
-        // We first have to load the entity values relation which will fetch
-        // all the values available for every entity model. We can now use
-        // these values to link them to the right property of the model.
-        with(new Collection($models))->load('values');
+        // We will only load the values relation for all the models if there is
+        // at least one property registered for them. It is pointless to load
+        // the values if there aren't properties so we improve performance.
+        if (count($results)) {
+            with(new Collection($models))->load('values');
+        }
 
         foreach ($models as $model) {
-            // We have to get a clone of every property and get its values linked
-            // for loop iteration. The relation we are setting will include the
-            // property and its values already linked simulating eagerloading.
-            $linked = $results->map(function ($result) {
-                return $result->replicateExisting();
-            })->keyBy('name');
+            $properties = $results->map(function ($property) use ($model) {
+                // Replicating the existing property will avoid the problem of
+                // many enities pointing to the same property object. Every
+                // entity should have its stand-alone property instances.
+                return $property->replicateExisting()->loadValues($model->values);
+            });
 
-            $model->setRelation($relation, $linked);
-
-            $this->linkValues($model->properties, $model->values);
+            $model->setRelation($relation, $properties->keyBy('name'));
         }
 
         return $models;
