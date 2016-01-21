@@ -21,7 +21,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function get_value_provides_a_plain_value_when_not_multivalue()
+    public function it_can_get_a_single_value()
     {
         $property = new Property;
         $property->setRelation('value', new Value(['value' => 'foo']));
@@ -32,7 +32,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function get_value_provides_an_array_when_multivalue()
+    public function it_can_get_a_multivalue()
     {
         $property = new Property(['multivalue' => true]);
         $property->setRelation('values', new Collection([
