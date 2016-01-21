@@ -32,19 +32,19 @@ class Manager
      */
     public function isProperty($key)
     {
-        // Checking if the key corresponds to any comlumn in the main entity
-        // table. If there is a match, means the key is an existing model
-        // attribute which value will be always taken before property.
-        if (in_array($key, $this->getModelColumns())) {
+        // Checking if the key corresponds to any attribute of the main entity or
+        // any relationship. If there's a match we'll we cannot assume they may
+        // ever be a property as them are part of the core so more important.
+        if ($this->getEntity()->getRelationValue($key) ||
+            in_array($key, $this->getModelColumns())
+        ) {
             return false;
         }
 
         // $key will be property when it does not belong to any relationship
         // name and it also exists into the entity properties collection.
         // This way it won't interfiere with the base model behaviour.
-        return is_null($this->getEntity()->getRelationValue($key))
-            ? ! is_null($this->getProperty($key))
-            : false;
+        return ! is_null($this->getProperty($key));
     }
 
     /**
@@ -82,14 +82,14 @@ class Manager
      * @param $key
      * @return mixed
      */
-    public function getRawValue($key)
+    public function getValueObject($key)
     {
         $property = $this->getProperty($key);
 
         // We will first grab the property object which contains a collection of
         // values linked to it. It will work even when setting elements that
         // are no yet persisted as they will be set into the relationship.
-        return $property->values;
+        return $property->getValueObject();
     }
 
     /**
@@ -120,7 +120,7 @@ class Manager
 
         // We have to resolve the entity class name in order to access its static
         // property $modelColums. This property is stored in the model as will
-        // differ from one model to another.
+        // be different from one model to another.
         if (empty($class::$modelColumns)) {
             $class::$modelColumns = $this->fetchModelColumns();
         }
