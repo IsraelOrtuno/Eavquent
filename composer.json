@@ -22,7 +22,6 @@
         "phpunit/phpunit": "~4.7@dev",
         "mockery/mockery": "^0.9.4",
         "fzaninotto/faker": "~1.4",
-        "phpspec/phpspec": "^2.3",
         "orchestra/testbench": "~3.0"
     },
     "autoload": {
