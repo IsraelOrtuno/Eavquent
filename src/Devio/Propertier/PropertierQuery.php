@@ -5,7 +5,7 @@ namespace Devio\Propertier;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
-class Manager
+class PropertierQuery
 {
     /**
      * The entity instance.
