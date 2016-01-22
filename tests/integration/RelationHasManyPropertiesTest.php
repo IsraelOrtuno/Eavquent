@@ -40,18 +40,18 @@ class RelationHasManyPropertiesTest extends TestCase
     /** @test */
     public function properties_can_be_dynamically_loaded()
     {
-//        Company::setModelColumns(['name']);
+        Company::setModelColumns(['id', 'name']);
 
         $this->createModelsAndProperties();
 
-//        $result = Company::find(1);
-//        $result->properties;
+        $result = Company::find(1);
+        $result->properties;
 
-//        $this->assertTrue($result->relationLoaded('values'));
-//        $this->assertTrue($result->relationLoaded('properties'));
-//
-//        $this->assertEquals('Madrid', $result->getValue('city'));
-//        $this->assertCount(2, $result->getValueObject('colors'));
+        $this->assertTrue($result->relationLoaded('values'));
+        $this->assertTrue($result->relationLoaded('properties'));
+
+        $this->assertEquals('Madrid', $result->getValue('city'));
+        $this->assertCount(2, $result->getValueObject('colors'));
     }
 
     /** @test */
