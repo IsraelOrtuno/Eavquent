@@ -4,8 +4,8 @@ namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Devio\Propertier\Exceptions\EntityNotFoundException;
 use Illuminate\Support\Collection as BaseCollection;
+use Devio\Propertier\Exceptions\EntityNotFoundException;
 
 class Property extends Model
 {
