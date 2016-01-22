@@ -59,7 +59,7 @@ class PropertierQuery
         // We will assume our collection is keyed by name as it is supposed to
         // happen into the relationship process. If the property has the key
         // we are looking for, will return it meaning the property exists.
-        return $this->getEntity()->properties->get($key, null);
+        return $this->getEntity()->getRelationValue('properties')->get($key, null);
     }
 
     /**
@@ -71,7 +71,7 @@ class PropertierQuery
     public function getValue($key)
     {
         if (is_null($property = $this->getProperty($key))) {
-            return $property;
+            throw new \RuntimeException('Trying to get a value on a non existing property.');
         }
 
         return $property->getValue();
@@ -85,7 +85,9 @@ class PropertierQuery
      */
     public function getValueObject($key)
     {
-        $property = $this->getProperty($key);
+        if (is_null($property = $this->getProperty($key))) {
+            throw new \RuntimeException('Trying to access a value object on a non existing property.');
+        }
 
         // We will first grab the property object which contains a collection of
         // values linked to it. It will work even when setting elements that
