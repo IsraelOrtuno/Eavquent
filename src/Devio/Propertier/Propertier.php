@@ -16,6 +16,16 @@ trait Propertier
     public static $modelColumns = [];
 
     /**
+     * The propertier query instance.
+     *
+     * @var PropertierQuery
+     */
+    protected $propertierQuery;
+
+    // TODO: When saving, push() the properties of the model if any.
+    // TODO: this will save only unsaved values :D
+
+    /**
      * Relationship to the properties table.
      *
      * @return HasManyProperties
@@ -72,9 +82,9 @@ trait Propertier
      *
      * @return Manager
      */
-    public function newManagerQuery()
+    public function propertierQuery()
     {
-        return new Manager($this);
+        return new PropertierQuery($this);
     }
 
     /**
@@ -85,10 +95,10 @@ trait Propertier
      */
     public function getAttribute($key)
     {
-        $manager = $this->newManagerQuery();
+        $query = $this->propertierQuery();
 
-        if ($manager->isProperty($key)) {
-            return $manager->getValue($key);
+        if ($query->isProperty($key)) {
+            return $query->getValue($key);
         }
 
         // If the property we are accesing corresponds to a any registered property
@@ -107,10 +117,10 @@ trait Propertier
      */
     public function setAttribute($key, $value)
     {
-        $manager = $this->newManagerQuery();
+        $query = $this->propertierQuery();
 
-        if ($manager->isProperty($key) && ! $manager->isModelColumn($key)) {
-            return $manager->setValue($key, $value);
+        if ($query->isProperty($key) && ! $query->isModelColumn($key)) {
+            return $query->setValue($key, $value);
         }
 
         // If the property to set is registered and does not correspond to any
@@ -128,13 +138,13 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $reflection = new ReflectionClass(Manager::class);
+        $reflection = new ReflectionClass(PropertierQuery::class);
 
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
         // this method in the Manager class passing this existing instance.
         if ($reflection->hasMethod($method)) {
-            return call_user_func_array([$this->newManagerQuery(), $method], $parameters);
+            return call_user_func_array([$this->propertierQuery(), $method], $parameters);
         }
 
         return parent::__call($method, $parameters);
@@ -149,15 +159,15 @@ trait Propertier
      */
     public static function __callStatic($method, $parameters)
     {
-        $reflection = new ReflectionClass(Manager::class);
+        $reflection = new ReflectionClass(PropertierQuery::class);
 
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
         // this method in the Manager class providing a new entity instance.
         if ($reflection->hasMethod($method)) {
-            $manager = (new static)->newManagerQuery();
+            $query = (new static)->propertierQuery();
 
-            return call_user_func_array([$manager, $method], $parameters);
+            return call_user_func_array([$query, $method], $parameters);
         }
 
         return parent::__callStatic($method, $parameters);
