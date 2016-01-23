@@ -22,8 +22,7 @@
         "phpunit/phpunit": "~4.7@dev",
         "mockery/mockery": "^0.9.4",
         "fzaninotto/faker": "~1.4",
-        "orchestra/testbench": "~3.0",
-        "phpspec/phpspec": "^2.4"
+        "orchestra/testbench": "~3.0"
     },
     "autoload": {
         "classmap": [
