@@ -1,5 +1,0 @@
-suites:
-    main:
-        namespace: Devio\Propertier
-        psr4_prefix: Devio\Propertier
-        src_path: src
