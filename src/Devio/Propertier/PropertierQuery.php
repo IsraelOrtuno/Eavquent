@@ -36,7 +36,7 @@ class PropertierQuery
         // any relationship. If there's a match we'll we cannot assume they may
         // ever be a property as them are part of the core so more important.
         if ($this->getEntity()->getRelationValue($key) ||
-            in_array($key, $this->getModelColumns()) ||
+            $this->isModelColumn($key) ||
             $key == $this->getEntity()->getKeyName()
         ) {
             return false;
