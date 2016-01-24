@@ -43,6 +43,13 @@ class Property extends Model
         return $instance;
     }
 
+
+    /**
+     * Load a collection of values.
+     *
+     * @param Collection $values
+     * @return $this
+     */
     public function loadValues(Collection $values)
     {
         if ($this->relationLoaded('values')) {
