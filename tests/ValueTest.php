@@ -25,7 +25,7 @@ class ValueTest extends PHPUnit_Framework_TestCase
     public function it_should_make_a_value_with_property_and_array()
     {
         $value = Value::make(new Property(['type' => 'string']), ['value' => 'foo']);
-        
+
         $this->assertEquals('foo', $value->getAttribute('value'));
     }
 
