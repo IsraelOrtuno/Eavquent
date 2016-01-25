@@ -149,27 +149,4 @@ trait Propertier
 
         return parent::__call($method, $parameters);
     }
-
-    /**
-     * Handling dynamic method calls to the manager class.
-     *
-     * @param $method
-     * @param $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        $reflection = new ReflectionClass(PropertierQuery::class);
-
-        // If the method we are trying to call is available in the manager class
-        // we will prevent the default Model call to the Query Builder calling
-        // this method in the Manager class providing a new entity instance.
-        if ($reflection->hasMethod($method)) {
-            $query = (new static)->propertierQuery();
-
-            return call_user_func_array([$query, $method], $parameters);
-        }
-
-        return parent::__callStatic($method, $parameters);
-    }
 }
