@@ -62,15 +62,36 @@ class Property extends Model
         $values = $this->extractValues($values);
 
         $values = $this->cast($values);
-        
+
         // If the property is multivalue, we will set the values to the "values"
         // relation. Otherwise we will pick the first value of the collection
         // and set it to the "value" relation as it accepts a single value.
-        if ($this->isMultivalue()) {
-            return $this->setRelation('values', $values);
-        } else {
-            return $this->setRelation('value', $values->first());
+        return $this->setValueRelation($values);
+    }
+
+    /**
+     * Setting the values to the relation.
+     *
+     * @param Collection $values
+     * @return $this
+     */
+    public function setValueRelation(Collection $values)
+    {
+        if (! $this->isMultivalue()) {
+            $values = $values->first();
         }
+
+        return $this->setRelation($this->getValueRelationName(), $values);
+    }
+
+    /**
+     * Get the name of the value relation based on the property type.
+     *
+     * @return string
+     */
+    public function getValueRelationName()
+    {
+        return $this->isMultivalue() ? 'values' : 'value';
     }
 
     /**
@@ -98,7 +119,7 @@ class Property extends Model
      */
     protected function extractValues(Collection $values)
     {
-        return $values->filter(function($item) {
+        return $values->filter(function ($item) {
             return $item->{$this->getForeignKey()} == $this->getKey();
         });
     }
@@ -134,9 +155,7 @@ class Property extends Model
      */
     public function getValueObject()
     {
-        $relation = $this->isMultivalue() ? 'values' : 'value';
-
-        return $this->getRelationValue($relation);
+        return $this->getRelationValue($this->getValueRelationName());
     }
 
     /**

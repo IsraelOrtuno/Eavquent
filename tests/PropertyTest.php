@@ -16,6 +16,32 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_set_a_values_relation()
+    {
+        $plainProperty = new Property;
+        with($multiProperty = new Property)->setRawAttributes(['multivalue' => true]);
+
+        $plainProperty->setValueRelation(new Collection(['foo']));
+        $multiProperty->setValueRelation(new Collection(['foo', 'bar']));
+
+        $this->assertEquals('foo', $plainProperty->getValueObject());
+        $this->assertNull($plainProperty->getRelationValue('values'));
+
+        $this->assertInstanceOf(Collection::class, $multiProperty->getValueObject());
+        $this->assertNull($multiProperty->getRelationValue('value'));
+    }
+
+    /** @test */
+    public function it_should_fetch_the_value_relation_name()
+    {
+        $plainProperty = new Property;
+        with($multiProperty = new Property)->setRawAttributes(['multivalue' => true]);
+
+        $this->assertEquals('value', $plainProperty->getValueRelationName());
+        $this->assertEquals('values', $multiProperty->getValueRelationName());
+    }
+
+    /** @test */
     public function it_loads_a_collection_of_values()
     {
         with($plainProperty = new Property)->setRawAttributes(['id' => 1]);
