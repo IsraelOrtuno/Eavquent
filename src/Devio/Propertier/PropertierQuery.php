@@ -106,10 +106,10 @@ class PropertierQuery
     public function setValue($key, $value)
     {
         if (is_null($property = $this->getProperty($key))) {
-            throw new Exception("Setting a {$key} property that does not exist.");
+            throw new \RuntimeException('Trying to set a value on a non existing property.');
         }
 
-        return $property->entity($this->getEntity())->setValue($value);
+        return $property->setValue($value);
     }
 
     /**

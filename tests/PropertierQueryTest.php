@@ -19,6 +19,17 @@ class PropertierQueryTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_not_set_values_on_unexisting_properties()
+    {
+        list($query, $entity) = $this->getQueryAndEntity();
+
+        $entity->shouldReceive('getRelationValue')->with('properties')->once()->andReturn(new Collection());
+        $this->setExpectedException(RuntimeException::class);
+
+        $query->setValue('foo', 'bar');
+    }
+
+    /** @test */
     public function it_should_retrieve_model_columns()
     {
         $entity = m::mock(EntityStub::class);
