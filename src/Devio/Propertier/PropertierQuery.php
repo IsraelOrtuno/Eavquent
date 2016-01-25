@@ -74,7 +74,7 @@ class PropertierQuery
             throw new \RuntimeException('Trying to get a value on a non existing property.');
         }
 
-        return $property->getValue();
+        return $property->get();
     }
 
     /**
@@ -109,7 +109,7 @@ class PropertierQuery
             throw new \RuntimeException('Trying to set a value on a non existing property.');
         }
 
-        return $property->setValue($value);
+        return $property->set($value);
     }
 
     /**

@@ -85,7 +85,7 @@ class PropertierQueryTest extends PHPUnit_Framework_TestCase
         list($query, $entity) = $this->getQueryAndEntity();
 
         $property = m::mock(Property::class);
-        $property->shouldReceive('getValue')->once()->andReturn('foo');
+        $property->shouldReceive('get')->once()->andReturn('foo');
 
         $entity->shouldReceive('getRelationValue')->with('properties')
             ->andReturn(new Collection(['city' => $property]));

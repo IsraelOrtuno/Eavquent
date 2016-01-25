@@ -16,6 +16,54 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_cast_when_setting_values()
+    {
+        $property = new Property(['type' => 'string']);
+        $property->set('foo');
+
+        $this->assertInstanceOf(StringValue::class, $property->getValue());
+
+        $property->setAttribute('multivalue', true);
+
+        $property->set('foo', 'bar');
+
+        $this->assertInstanceOf(StringValue::class, $property->getValue()->first());
+        $this->assertInstanceOf(StringValue::class, $property->getValue()->last());
+    }
+
+    /** @test */
+    public function it_should_set_multivalue()
+    {
+        $property = new Property(['type' => 'string', 'multivalue' => true]);
+
+        $property->set(['foo', 'bar']);
+        $this->assertEquals(['foo', 'bar'], $property->get()->toArray());
+
+        $property->set('foo', 'bar');
+        $this->assertEquals(['foo', 'bar'], $property->get()->toArray());
+    }
+
+    /** @test */
+    public function it_should_update_existing_value()
+    {
+        $property = new Property(['type' => 'string']);
+        $property->setValueRelation(new StringValue(['value' => 'foo']));
+
+        $this->assertEquals('foo', $property->get());
+        $property->set('bar');
+        $this->assertEquals('bar', $property->get());
+    }
+
+    /** @test */
+    public function it_should_set_new_value()
+    {
+        $property = new Property(['type' => 'string']);
+        $property->set('foo');
+
+        $this->assertEquals('foo', $property->get());
+    }
+
+    /** @test */
     public function it_should_check_if_property_is_multivalued()
     {
         $property = new Property();
@@ -37,7 +85,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['foo', 'bar'], $property->getDeletionQueue()->toArray());
     }
-    
+
     /** @test */
     public function it_should_reset_the_values_collection()
     {
@@ -57,7 +105,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $plainProperty = new Property;
         with($multiProperty = new Property)->setRawAttributes(['multivalue' => true]);
 
-        $plainProperty->setValueRelation(new Collection(['foo']));
+        $plainProperty->setValueRelation('foo');
         $multiProperty->setValueRelation(new Collection(['foo', 'bar']));
 
         $this->assertEquals('foo', $plainProperty->getValueRelation());
@@ -78,7 +126,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_should_loas_a_collection_of_values()
+    public function it_should_load_a_collection_of_values()
     {
         with($plainProperty = new Property)->setRawAttributes(['id' => 1]);
         with($multiProperty = new Property)->setRawAttributes(['id' => 2, 'multivalue' => true]);
@@ -86,14 +134,14 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $multiProperty->loadValues($this->getValuesCollection());
 
         // Checking plain
-        $this->assertNull($plainProperty->values);
-        $this->assertInstanceOf(StringValue::class, $plainProperty->value);
-        $this->assertEquals('utah', $plainProperty->getValue());
+        $this->assertNull($plainProperty->getRelationValue('values'));
+        $this->assertInstanceOf(StringValue::class, $plainProperty->getRelation('value'));
+        $this->assertEquals('utah', $plainProperty->get());
 
         // Checking multi
-        $value = $multiProperty->getValue()->toArray();
-        $this->assertNull($multiProperty->value);
-        $this->assertInstanceOf(Collection::class, $multiProperty->values);
+        $value = $multiProperty->get()->toArray();
+        $this->assertNull($multiProperty->getrelationValue('value'));
+        $this->assertInstanceOf(Collection::class, $multiProperty->getrelationValue('values'));
         $this->assertCount(2, $value);
         $this->assertTrue(in_array('omaha', $value));
         $this->assertTrue(in_array('gold', $value));
@@ -123,7 +171,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     {
         $property = new Property;
 
-        $this->assertNull($property->getValue());
+        $this->assertNull($property->get());
     }
 
     /** @test */
@@ -134,7 +182,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $value->shouldReceive('getAttribute')->once()->andReturn('foo');
         $property->setRelation('value', $value);
 
-        $value = $property->getValue();
+        $value = $property->get();
 
         $this->assertNotInstanceOf(BaseCollection::class, $value);
         $this->assertEquals('foo', $value);
@@ -148,7 +196,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $value->shouldReceive('getAttribute')->twice()->andReturn('foo', 'bar');
         $property->setRelation('values', new Collection([$value, $value]));
 
-        $value = $property->getValue();
+        $value = $property->get();
 
         $this->assertInstanceOf(Collection::class, $value);
         $this->assertEquals('foo', $value->first());

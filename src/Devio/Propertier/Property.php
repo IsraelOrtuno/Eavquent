@@ -78,6 +78,10 @@ class Property extends Model
         // If the property is multivalue, we will set the values to the "values"
         // relation. Otherwise we will pick the first value of the collection
         // and set it to the "value" relation as it accepts a single value.
+        if ($values instanceof Collection && ! $this->isMultivalue()) {
+            $values = $values->first();
+        }
+
         return $this->setValueRelation($values);
     }
 
@@ -104,12 +108,8 @@ class Property extends Model
      * @param Collection $values
      * @return $this
      */
-    public function setValueRelation(Collection $values)
+    public function setValueRelation($values)
     {
-        if (! $this->isMultivalue()) {
-            $values = $values->first();
-        }
-
         return $this->setRelation($this->getValueRelationName(), $values);
     }
 
@@ -160,7 +160,7 @@ class Property extends Model
      *
      * @return mixed
      */
-    public function getValue()
+    public function get()
     {
         if (is_null($value = $this->getValueRelation())) {
             return $value;
@@ -179,6 +179,16 @@ class Property extends Model
     }
 
     /**
+     * Get the raw value object.
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->getValueRelation();
+    }
+
+    /**
      * Set the value to the given value.
      *
      * @param Value $value
@@ -186,8 +196,15 @@ class Property extends Model
      */
     public function set($value)
     {
-        return $this->isMultivalue() ?
-            $this->setMany($value) : $this->setOne($value);
+        if (! $this->isMultivalue()) {
+            return $this->setOne($value);
+        }
+
+        if (! is_array($value) && ! $value instanceof Collection) {
+            $value = func_get_args();
+        }
+
+        return $this->setMany($value);
     }
 
     /**
@@ -196,10 +213,10 @@ class Property extends Model
      * @param $value
      * @return Property
      */
-    public function setOne($value)
+    protected function setOne($value)
     {
         if (! is_null($valueItem = $this->getValueRelation())) {
-            return $valueItem->setValueAttribute($value);
+            return $valueItem->setAttribute('value', $value);
         }
 
         return $this->setValueRelation(Value::make($this, $value));
@@ -211,16 +228,14 @@ class Property extends Model
      * @param $values
      * @return $this
      */
-    public function setMany($values)
+    protected function setMany($values)
     {
-        if (! is_array($values) && ! $values instanceof Collection) {
-            $values = func_get_args();
-        }
+        $this->enqueueCurrentValues();
 
         // Will add the current values relation to the deletion queue in order to
         // be deleted if persisted. After that we will just have to push every
         // item found in the values array to the new empty values relation.
-        $this->enqueueCurrentValues();
+        $this->resetValuesRelation();
 
         foreach ($values as $value) {
             $this->getValueRelation()->push(Value::make($this, $value));
@@ -234,7 +249,11 @@ class Property extends Model
      */
     public function enqueueCurrentValues()
     {
-        $existing = $this->getValueRelation()->where('exists', true);
+        if (! $values = $this->getValueRelation()) {
+            return $values;
+        }
+
+        $existing = $values->where('exists', true);
 
         // We will only add the values that already exist in database as not
         // persisted values do not need to be deleted. Every value will be
@@ -242,8 +261,6 @@ class Property extends Model
         foreach ($existing as $value) {
             $this->deletionQueue->push($value);
         }
-
-        $this->resetValuesRelation();
     }
 
     /**
@@ -253,7 +270,7 @@ class Property extends Model
      */
     public function isMultivalue()
     {
-        return (bool) $this->getAttribute('multivalue');
+        return (bool)$this->getAttribute('multivalue');
     }
 
     /**
