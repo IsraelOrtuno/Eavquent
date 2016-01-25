@@ -14,7 +14,7 @@ class ValueTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_casts_a_value_to_a_given_value_type_object()
+    public function it_should_cast_a_value_object()
     {
         $factory = m::mock(Factory::class);
         $value = new Value();
@@ -28,7 +28,7 @@ class ValueTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_does_try_to_cast_a_casted_value()
+    public function it_should_not_cast_casted_value()
     {
         $value = new StringValue();
         $property = new Property(['type' => 'integer']);
