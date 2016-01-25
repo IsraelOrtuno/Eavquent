@@ -42,7 +42,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_loads_a_collection_of_values()
+    public function it_should_loas_a_collection_of_values()
     {
         with($plainProperty = new Property)->setRawAttributes(['id' => 1]);
         with($multiProperty = new Property)->setRawAttributes(['id' => 2, 'multivalue' => true]);
@@ -64,8 +64,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(in_array('utah', $value));
     }
 
-//    /** @test */
-    public function it_can_cast_values()
+    /** @test */
+    public function it_should_cast_values()
     {
         $property = new Property(['type' => 'string']);
 
@@ -76,14 +76,14 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 
         // Collection of values
         $value = m::mock(Value::class);
-        $values = collect([$value, $value]);
         $value->shouldReceive('castObjectTo')->with($property)->twice();
+        $values = collect([$value, $value]);
 
         $property->cast($values);
     }
 
     /** @test */
-    public function get_value_provides_null_when_no_values_found()
+    public function it_should_return_null_when_getting_not_found_values()
     {
         $property = new Property;
 
@@ -91,7 +91,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_can_get_a_single_value()
+    public function it_should_get_a_single_value()
     {
         $property = new Property;
         $value = m::mock(Value::class);
@@ -105,7 +105,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_can_get_a_multivalue()
+    public function it_should_get_a_multivalue()
     {
         $property = new Property(['multivalue' => true]);
         $value = m::mock(Value::class);
@@ -120,7 +120,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_can_replicate_an_existing_property()
+    public function it_should_replicate_an_existing_property()
     {
         $property = new Property;
         $property->exists = true;
