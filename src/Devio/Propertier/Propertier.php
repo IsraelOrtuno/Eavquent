@@ -14,13 +14,6 @@ trait Propertier
      */
     public static $modelColumns = [];
 
-    /**
-     * The propertier query instance.
-     *
-     * @var PropertierQuery
-     */
-    protected $propertierQuery;
-
     // TODO: When saving, push() the properties of the model if any.
     // TODO: this will save only unsaved values :D
 
