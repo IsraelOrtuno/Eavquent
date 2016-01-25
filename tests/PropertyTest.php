@@ -16,6 +16,42 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_check_if_property_is_multivalued()
+    {
+        $property = new Property();
+        $this->assertFalse($property->isMultivalue());
+
+        $property->setAttribute('multivalue', true);
+        $this->assertTrue($property->isMultivalue());
+    }
+
+    /** @test */
+    public function it_should_enqueue_current_values_for_deletion()
+    {
+        $property = new Property(['multivalue' => true]);
+        $collection = m::mock(Collection::class);
+        $collection->shouldReceive('where')->once()->andReturn(['foo', 'bar']);
+        $property->setValueRelation($collection);
+
+        $property->enqueueCurrentValues();
+
+        $this->assertEquals(['foo', 'bar'], $property->getDeletionQueue()->toArray());
+    }
+    
+    /** @test */
+    public function it_should_reset_the_values_collection()
+    {
+        $property = new Property();
+        $property->setRelation('values', new Collection(['foo', 'bar']));
+
+        $property->resetValuesRelation();
+
+        $this->assertInstanceOf(Collection::class, $property->getRelationValue('values'));
+        $this->assertCount(0, $property->getRelationValue('values'));
+
+    }
+
+    /** @test */
     public function it_should_set_a_values_relation()
     {
         $plainProperty = new Property;

@@ -71,6 +71,24 @@ class Value extends Model
     }
 
     /**
+     * Make a new casted value instance.
+     *
+     * @param Property $property
+     * @param $attributes
+     * @return mixed
+     */
+    public static function make(Property $property, $attributes)
+    {
+        if (! is_array($attributes)) {
+            $attributes = ['value' => $attributes];
+        }
+
+        with($instance = new static)->setRawAttributes($attributes);
+
+        return $instance->castObjectTo($property);
+    }
+
+    /**
      * Casting a raw value object to a value type.
      *
      * @param Property $property

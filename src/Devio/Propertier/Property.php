@@ -5,7 +5,6 @@ namespace Devio\Propertier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
-use Devio\Propertier\Exceptions\EntityNotFoundException;
 
 class Property extends Model
 {
@@ -19,7 +18,7 @@ class Property extends Model
     /**
      * Values deletion queue.
      *
-     * @var array
+     * @var Collection
      */
     protected $deletionQueue = [];
 
@@ -29,6 +28,19 @@ class Property extends Model
      * @var array
      */
     public $fillable = ['type', 'name', 'multivalue', 'entity', 'default_value'];
+
+    /**
+     * Property constructor.
+     *
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->deletionQueue = collect();
+    }
+
 
     /**
      * Replicates a model and set it as existing.
@@ -70,31 +82,6 @@ class Property extends Model
     }
 
     /**
-     * Setting the values to the relation.
-     *
-     * @param Collection $values
-     * @return $this
-     */
-    public function setValueRelation(Collection $values)
-    {
-        if (! $this->isMultivalue()) {
-            $values = $values->first();
-        }
-
-        return $this->setRelation($this->getValueRelationName(), $values);
-    }
-
-    /**
-     * Get the name of the value relation based on the property type.
-     *
-     * @return string
-     */
-    public function getValueRelationName()
-    {
-        return $this->isMultivalue() ? 'values' : 'value';
-    }
-
-    /**
      * Cast either a value or a collection.
      *
      * @param $values
@@ -112,6 +99,50 @@ class Property extends Model
     }
 
     /**
+     * Setting the values to the relation.
+     *
+     * @param Collection $values
+     * @return $this
+     */
+    public function setValueRelation(Collection $values)
+    {
+        if (! $this->isMultivalue()) {
+            $values = $values->first();
+        }
+
+        return $this->setRelation($this->getValueRelationName(), $values);
+    }
+
+    /**
+     * Get the raw value relationship. It could be null, a Collection or
+     * a single value Object.
+     *
+     * @return mixed
+     */
+    public function getValueRelation()
+    {
+        return $this->getRelationValue($this->getValueRelationName());
+    }
+
+    /**
+     * Get the name of the value relation based on the property type.
+     *
+     * @return string
+     */
+    public function getValueRelationName()
+    {
+        return $this->isMultivalue() ? 'values' : 'value';
+    }
+
+    /**
+     * Will reset the values relation (many).
+     */
+    public function resetValuesRelation()
+    {
+        $this->setRelation('values', new Collection);
+    }
+
+    /**
      * Extract only the values of this property.
      *
      * @param Collection $values
@@ -120,7 +151,7 @@ class Property extends Model
     protected function extractValues(Collection $values)
     {
         return $values->filter(function ($item) {
-            return $item->{$this->getForeignKey()} == $this->getKey();
+            return $item->getAttribute($this->getForeignKey()) == $this->getKey();
         });
     }
 
@@ -148,159 +179,71 @@ class Property extends Model
     }
 
     /**
-     * Get the raw value relationship. It could be null, a Collection or
-     * a single value Object.
-     *
-     * @return mixed
-     */
-    public function getValueRelation()
-    {
-        return $this->getRelationValue($this->getValueRelationName());
-    }
-
-    /**
      * Set the value to the given value.
      *
      * @param Value $value
      * @return $this
-     * @throws EntityNotFoundException
      */
-    public function setValue($value)
+    public function set($value)
     {
-//        if (is_null($this->getEntity())) {
-//            throw new EntityNotFoundException('No entity defined on property');
-//        }
-//
-//        return ! $this->isMultivalue()
-//            ? $this->setSingleValue($value)
-//            : $this->setMultiValue($value);
+        return $this->isMultivalue() ?
+            $this->setMany($value) : $this->setOne($value);
     }
 
     /**
-     * Set or create a single value for the property.
+     * Set a single value.
      *
      * @param $value
-     * @return Value
+     * @return Property
      */
-    public function setSingleValue($value)
+    public function setOne($value)
     {
-        if ($this->values instanceof self) {
-            $this->values->setValue($value);
-        } else {
-            $propertyValue = $this->createNewValue($value);
+        if (! is_null($valueItem = $this->getValueRelation())) {
+            return $valueItem->setValueAttribute($value);
         }
 
-        // We modify the value of the existing property value to the one passed
-        // to the function. If there is no value related to the property, we
-        // will create a new value instance and relate it to the property.
-        return $propertyValue;
+        return $this->setValueRelation(Value::make($this, $value));
     }
 
     /**
-     * Set a multi value collection replacing previous values.
+     * Set values for multivalue.
      *
      * @param $values
+     * @return $this
      */
-    public function setMultiValue($values)
+    public function setMany($values)
     {
-        if (! $values instanceof Collection && ! is_array($values)) {
+        if (! is_array($values) && ! $values instanceof Collection) {
             $values = func_get_args();
         }
 
-        // As it is a multivalue property, we will make sure we are getting
-        // an array of values. Also we have to fill up the deletion queue
-        // with any existing values that this property may have linked.
-        $this->enqueueValuesDeletion();
-
-        // Once we have enqueued for deletion all the existing values in the
-        // property, we have to force a reset into the values relationship
-        // collection in order to fill it up again with the new values.
-        $this->initializeValues(true);
+        // Will add the current values relation to the deletion queue in order to
+        // be deleted if persisted. After that we will just have to push every
+        // item found in the values array to the new empty values relation.
+        $this->enqueueCurrentValues();
 
         foreach ($values as $value) {
-            $this->createNewValue($value);
+            $this->getValueRelation()->push(Value::make($this, $value));
         }
+
+        return $this;
     }
 
     /**
-     * Add the current property values to the deletion queue.
+     * Add the current values to the deletion queue.
      */
-    protected function enqueueValuesDeletion()
+    public function enqueueCurrentValues()
     {
-        $existing = $this->values->where('exists', true);
+        $existing = $this->getValueRelation()->where('exists', true);
 
         // We will only add the values that already exist in database as not
         // persisted values do not need to be deleted. Every value will be
         // added to the deletionQueue to be processed if model is saved.
         foreach ($existing as $value) {
-            array_push($this->deletionQueue, $value);
-        }
-    }
-
-    /**
-     * Creates a new property value related to the given property and the entity.
-     *
-     * @param $value
-     * @return PropertyValue
-     */
-    protected function createNewValue($value)
-    {
-        // We will create a new Value instance already resolved to the property
-        // it is related to using the value resolver from the abstract Value
-        // class. We set a fully transformed value object to the relation.
-        $newValue = Value::resolveValue($this, $this->getEntity(), $value);
-
-        // After creating a new property value, we have to include it manually
-        // into the property values relation collection. The "push" method
-        // inlcuded in the collection will help us to perform this task.
-        $this->setOrPushValue($newValue);
-
-        return $newValue;
-    }
-
-    /**
-     * Pushes a new value into the values relationship collection.
-     *
-     * @param $value
-     * @return mixed
-     */
-    public function setOrPushValue($value)
-    {
-        if ($this->isMultivalue()) {
-            return $this->pushValue($value);
+            $this->deletionQueue->push($value);
         }
 
-        return $this->setRelation('values', $value);
-    }
-
-    /**
-     * Pushes a new value into the values collection.
-     *
-     * @param Value $value
-     * @return $this
-     */
-    public function pushValue(Value $value)
-    {
-        $this->initializeValues();
-
-        $this->values->push($value);
-
-        return $this;
-    }
-
-    /**
-     * Initialize the values relation to an empty collection.
-     *
-     * @param bool $force
-     * @return $this
-     */
-    protected function initializeValues($force = false)
-    {
-        if (is_null($this->values) || $force) {
-            $this->setRelation('values', new Collection);
-        }
-
-        return $this;
+        $this->resetValuesRelation();
     }
 
     /**
@@ -310,7 +253,7 @@ class Property extends Model
      */
     public function isMultivalue()
     {
-        return $this->getAttribute('multivalue');
+        return (bool) $this->getAttribute('multivalue');
     }
 
     /**
