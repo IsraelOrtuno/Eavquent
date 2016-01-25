@@ -77,7 +77,7 @@ class Value extends Model
      * @param $attributes
      * @return mixed
      */
-    public static function make(Property $property, $attributes)
+    public static function make(Property $property, $attributes = [])
     {
         if (! is_array($attributes)) {
             $attributes = ['value' => $attributes];

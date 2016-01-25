@@ -14,6 +14,30 @@ class ValueTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_make_a_casted_value()
+    {
+        $value = Value::make(new Property(['type' => 'string']), 'foo');
+
+        $this->assertInstanceOf(StringValue::class, $value);
+    }
+
+    /** @test */
+    public function it_should_make_a_value_with_property_and_array()
+    {
+        $value = Value::make(new Property(['type' => 'string']), ['value' => 'foo']);
+        
+        $this->assertEquals('foo', $value->getAttribute('value'));
+    }
+
+    /** @test */
+    public function it_should_make_a_value_with_property_and_string()
+    {
+        $value = Value::make(new Property(['type' => 'string']), 'foo');
+
+        $this->assertEquals('foo', $value->getAttribute('value'));
+    }
+
+    /** @test */
     public function it_should_cast_a_value_object()
     {
         $factory = m::mock(Factory::class);
