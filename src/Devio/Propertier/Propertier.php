@@ -138,13 +138,13 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $reflection = new ReflectionClass(PropertierQuery::class);
+        $reflection = new ReflectionClass($query = $this->propertierQuery());
 
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
         // this method in the Manager class passing this existing instance.
         if ($reflection->hasMethod($method)) {
-            return call_user_func_array([$this->propertierQuery(), $method], $parameters);
+            return call_user_func_array([$query, $method], $parameters);
         }
 
         return parent::__call($method, $parameters);
