@@ -2,7 +2,6 @@
 
 namespace Devio\Propertier;
 
-use ReflectionClass;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -138,12 +137,12 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $reflection = new ReflectionClass($query = $this->propertierQuery());
+        $query = $this->propertierQuery();
 
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
         // this method in the Manager class passing this existing instance.
-        if ($reflection->hasMethod($method)) {
+        if (in_array($method, get_class_methods($query))) {
             return call_user_func_array([$query, $method], $parameters);
         }
 
