@@ -56,13 +56,13 @@ class Property extends Model
             throw new \RuntimeException('Values relation is already loaded.');
         }
 
-        $values = $this->cast($values);
-
         // If the property already contains a values relationship, we do not
         // want to interfiere, this will be a breaking error. If not will
         // initialize the relation with the values that belong to it.
         $values = $this->extractValues($values);
 
+        $values = $this->cast($values);
+        
         // If the property is multivalue, we will set the values to the "values"
         // relation. Otherwise we will pick the first value of the collection
         // and set it to the "value" relation as it accepts a single value.
