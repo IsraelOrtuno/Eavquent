@@ -131,7 +131,7 @@ class Property extends Model
      */
     public function getValue()
     {
-        if (is_null($value = $this->getValueObject())) {
+        if (is_null($value = $this->getValueRelation())) {
             return $value;
         }
 
@@ -153,7 +153,7 @@ class Property extends Model
      *
      * @return mixed
      */
-    public function getValueObject()
+    public function getValueRelation()
     {
         return $this->getRelationValue($this->getValueRelationName());
     }

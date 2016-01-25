@@ -92,7 +92,7 @@ class PropertierQuery
         // We will first grab the property object which contains a collection of
         // values linked to it. It will work even when setting elements that
         // are no yet persisted as they will be set into the relationship.
-        return $property->getValueObject();
+        return $property->getValueRelation();
     }
 
     /**

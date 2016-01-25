@@ -24,10 +24,10 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $plainProperty->setValueRelation(new Collection(['foo']));
         $multiProperty->setValueRelation(new Collection(['foo', 'bar']));
 
-        $this->assertEquals('foo', $plainProperty->getValueObject());
+        $this->assertEquals('foo', $plainProperty->getValueRelation());
         $this->assertNull($plainProperty->getRelationValue('values'));
 
-        $this->assertInstanceOf(Collection::class, $multiProperty->getValueObject());
+        $this->assertInstanceOf(Collection::class, $multiProperty->getValueRelation());
         $this->assertNull($multiProperty->getRelationValue('value'));
     }
 
