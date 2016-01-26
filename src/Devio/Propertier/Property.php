@@ -20,7 +20,7 @@ class Property extends Model
      *
      * @var Collection
      */
-    protected $deletionQueue = [];
+    protected $deletionQueue;
 
     /**
      * List of attributes that open to mass assignment.
@@ -40,7 +40,6 @@ class Property extends Model
 
         $this->deletionQueue = collect();
     }
-
 
     /**
      * Replicates a model and set it as existing.
@@ -74,6 +73,7 @@ class Property extends Model
         $values = $this->extractValues($values);
 
         $values = $this->cast($values);
+
 
         // If the property is multivalue, we will set the values to the "values"
         // relation. Otherwise we will pick the first value of the collection
@@ -183,7 +183,7 @@ class Property extends Model
      *
      * @return mixed
      */
-    public function getValue()
+    public function getObject()
     {
         return $this->getValueRelation();
     }
