@@ -83,7 +83,7 @@ class Value extends Model
             $attributes = ['value' => $attributes];
         }
 
-        with($instance = new static)->setRawAttributes($attributes);
+        with($instance = new static)->fill($attributes);
 
         return $instance->castObjectTo($property);
     }
