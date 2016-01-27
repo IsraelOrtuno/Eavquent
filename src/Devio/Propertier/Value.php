@@ -89,6 +89,26 @@ class Value extends Model
     }
 
     /**
+     * Sync the relation attributes with parents.
+     *
+     * @return $this
+     */
+    public function syncRelations()
+    {
+        if (! is_null($entity = $this->getEntity())) {
+            $this->entity()->associate($entity);
+            unset($this->relations['entity']);
+        }
+
+        if (! is_null($property = $this->getProperty())) {
+            $this->property()->associate($property);
+            unset($this->relations['property']);
+        }
+
+        return $this;
+    }
+
+    /**
      * Casting a raw value object to a value type.
      *
      * @param Property $property
@@ -110,6 +130,13 @@ class Value extends Model
         // will be an exact copy of the base model into a different class.
         with($cast = new $cast)->setRawAttributes($this->getAttributes());
         $cast->exists = $this->exists;
+
+        // In case we are casting an existing value model, such as loaded from
+        // a relation, we will also sync the original attributes. We need to
+        // do this to let Eloquent know if value has changed before saving.
+        if ($this->exists) {
+            $cast->syncOriginal();
+        }
 
         $cast->setProperty($property);
 
@@ -163,6 +190,10 @@ class Value extends Model
      */
     public function getEntity()
     {
+        if (is_null($property = $this->getProperty())) {
+            return $property;
+        }
+
         return $this->getProperty()->getEntity();
     }
 
