@@ -239,11 +239,13 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     public function it_should_replicate_an_existing_property()
     {
         $property = new Property;
+        $property->entity('foo');
         $property->exists = true;
 
         $result = $property->replicateExisting();
 
         $this->assertEquals($result, $property);
+        $this->assertEquals($property->getEntity(), $result->getEntity());
         $this->assertTrue($result->exists);
     }
 

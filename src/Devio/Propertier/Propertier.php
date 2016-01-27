@@ -2,6 +2,7 @@
 
 namespace Devio\Propertier;
 
+use Devio\Propertier\Listeners\SavedEntity;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -14,8 +15,13 @@ trait Propertier
      */
     public static $modelColumns = [];
 
-    // TODO: When saving, push() the properties of the model if any.
-    // TODO: this will save only unsaved values :D
+    /**
+     * Booting the trait.
+     */
+    public static function bootPropertier()
+    {
+        static::saved(SavedEntity::class . '@handle');
+    }
 
     /**
      * Relationship to the properties table.
@@ -42,6 +48,28 @@ trait Propertier
         $this->addHidden('values');
 
         return $this->morphMany(Value::class, 'entity');
+    }
+
+    /**
+     * Get if properties could be accessed.
+     *
+     * @return bool
+     */
+    public function isPropertiesRelationAccessible()
+    {
+        return ! ($this->getPropertiesAutoloading() || $this->relationLoaded('properties'));
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPropertiesAutoloading()
+    {
+        if (property_exists($this, 'propertiesAutoloading')) {
+            return $this->propertiesAutoloading;
+        }
+
+        return false;
     }
 
     /**
