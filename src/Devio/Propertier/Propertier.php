@@ -57,7 +57,7 @@ trait Propertier
      */
     public function isPropertiesRelationAccessible()
     {
-        return ! ($this->getPropertiesAutoloading() || $this->relationLoaded('properties'));
+        return $this->getPropertiesAutoloading() || $this->relationLoaded('properties');
     }
 
     /**
@@ -69,7 +69,7 @@ trait Propertier
             return $this->propertiesAutoloading;
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -117,7 +117,9 @@ trait Propertier
     {
         $query = $this->propertierQuery();
 
-        if ($query->isProperty($key)) {
+        if ($this->isPropertiesRelationAccessible() &&
+            $query->isProperty($key)
+        ) {
             return $query->getValue($key);
         }
 
@@ -139,7 +141,10 @@ trait Propertier
     {
         $query = $this->propertierQuery();
 
-        if ($query->isProperty($key) && ! $query->isModelColumn($key)) {
+        if ($this->isPropertiesRelationAccessible() &&
+            $query->isProperty($key) &&
+            ! $query->isModelColumn($key)
+        ) {
             return $query->setValue($key, $value);
         }
 
@@ -163,7 +168,9 @@ trait Propertier
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
         // this method in the Manager class passing this existing instance.
-        if (in_array($method, get_class_methods($query))) {
+        if ($this->isPropertiesRelationAccessible() &&
+            in_array($method, get_class_methods($query))
+        ) {
             return call_user_func_array([$query, $method], $parameters);
         }
 
