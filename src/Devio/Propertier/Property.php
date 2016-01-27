@@ -51,9 +51,9 @@ class Property extends Model
         $instance = parent::replicate(['*']);
         $instance->exists = $this->exists;
 
-        return $instance;
+        $instance->syncOriginal();
+        return $instance->entity($this->getEntity());
     }
-
 
     /**
      * Load a collection of values.
@@ -73,7 +73,6 @@ class Property extends Model
         $values = $this->extractValues($values);
 
         $values = $this->cast($values);
-
 
         // If the property is multivalue, we will set the values to the "values"
         // relation. Otherwise we will pick the first value of the collection
