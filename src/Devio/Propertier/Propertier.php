@@ -61,6 +61,8 @@ trait Propertier
     }
 
     /**
+     * Get properties autoloading property.
+     *
      * @return bool
      */
     public function getPropertiesAutoloading()
