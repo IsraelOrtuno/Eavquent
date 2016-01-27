@@ -88,7 +88,9 @@ class HasManyProperties extends HasMany
                 // Replicating the existing property will avoid the problem of
                 // many enities pointing to the same property object. Every
                 // entity should have its stand-alone property instances.
-                return $property->replicateExisting()->loadValues($model->values);
+                return $property->entity($model)
+                    ->replicateExisting()
+                    ->loadValues($model->values);
             });
 
             $model->setRelation($relation, $properties->keyBy('name'));
