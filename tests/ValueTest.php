@@ -14,6 +14,19 @@ class ValueTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_unset_existing_relations()
+    {
+        $value = new Value;
+        $value->setRelation('entity', 'foo');
+        $value->setRelation('property', 'bar');
+
+        $value->unsetRelations();
+
+        $this->assertFalse($value->relationLoaded('entity'));
+        $this->assertFalse($value->relationLoaded('property'));
+    }
+
+    /** @test */
     public function it_should_make_a_casted_value()
     {
         $value = Value::make(new Property(['type' => 'string']), 'foo');

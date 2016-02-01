@@ -14,33 +14,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         parent::setUp();
         Company::setModelColumns(['name']);
     }
-    
-    /** @test */
-    public function it_should_add_existing_to_deletion_queue_when_setting_collection()
-    {
-        $property = new PropertyMultivalueStub;
-        $values = $this->getValuesCollection();
-        $values->first()->exists = true;
-        $values->last()->exists = true;
-        $property->setValueRelation($values);
-
-        $property->set('foo');
-
-        $this->assertCount(2, $property->getDeletionQueue());
-        $this->assertEquals('utah', $property->getDeletionQueue()->first()->getAttribute('value'));
-        $this->assertEquals('sword', $property->getDeletionQueue()->last()->getAttribute('value'));
-    }
-    
-    /** @test */
-    public function it_should_replace_values_when_setting_multivalue()
-    {
-        $property = new PropertyMultivalueStub;
-        $property->setValueRelation(new Collection('foo', 'bar'));
-
-        $property->set(['utah', 'omaha']);
-
-        $this->assertEquals(['utah', 'omaha'], $property->get()->toArray());
-    }
 
     /** @test */
     public function it_should_cast_when_setting_values()
@@ -105,30 +78,34 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($property->isMultivalue());
     }
 
+//    /** @test */
+//    public function it_should_enqueue_current_values_for_deletion()
+//    {
+//        $property = new PropertyMultivalueStub;
+//        $collection = m::mock(Collection::class);
+//        $collection->shouldReceive('where')->once()->andReturn(['foo', 'bar']);
+//        $property->setValueRelation($collection);
+//
+//        $property->enqueueCurrentValue();
+//
+//        $this->assertEquals(['foo', 'bar'], $property->getDeletionQueue()->toArray());
+//    }
+
     /** @test */
-    public function it_should_enqueue_current_values_for_deletion()
+    public function it_should_reset_the_value_relation()
     {
-        $property = new PropertyMultivalueStub;
-        $collection = m::mock(Collection::class);
-        $collection->shouldReceive('where')->once()->andReturn(['foo', 'bar']);
-        $property->setValueRelation($collection);
+        $property = new Property();
+        $multiProperty = new PropertyMultivalueStub;
+        $property->setValueRelation('foo');
+        $multiProperty->setValueRelation('values', new Collection(['foo', 'bar']));
 
-        $property->enqueueCurrentValues();
+        $property->resetValueRelation();
+        $multiProperty->resetValueRelation();
 
-        $this->assertEquals(['foo', 'bar'], $property->getDeletionQueue()->toArray());
-    }
+        $this->assertInstanceOf(Collection::class, $multiProperty->getValueRelation());
+        $this->assertCount(0, $multiProperty->getValueRelation());
 
-    /** @test */
-    public function it_should_reset_the_values_collection()
-    {
-        $property = new Property;
-        $property->setRelation('values', new Collection(['foo', 'bar']));
-
-        $property->resetValuesRelation();
-
-        $this->assertInstanceOf(Collection::class, $property->getRelationValue('values'));
-        $this->assertCount(0, $property->getRelationValue('values'));
-
+        $this->assertNull($property->getValueRelation());
     }
 
     /** @test */
@@ -162,8 +139,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     {
         with($plainProperty = new Property)->setRawAttributes(['id' => 1]);
         with($multiProperty = new PropertyMultivalueStub)->setRawAttributes(['id' => 2]);
-        $plainProperty->loadValues($this->getValuesCollection());
-        $multiProperty->loadValues($this->getValuesCollection());
+        $plainProperty->loadValue($this->getValuesCollection());
+        $multiProperty->loadValue($this->getValuesCollection());
 
         // Checking plain
         $this->assertNull($plainProperty->getRelationValue('values'));
