@@ -16,11 +16,16 @@ class Property extends Model
     protected $entity = null;
 
     /**
-     * Values deletion queue.
+     * Original property value.
      *
+     * @var null
+     */
+    protected $originalValue = null;
+
+    /**
      * @var Collection
      */
-    protected $deletionQueue;
+    protected $queue;
 
     /**
      * List of attributes that open to mass assignment.
@@ -38,11 +43,12 @@ class Property extends Model
     {
         parent::__construct($attributes);
 
-        $this->deletionQueue = collect();
+        $this->queue = new Queue;
+        $this->resetValueRelation();
     }
 
     /**
-     * Replicates a model and set it as existing.
+     * Replicates a property and set it as existing.
      *
      * @return mixed
      */
@@ -52,6 +58,8 @@ class Property extends Model
         $instance->exists = $this->exists;
 
         $instance->syncOriginal();
+        $instance->syncOriginalValue();
+
         return $instance->entity($this->getEntity());
     }
 
@@ -61,16 +69,12 @@ class Property extends Model
      * @param Collection $values
      * @return $this
      */
-    public function loadValues(Collection $values)
+    public function loadValue(Collection $values)
     {
-        if ($this->relationLoaded('values')) {
-            throw new \RuntimeException('Values relation is already loaded.');
-        }
-
         // If the property already contains a values relationship, we do not
         // want to interfiere, this will be a breaking error. If not will
         // initialize the relation with the values that belong to it.
-        $values = $this->extractValues($values);
+        $values = $this->extractValue($values);
 
         $values = $this->cast($values);
 
@@ -81,7 +85,12 @@ class Property extends Model
             $values = $values->first();
         }
 
-        return $this->setValueRelation($values);
+        $this->setValueRelation($values);
+
+        // We also have to sync the original values. This will let us control
+        // which values may have changed when we try to save the entity. It
+        // will also help us to roll back to the original property state.
+        return $this->syncOriginalValue();
     }
 
     /**
@@ -136,9 +145,11 @@ class Property extends Model
     /**
      * Will reset the values relation (many).
      */
-    public function resetValuesRelation()
+    public function resetValueRelation()
     {
-        $this->setRelation('values', new Collection);
+        $value = $this->isMultivalue() ? new Collection : null;
+
+        $this->setRelation($this->getValueRelationName(), $value);
     }
 
     /**
@@ -147,7 +158,7 @@ class Property extends Model
      * @param Collection $values
      * @return static
      */
-    protected function extractValues(Collection $values)
+    protected function extractValue(Collection $values)
     {
         return $values->filter(function ($item) {
             return $item->getAttribute($this->getForeignKey()) == $this->getKey();
@@ -229,12 +240,12 @@ class Property extends Model
      */
     protected function setMany($values)
     {
-        $this->enqueueCurrentValues();
+        $this->enqueueCurrentValue();
 
         // Will add the current values relation to the deletion queue in order to
         // be deleted if persisted. After that we will just have to push every
         // item found in the values array to the new empty values relation.
-        $this->resetValuesRelation();
+        $this->resetValueRelation();
 
         foreach ($values as $value) {
             $this->getValueRelation()->push(Value::make($this, $value));
@@ -245,21 +256,49 @@ class Property extends Model
 
     /**
      * Add the current values to the deletion queue.
+     *
+     * @return mixed
      */
-    public function enqueueCurrentValues()
+    public function enqueueCurrentValue()
     {
         if (! $values = $this->getValueRelation()) {
             return $values;
         }
 
-        $existing = $values->where('exists', true);
+        if (! is_array($values) && ! $values instanceof Collection) {
+            $values = [$values];
+        }
+
+        $queue = $this->getQueue();
 
         // We will only add the values that already exist in database as not
         // persisted values do not need to be deleted. Every value will be
-        // added to the deletionQueue to be processed if model is saved.
-        foreach ($existing as $value) {
-            $this->deletionQueue->push($value);
+        // added to the deletion queue to be processed if model is saved.
+        foreach ($values as $value) {
+            $queue->add($value);
         }
+    }
+
+    /**
+     * Add to deletion queue.
+     *
+     * @param $value
+     */
+    public function enqueueForDeletion($value)
+    {
+        $this->getQueue()->add($value);
+    }
+
+    /**
+     * Sync the original value relation.
+     *
+     * @return $this
+     */
+    public function syncOriginalValue()
+    {
+        $this->originalValue = $this->getValueRelation();
+
+        return $this;
     }
 
     /**
@@ -296,12 +335,22 @@ class Property extends Model
     }
 
     /**
+     * Get the original value.
+     *
+     * @return null
+     */
+    public function getOriginalValue()
+    {
+        return $this->originalValue;
+    }
+
+    /**
      * Get the deletion queue.
      *
      * @return array
      */
-    public function getDeletionQueue()
+    public function getQueue()
     {
-        return $this->deletionQueue;
+        return $this->queue;
     }
 }
