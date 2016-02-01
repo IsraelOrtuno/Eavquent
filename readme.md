@@ -20,7 +20,7 @@ Add the `PropertierServiceProvider` class to your `providers` array in `config/a
 Devio\Propertier\PropertierServiceProvider::class,
 ```
 
-#### 3. Run the package migrations
+#### 3. Publish and migrate
 This package needs a couple of tables for creating the EAV schema structure. First we will publish the package migrations:
 
 ```
