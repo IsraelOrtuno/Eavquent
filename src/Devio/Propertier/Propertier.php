@@ -2,7 +2,8 @@
 
 namespace Devio\Propertier;
 
-use Devio\Propertier\Listeners\SavedEntity;
+use Devio\Propertier\Listeners\EntitySaved;
+use Devio\Propertier\Listeners\EntitySaving;
 use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -20,7 +21,8 @@ trait Propertier
      */
     public static function bootPropertier()
     {
-        static::saved(SavedEntity::class . '@handle');
+        static::saving(EntitySaving::class . '@handle');
+        static::saved(EntitySaved::class . '@handle');
     }
 
     /**
