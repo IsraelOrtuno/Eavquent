@@ -49,7 +49,6 @@ class Value extends Model
         // placed into the Service Provider. As this class is considered as
         // abstract, we have to set up the listeners at children classes.
         static::saving(ValueSaving::class . '@handle');
-        static::saving(ValueSaved::class . '@handle');
     }
 
     /**

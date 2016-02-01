@@ -2,6 +2,7 @@
 
 namespace Devio\Propertier\Listeners;
 
+use Illuminate\Database\Connection;
 
 class EntitySaving
 {
