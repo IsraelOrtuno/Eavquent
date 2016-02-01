@@ -3,7 +3,8 @@
 namespace Devio\Propertier;
 
 use Illuminate\Database\Eloquent\Model;
-use Devio\Propertier\Listeners\SavingValue;
+use Devio\Propertier\Listeners\ValueSaved;
+use Devio\Propertier\Listeners\ValueSaving;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -47,7 +48,8 @@ class Value extends Model
         // Setting up the model event listeners. Much more elegant would be if
         // placed into the Service Provider. As this class is considered as
         // abstract, we have to set up the listeners at children classes.
-        static::saving(SavingValue::class . '@handle');
+        static::saving(ValueSaving::class . '@handle');
+        static::saving(ValueSaved::class . '@handle');
     }
 
     /**
@@ -68,6 +70,22 @@ class Value extends Model
     public function entity()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Replicates a value and set it as existing.
+     *
+     * @return Model
+     */
+    public function replicateExisting()
+    {
+        $instance = parent::replicate(['*']);
+        $instance->exists = $this->exists;
+
+        $instance->syncOriginal();
+        $instance->setProperty($this->getProperty());
+
+        return $instance;
     }
 
     /**
@@ -93,19 +111,27 @@ class Value extends Model
      *
      * @return $this
      */
-    public function syncRelations()
+    public function syncRelationAttributes()
     {
         if (! is_null($entity = $this->getEntity())) {
             $this->entity()->associate($entity);
-            unset($this->relations['entity']);
         }
 
         if (! is_null($property = $this->getProperty())) {
             $this->property()->associate($property);
-            unset($this->relations['property']);
         }
 
+        $this->unsetRelations();
+
         return $this;
+    }
+
+    /**
+     * Unset any existing relation.
+     */
+    public function unsetRelations()
+    {
+        $this->relations = [];
     }
 
     /**
@@ -151,6 +177,16 @@ class Value extends Model
     protected function isCasted()
     {
         return get_class($this) != Value::class;
+    }
+
+    /**
+     * Remove null values from database.
+     *
+     * @return mixed
+     */
+    public static function flush()
+    {
+        return static::where('value', null)->delete();
     }
 
     /**
