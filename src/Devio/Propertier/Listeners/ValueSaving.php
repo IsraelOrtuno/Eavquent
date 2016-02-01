@@ -5,7 +5,7 @@ namespace Devio\Propertier\Listeners;
 use Illuminate\Contracts\Validation\Factory as Validator;
 use Illuminate\Validation\ValidationException;
 
-class SavingValue
+class ValueSaving
 {
     /**
      * The validator instance.
@@ -33,7 +33,7 @@ class SavingValue
      */
     public function handle($model)
     {
-        $model->syncRelations();
+        $model->syncRelationAttributes();
 
         // We will validate that the model passes the minimum validation for being
         // stored which are just the needed fields for keeping relation between
