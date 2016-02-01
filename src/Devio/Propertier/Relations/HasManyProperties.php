@@ -47,7 +47,7 @@ class HasManyProperties extends HasMany
         // run by the property class. We need to pass the collection of values
         // this entity. After return the name keyed properties collection.
         foreach ($properties as $property) {
-            $property->loadValues($values);
+            $property->entity($this->getParent())->loadValue($values);
         }
 
         return $properties->keyby('name');
@@ -90,7 +90,7 @@ class HasManyProperties extends HasMany
                 // entity should have its stand-alone property instances.
                 return $property->entity($model)
                     ->replicateExisting()
-                    ->loadValues($model->values);
+                    ->loadValue($model->values);
             });
 
             $model->setRelation($relation, $properties->keyBy('name'));
