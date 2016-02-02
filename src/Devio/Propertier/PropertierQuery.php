@@ -59,7 +59,29 @@ class PropertierQuery
         // We will assume our collection is keyed by name as it is supposed to
         // happen into the relationship process. If the property has the key
         // we are looking for, will return it meaning the property exists.
-        return $this->getEntity()->getRelationValue('properties')->get($key, null);
+        return $this->getProperties()->get($key, null);
+    }
+
+    /**
+     * Get the entity properties.
+     *
+     * @return mixed
+     */
+    public function getProperties()
+    {
+        return $this->getEntity()->getRelationValue('properties');
+    }
+
+    /**
+     * Get the values of every property.
+     *
+     * @return mixed
+     */
+    public function getValues()
+    {
+        return $this->getProperties()->map(function ($property) {
+            return $property->get();
+        });
     }
 
     /**

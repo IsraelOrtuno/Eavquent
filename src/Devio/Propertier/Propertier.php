@@ -159,6 +159,37 @@ trait Propertier
     }
 
     /**
+     * Get an attribute array of all arrayable attributes.
+     *
+     * @return array
+     */
+    public function getArrayableAttributes()
+    {
+        $attributes = parent::getArrayableAttributes();
+
+        // We will sum an array of properties to the array of attributes in order
+        // to avoid replacing any attribute with a property as original model
+        // attribute names should be considered first instead of property.
+        if ($this->isPropertiesRelationAccessible()) {
+            $attributes = $attributes + $this->propertiesToArray();
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Convert the properties to an array.
+     *
+     * @return array
+     */
+    public function propertiesToArray()
+    {
+        $values = $this->propertierQuery()->getValues();
+
+        return $this->getArrayableItems($values->toArray());
+    }
+
+    /**
      * Handling propertier method calls to the manager class.
      *
      * @param $method
