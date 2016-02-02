@@ -31,6 +31,24 @@ class PropertierQueryTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_should_get_a_collection_of_values_keyed_by_property_name()
+    {
+        list($query, $entity) = $this->getQueryAndEntity();
+
+        $city = m::mock(Property::class);
+        $city->shouldReceive('get')->once()->andReturn('Madrid');
+        $color = m::mock(Property::class);
+        $color->shouldReceive('get')->once()->andReturn('blue');
+
+        $values = new Collection(compact('city', 'color'));
+
+        $entity->shouldReceive('getRelationValue')->with('properties')
+            ->andReturn($values);
+
+        $this->assertEquals(['city' => 'Madrid', 'color' => 'blue'], $query->getValues()->toArray());
+    }
+
+    /** @test */
     public function it_should_not_set_values_on_unexisting_properties()
     {
         list($query, $entity) = $this->getQueryAndEntity();
