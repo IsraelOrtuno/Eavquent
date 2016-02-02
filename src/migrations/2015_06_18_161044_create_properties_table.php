@@ -25,6 +25,8 @@ class CreatePropertiesTable extends Migration {
             $table->text('default_value')->nullable();
 
             $table->timestamps();
+            
+            $table->unique(['entity', 'name']);
 
         });
     }
