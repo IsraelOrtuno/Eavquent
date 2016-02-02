@@ -16,13 +16,16 @@ class CreatePropertyValues extends Migration
         {
             $table->increments('id');
 
-            $table->text('value', 30);
+            $table->text('value');
             $table->integer('property_id');
 
             $table->string('entity_type');
             $table->integer('entity_id');
 
             $table->timestamps();
+            
+            $table->index(['property_id', 'entity_id']);
+            $table->index(['entity_type', 'entity_id']);
         });
     }
 
