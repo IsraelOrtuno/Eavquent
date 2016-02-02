@@ -159,6 +159,32 @@ trait Propertier
     }
 
     /**
+     * Get an attribute array of all arrayable attributes.
+     *
+     * @return array
+     */
+    public function getArrayableAttributes()
+    {
+        $attributes = parent::getArrayableAttributes();
+        if ($this->isPropertiesRelationAccessible()) {
+            $query = $this->propertierQuery();
+
+            $visible = $this->getVisible();
+            $hidden = $this->getHidden();
+            /* @var Collection $property */
+            foreach ($this->properties as $property) {
+                if (in_array($property->name, $hidden, true) || (count($visible) > 0 && in_array($property->name, $visible, true))) {
+                    continue;
+                }
+                $value = $query->getValue($property->name);
+                $attributes[$property->name] = $value instanceof Arrayable ? $value->toArray() : $value;
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
      * Handling propertier method calls to the manager class.
      *
      * @param $method
