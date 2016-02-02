@@ -166,22 +166,27 @@ trait Propertier
     public function getArrayableAttributes()
     {
         $attributes = parent::getArrayableAttributes();
-        if ($this->isPropertiesRelationAccessible()) {
-            $query = $this->propertierQuery();
 
-            $visible = $this->getVisible();
-            $hidden = $this->getHidden();
-            /* @var Collection $property */
-            foreach ($this->properties as $property) {
-                if (in_array($property->name, $hidden, true) || (count($visible) > 0 && in_array($property->name, $visible, true))) {
-                    continue;
-                }
-                $value = $query->getValue($property->name);
-                $attributes[$property->name] = $value instanceof Arrayable ? $value->toArray() : $value;
-            }
+        // We will sum an array of properties to the array of attributes in order
+        // to avoid replacing any attribute with a property as original model
+        // attribute names should be considered first instead of property.
+        if ($this->isPropertiesRelationAccessible()) {
+            $attributes = $attributes + $this->propertiesToArray();
         }
 
         return $attributes;
+    }
+
+    /**
+     * Convert the properties to an array.
+     *
+     * @return array
+     */
+    public function propertiesToArray()
+    {
+        $values = $this->propertierQuery()->getValues();
+
+        return $this->getArrayableItems($values->toArray());
     }
 
     /**
