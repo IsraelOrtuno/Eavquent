@@ -3,27 +3,9 @@
 namespace Devio\Propertier\Listeners;
 
 use Exception;
-use Illuminate\Database\Connection;
 
 class EntitySaved
 {
-    /**
-     * Connection instance.
-     *
-     * @var Connection
-     */
-    protected $connection;
-
-    /**
-     * EntitySaved constructor.
-     *
-     * @param Connection $connection
-     */
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
     /**
      * Handling after saved.
      *
@@ -47,10 +29,8 @@ class EntitySaved
                 $property->entity($model)->push();
             }
 
-            $this->connection->commit();
+            $property->getQueue()->flush();
         } catch (Exception $e) {
-            $this->connection->rollBack();
-
             throw $e;
         }
     }
