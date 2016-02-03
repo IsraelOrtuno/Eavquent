@@ -21,7 +21,6 @@ trait Propertier
      */
     public static function bootPropertier()
     {
-        static::saving(EntitySaving::class . '@handle');
         static::saved(EntitySaved::class . '@handle');
     }
 
