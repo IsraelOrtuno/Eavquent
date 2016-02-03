@@ -1,10 +1,14 @@
 {
     "name": "devio/propertier",
-    "description": "EAV modeling for Eloquent.",
+    "description": "EAV modeling for Laravel and Eloquent.",
     "keywords": [
+        "eav",
+        "dynamic",
+        "schema",
+        "entity attribute value",
+        "database",
         "laravel",
-        "eloquent",
-        "eav"
+        "eloquent"
     ],
     "license": "MIT",
     "authors": [
