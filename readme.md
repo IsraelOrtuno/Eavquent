@@ -48,4 +48,4 @@ php artisan vendor:publish --provider="Devio\Propertier\PropertierServiceProvide
 
 TODO: Describe
 
-[Imgur](http://i.imgur.com/OHnW1Vp.jpg)
+![Propertier E-R Diagram](http://i.imgur.com/OHnW1Vp.jpg)
