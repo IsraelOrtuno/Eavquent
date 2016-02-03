@@ -42,4 +42,10 @@ php artisan vendor:publish --provider="Devio\Propertier\PropertierServiceProvide
 
 #### Current status
 
-**28/12/2015** - First alpha will be tagged in a few days.
+**03/02/2016** - First alpha will be tagged soon.
+
+## Schema
+
+TODO: Describe
+
+[Imgur](http://i.imgur.com/OHnW1Vp.jpg)
