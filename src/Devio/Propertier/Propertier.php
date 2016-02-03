@@ -47,8 +47,6 @@ trait Propertier
      */
     public function values()
     {
-        $this->addHidden('values');
-
         return $this->morphMany(Value::class, 'entity');
     }
 
