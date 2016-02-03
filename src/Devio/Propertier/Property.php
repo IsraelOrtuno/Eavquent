@@ -23,7 +23,7 @@ class Property extends Model
     protected $originalValue = null;
 
     /**
-     * @var Collection
+     * @var Queue
      */
     protected $queue;
 

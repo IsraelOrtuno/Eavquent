@@ -7,26 +7,28 @@ use Illuminate\Support\Collection;
 class Queue
 {
     /**
-     * Deletion queue.
+     * Queued items.
      *
      * @var Collection
      */
-    protected $deleteQueue;
+    protected $queue;
 
     /**
      * Queue constructor.
      */
     public function __construct()
     {
-        $this->deleteQueue = new Collection;
+        $this->queue = new Collection;
     }
 
     /**
      * Process the queue.
+     *
+     * @return mixed
      */
     public function process()
     {
-        $values = $this->deleteQueue->pluck('id');
+        $values = $this->queue->pluck('id');
 
         if ($values->count()) {
             Value::whereIn('id', $values)->delete();
@@ -41,7 +43,7 @@ class Queue
     public function add(Value $item)
     {
         if ($item->exists) {
-            $this->deleteQueue->push($item);
+            $this->queue->push($item);
         }
     }
 
@@ -50,6 +52,6 @@ class Queue
      */
     public function flush()
     {
-        $this->deleteQueue = new Collection;
+        $this->queue = new Collection;
     }
 }
