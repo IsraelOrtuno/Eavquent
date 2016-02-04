@@ -4,6 +4,11 @@ Propertier - EAV modeling for Eloquent
 
 This package will help you to provide an EAV structure and functionality to your Eloquent models.
 
+
+## Current status
+
+**03/02/2016** Still under development. First alpha will be tagged soon.
+
 ## Install
 
 #### 1. Require with composer
@@ -39,10 +44,6 @@ Publish the package configuration
 ```
 php artisan vendor:publish --provider="Devio\Propertier\PropertierServiceProvider" --tag="config"
 ```
-
-#### Current status
-
-**03/02/2016** - First alpha will be tagged soon.
 
 ## Schema
 
