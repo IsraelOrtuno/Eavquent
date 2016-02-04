@@ -14,20 +14,17 @@ class CreatePropertiesTable extends Migration {
         Schema::create('properties', function (Blueprint $table)
         {
             $table->increments('id');
-
             $table->string('type', 30);
             $table->string('name', 30);
-
             $table->boolean('multivalue')->default(false);
-
             $table->string('entity');
-
             $table->text('default_value')->nullable();
 
             $table->timestamps();
-            
-            $table->unique(['entity', 'name']);
 
+            $table->index('entity');
+
+            $table->unique(['entity', 'name']);
         });
     }
 
