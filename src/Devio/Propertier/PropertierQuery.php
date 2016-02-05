@@ -4,6 +4,7 @@ namespace Devio\Propertier;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class PropertierQuery
 {
@@ -72,6 +73,27 @@ class PropertierQuery
         return $this->getEntity()->getRelationValue('properties');
     }
 
+    public function setProperty($property, Collection $values)
+    {
+//        $values = $this->extractValue($property, $values);
+//
+        $this->getEntity()->setRelation(
+            $property->getAttribute('name'), $values);
+    }
+
+    /**
+     * Extract only the values of this property.
+     *
+     * @param Collection $values
+     * @return static
+     */
+    protected function extractValue($property, Collection $values)
+    {
+        return $values->filter(function ($item) use ($property) {
+            return $item->getAttribute($property->getForeignKey()) == $property->getKey();
+        });
+    }
+
     /**
      * Get the values of every property.
      *
@@ -131,8 +153,19 @@ class PropertierQuery
             throw new \RuntimeException('Trying to set a value on a non existing property.');
         }
 
+        return $this->getEntity()->setRelation($key, $value);
+
         return $property->set($value);
     }
+//    public function setValue($key, $value)
+//    {
+//        if (is_null($property = $this->getProperty($key))) {
+//            throw new \RuntimeException('Trying to set a value on a non existing property.');
+//        }
+//
+//        return $property->set($value);
+//    }
+
 
     /**
      * Get the base model attribute names.

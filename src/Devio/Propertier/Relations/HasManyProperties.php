@@ -2,6 +2,7 @@
 
 namespace Devio\Propertier\Relations;
 
+use Devio\Propertier\Property;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,6 +18,13 @@ class HasManyProperties extends HasMany
     protected $entity;
 
     /**
+     * Property field to group by.
+     *
+     * @var string
+     */
+    protected $propertyGroup;
+
+    /**
      * @param Builder $query
      * @param Model $model
      * @param string $entity
@@ -24,6 +32,7 @@ class HasManyProperties extends HasMany
     public function __construct(Builder $query, Model $model, $entity)
     {
         $this->entity = $entity;
+        $this->propertyGroup = (new Property)->getForeignKey();
         parent::__construct($query, $model, 'entity', '');
     }
 
@@ -47,7 +56,9 @@ class HasManyProperties extends HasMany
         // run by the property class. We need to pass the collection of values
         // this entity. After return the name keyed properties collection.
         foreach ($properties as $property) {
-            $property->entity($this->getParent())->loadValue($values);
+//            $this->getParent()->setProperty($property, $values);
+//            $this->getParent()->setRelation($property->name, $values);
+//            $property->entity($this->getParent())->loadValue($values);
         }
 
         return $properties->keyby('name');
@@ -84,19 +95,27 @@ class HasManyProperties extends HasMany
         }
 
         foreach ($models as $model) {
-            $properties = $results->map(function ($property) use ($model) {
-                // Replicating the existing property will avoid the problem of
-                // many enities pointing to the same property object. Every
-                // entity should have its stand-alone property instances.
-                return $property->entity($model)
-                    ->replicateExisting()
-                    ->loadValue($model->values);
-            });
+            $model->setRelation($relation, $results->keyBy('name'));
 
-            $model->setRelation($relation, $properties->keyBy('name'));
+            $this->setProperties($model, $results);
         }
 
         return $models;
+    }
+
+    /**
+     * @param $entity
+     * @param $properties
+     */
+    protected function setProperties($entity, $properties)
+    {
+        $values = $entity->getRelationValue('values')->groupBy($this->propertyGroup);
+
+        foreach ($properties as $property) {
+            $entity->setValue(
+                $property->getName(), $values->get($property->getKey())
+            );
+        }
     }
 
     /**

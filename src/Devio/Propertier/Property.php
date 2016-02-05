@@ -353,4 +353,9 @@ class Property extends Model
     {
         return $this->queue;
     }
+
+    public function getName()
+    {
+        return $this->attributes['name'];
+    }
 }
