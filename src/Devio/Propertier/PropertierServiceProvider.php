@@ -36,9 +36,9 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerValueTypes()
     {
-        $properties = $this->app['config']->get('propertier.properties');
+        $properties = $this->app['config']->get('eavquent.fields');
 
-        Factory::register($properties);
+        Resolver::register($properties);
     }
 
     /**

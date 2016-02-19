@@ -3,8 +3,8 @@
 namespace Devio\Propertier;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class PropertierQuery
 {

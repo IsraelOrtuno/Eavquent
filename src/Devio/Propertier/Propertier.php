@@ -2,13 +2,28 @@
 
 namespace Devio\Propertier;
 
+use Closure;
+use Devio\Propertier\Relations\HasMany;
 use Devio\Propertier\Listeners\EntitySaved;
 use Devio\Propertier\Listeners\EntitySaving;
-use Devio\Propertier\Relations\HasManyProperties;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Propertier
 {
+    /**
+     * The factory instance.
+     *
+     * @var Factory
+     */
+    protected $factory = null;
+
+    /**
+     * Dynamic relations array.
+     *
+     * @var array
+     */
+    protected $fieldRelations = [];
+
     /**
      * Model schema columns.
      *
@@ -25,29 +40,23 @@ trait Propertier
     }
 
     /**
-     * Relationship to the properties table.
-     *
-     * @return HasManyProperties
-     */
-    public function properties()
-    {
-        // We are using a self coded relation as there is no foreign key into
-        // the properties table. The entity name will be used as a foreign
-        // key to find the properties which belong to this entity item.
-        return new HasManyProperties(
-            (new Property)->newQuery(), $this, $this->getMorphClass()
-        );
-    }
-
-    /**
      * Polimorphic relationship to the values table.
      *
      * @return MorphMany
      */
-    public function values()
+    public function fields()
     {
-        return $this->morphMany(Value::class, 'entity');
+        $table = with($instance = new Value)->getTable();
+
+        return new HasMany(
+            $instance->newQuery(), $this, "$table.partner_id", $this->getKeyName()
+        );
     }
+
+//    public function values()
+//    {
+//        return $this->morphMany('values', '');
+//    }
 
     /**
      * Get if properties could be accessed.
@@ -99,13 +108,17 @@ trait Propertier
     }
 
     /**
-     * Get a new manager instance.
+     * Get the factory instance.
      *
      * @return Manager
      */
-    public function propertierQuery()
+    public function factory()
     {
-        return new PropertierQuery($this);
+        if (! isset($this->factory)) {
+            $this->factory = new Factory($this);
+        }
+
+        return $this->factory;
     }
 
     /**
@@ -114,21 +127,21 @@ trait Propertier
      * @param $key
      * @return mixed
      */
-    public function getAttribute($key)
-    {
-        $query = $this->propertierQuery();
-
-        if ($this->isPropertiesRelationAccessible() &&
-            $query->isProperty($key)
-        ) {
-            return $query->getValue($key);
-        }
-
-        // If the property we are accesing corresponds to a any registered property
-        // we will provide the value of this property if any. Otherwise, we will
-        // access the parent Eloquent model and return its default behaviour.
-        return parent::getAttribute($key);
-    }
+//    public function getAttribute($key)
+//    {
+//        $factory = $this->propertierQuery();
+//
+//        if ($this->isPropertiesRelationAccessible() &&
+//            $factory->isProperty($key)
+//        ) {
+//            return $factory->getValue($key);
+//        }
+//
+//        // If the property we are accesing corresponds to a any registered property
+//        // we will provide the value of this property if any. Otherwise, we will
+//        // access the parent Eloquent model and return its default behaviour.
+//        return parent::getAttribute($key);
+//    }
 
     /**
      * Overriding Eloquent setAttribute method will first set a property.
@@ -138,53 +151,72 @@ trait Propertier
      * @return Value
      * @throws \Exception
      */
-    public function setAttribute($key, $value)
-    {
-        $query = $this->propertierQuery();
-
-        if ($this->isPropertiesRelationAccessible() &&
-            $query->isProperty($key) &&
-            ! $query->isModelColumn($key)
-        ) {
-            return $query->setValue($key, $value);
-        }
-
-        // If the property to set is registered and does not correspond to any
-        // model column we are free to set its value. Otherwise we will let
-        // go the default Eloquent behaviour and return its value if any.
-        return parent::setAttribute($key, $value);
-    }
+//    public function setAttribute($key, $value)
+//    {
+//        $factory = $this->propertierQuery();
+//
+//        if ($this->isPropertiesRelationAccessible() &&
+//            $factory->isProperty($key) &&
+//            ! $factory->isModelColumn($key)
+//        ) {
+//            return $factory->setValue($key, $value);
+//        }
+//
+//        // If the property to set is registered and does not correspond to any
+//        // model column we are free to set its value. Otherwise we will let
+//        // go the default Eloquent behaviour and return its value if any.
+//        return parent::setAttribute($key, $value);
+//    }
 
     /**
      * Get an attribute array of all arrayable attributes.
      *
+     * @param $key
+     * @param Closure $closure
      * @return array
      */
-    public function getArrayableAttributes()
-    {
-        $attributes = parent::getArrayableAttributes();
-
-        // We will sum an array of properties to the array of attributes in order
-        // to avoid replacing any attribute with a property as original model
-        // attribute names should be considered first instead of property.
-        if ($this->isPropertiesRelationAccessible()) {
-            $attributes = $attributes + $this->propertiesToArray();
-        }
-
-        return $attributes;
-    }
+//    public function getArrayableAttributes()
+//    {
+//        $attributes = parent::getArrayableAttributes();
+//
+//        // We will sum an array of properties to the array of attributes in order
+//        // to avoid replacing any attribute with a property as original model
+//        // attribute names should be considered first instead of property.
+//        if ($this->isPropertiesRelationAccessible()) {
+//            $attributes = $attributes + $this->propertiesToArray();
+//        }
+//
+//        return $attributes;
+//    }
+//
+//    /**
+//     * Convert the properties to an array.
+//     *
+//     * @return array
+//     */
+//    public function propertiesToArray()
+//    {
+//        $values = $this->propertierQuery()->getValues();
+//
+//        return $this->getArrayableItems($values->toArray());
+//    }
 
     /**
-     * Convert the properties to an array.
-     *
-     * @return array
+     * @param $key
+     * @param Closure $closure
+     * @return $this
      */
-    public function propertiesToArray()
+    public function setFieldRelation($key, Closure $closure)
     {
-        $values = $this->propertierQuery()->getValues();
+        $this->fieldRelations[$key] = $closure;
 
-        return $this->getArrayableItems($values->toArray());
+        return $this;
     }
+
+//    public function city()
+//    {
+//        return $this->morphOne(Value::class, 'partner');
+//    }
 
     /**
      * Handling propertier method calls to the manager class.
@@ -195,15 +227,22 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $query = $this->propertierQuery();
+        $factory = $this->factory();
 
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
         // this method in the Manager class passing this existing instance.
         if ($this->isPropertiesRelationAccessible() &&
-            in_array($method, get_class_methods($query))
+            in_array($method, get_class_methods($factory))
         ) {
-            return call_user_func_array([$query, $method], $parameters);
+            return call_user_func_array([$factory, $method], $parameters);
+        }
+
+        // As we are defining every field as a relationship and also creating a
+        // dynamic method to access this relationship object, we'll check if
+        // the method matches any of these relations and return its value.
+        if (in_array($method, $this->fieldRelations)) {
+            return call_user_func_array($this->fieldRelations[$method], $parameters);
         }
 
         return parent::__call($method, $parameters);
