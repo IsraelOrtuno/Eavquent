@@ -38,5 +38,4 @@ class ResolverTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException(RuntimeException::class);
         $this->resolver->field('foo');
     }
-
 }

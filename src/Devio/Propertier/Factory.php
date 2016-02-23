@@ -28,11 +28,12 @@ class Factory
      * Handler constructor.
      *
      * @param $partner
+     * @param null $manager
      */
-    public function __construct($partner)
+    public function __construct($partner, $manager = null)
     {
         $this->partner = $partner;
-        $this->manager = new Manager;
+        $this->manager = $manager ?: new Manager;
 
         $this->bootPartnerRelations();
     }
@@ -154,6 +155,34 @@ class Factory
     }
 
     /**
+     * Get the value of a field.
+     *
+     * @param $key
+     * @param $attribute
+     * @return mixed
+     */
+    public function get($key, $attribute)
+    {
+        // Just in case the user has set any get mutator into the main model
+        // that corresponds to a field, we will assume that the user will
+        // provide its own output and we will not modify anything else.
+        if ($this->getPartner()->hasGetMutator($key)) {
+            return $attribute;
+        }
+
+        $field = $this->getField($key);
+
+        // If the value is multivalued, we will provide a collection plucked by
+        // pluck by the value and its id. If is not we'll just grab the value
+        // of the item. Both cases have ran any mutator on their type class.
+        if ($field->isMultivalue()) {
+            return $attribute->pluck('value', 'id');
+        }
+
+        return $attribute->getAttribute('value');
+    }
+
+    /**
      * Generate the relation closure.
      *
      * @param $field
@@ -168,7 +197,7 @@ class Factory
         // This will help us to simulate any relation as if it was handly made
         // in the original partner definition using the function statement.
         return Closure::bind(function () use ($relation, $field) {
-            return $relation->where('field_id', $field->id);
+            return $relation->where('field_id', $field->getKey());
         }, $partner, get_class($partner));
     }
 
@@ -194,17 +223,6 @@ class Factory
     protected function getBaseRelationMethod($field)
     {
         return $field->isMultivalue() ? 'morphMany' : 'morphOne';
-    }
-
-    /**
-     * Get a field by name.
-     *
-     * @param $key
-     * @return mixed
-     */
-    public function getField($key)
-    {
-        return $this->getFields()->get($key);
     }
 
     /**
@@ -247,16 +265,6 @@ class Factory
     }
 
     /**
-     * Get the field foreign key name.
-     *
-     * @return string
-     */
-    protected function getFieldForeignKey()
-    {
-        return (new Field)->getForeignKey();
-    }
-
-    /**
      * Get the fields registered for the current partner.
      *
      * @return mixed
@@ -264,6 +272,27 @@ class Factory
     protected function getFields()
     {
         return $this->manager->getFields($this->getPartnerClass());
+    }
+
+    /**
+     * Get a field by name.
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function getField($key)
+    {
+        return $this->getFields()->get($key);
+    }
+
+    /**
+     * Get the field foreign key name.
+     *
+     * @return string
+     */
+    protected function getFieldForeignKey()
+    {
+        return (new Field)->getForeignKey();
     }
 
     /**
@@ -327,7 +356,7 @@ class Factory
      *
      * @return Model
      */
-    public function getPartner()
+    protected function getPartner()
     {
         return $this->partner;
     }

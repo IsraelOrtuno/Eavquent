@@ -4,9 +4,11 @@ namespace Devio\Propertier;
 
 use Closure;
 use Devio\Propertier\Relations\HasMany;
+use Devio\Propertier\Relations\MorphMany;
 use Devio\Propertier\Listeners\EntitySaved;
 use Devio\Propertier\Listeners\EntitySaving;
-use Devio\Propertier\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 trait Propertier
 {
@@ -49,17 +51,19 @@ trait Propertier
         $table = with($instance = new Value)->getTable();
         list($type, $id) = $this->getMorphs('partner', null, null);
 
-        return new MorphMany($instance->newQuery(), $this, $table.'.'.$type, $table.'.'.$id, $this->getKeyName());
+        return new MorphMany(
+            $instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $this->getKeyName()
+        );
     }
 
     /**
-     * Get if properties could be accessed.
+     * Get if fields can be accessed.
      *
      * @return bool
      */
-    public function isPropertiesRelationAccessible()
+    public function areFieldsAccessible()
     {
-        return $this->getPropertiesAutoloading() || $this->relationLoaded('properties');
+        return $this->getFieldsAutoloading() || ! empty($this->fieldRelations);
     }
 
     /**
@@ -67,10 +71,10 @@ trait Propertier
      *
      * @return bool
      */
-    public function getPropertiesAutoloading()
+    public function getFieldsAutoloading()
     {
-        if (property_exists($this, 'propertiesAutoloading')) {
-            return $this->propertiesAutoloading;
+        if (property_exists($this, 'fieldsAutoloading')) {
+            return $this->fieldsAutoloading;
         }
 
         return true;
@@ -104,7 +108,7 @@ trait Propertier
     /**
      * Get the factory instance.
      *
-     * @return Manager
+     * @return Factory
      */
     public function factory()
     {
@@ -121,21 +125,21 @@ trait Propertier
      * @param $key
      * @return mixed
      */
-//    public function getAttribute($key)
-//    {
-//        $factory = $this->propertierQuery();
-//
-//        if ($this->isPropertiesRelationAccessible() &&
-//            $factory->isProperty($key)
-//        ) {
-//            return $factory->getValue($key);
-//        }
-//
-//        // If the property we are accesing corresponds to a any registered property
-//        // we will provide the value of this property if any. Otherwise, we will
-//        // access the parent Eloquent model and return its default behaviour.
-//        return parent::getAttribute($key);
-//    }
+    public function getAttribute($key)
+    {
+        $attribute = parent::getAttribute($key);
+
+        // If the property we are accesing corresponds to a any registered property
+        // we will provide the value of this property if any. Otherwise, we will
+        // access the parent Eloquent model and return its default behaviour.
+        if ($this->areFieldsAccessible() &&
+            array_key_exists($key, $this->fieldRelations)
+        ) {
+            return $this->factory()->get($key, $attribute);
+        }
+
+        return $attribute;
+    }
 
     /**
      * Overriding Eloquent setAttribute method will first set a property.
@@ -216,23 +220,22 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $factory = $this->factory();
+        $this->factory();
 
+        if ($this->areFieldsAccessible()) {
+//            // If the method we are trying to call is available in the manager class
+//            // we will prevent the default Model call to the Query Builder calling
+//            // this method in the Manager class passing this existing instance.
+//            if (in_array($method, get_class_methods($factory))) {
+//                return call_user_func_array([$factory, $method], $parameters);
+//            }
 
-        // If the method we are trying to call is available in the manager class
-        // we will prevent the default Model call to the Query Builder calling
-        // this method in the Manager class passing this existing instance.
-        if ($this->isPropertiesRelationAccessible() &&
-            in_array($method, get_class_methods($factory))
-        ) {
-            return call_user_func_array([$factory, $method], $parameters);
-        }
-
-        // As we are defining every field as a relationship and also creating a
-        // dynamic method to access this relationship object, we'll check if
-        // the method matches any of these relations and return its value.
-        if (array_key_exists($method, $this->fieldRelations)) {
-            return call_user_func_array($this->fieldRelations[$method], $parameters);
+            // As we are defining every field as a relationship and also creating a
+            // dynamic method to access this relationship object, we'll check if
+            // the method matches any of these relations and return its value.
+            if (array_key_exists($method, $this->fieldRelations)) {
+                return call_user_func_array($this->fieldRelations[$method], $parameters);
+            }
         }
 
         return parent::__call($method, $parameters);

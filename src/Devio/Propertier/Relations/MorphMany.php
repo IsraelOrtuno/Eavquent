@@ -23,7 +23,7 @@ class MorphMany extends BaseMorphMany
             $key = $model->getAttribute($this->localKey);
 
             if (isset($dictionary[$key])) {
-                $model->allocate(collect($dictionary[$key]));
+                $model->factory()->allocate(collect($dictionary[$key]));
             }
         }
 
