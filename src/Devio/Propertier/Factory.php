@@ -127,16 +127,18 @@ class Factory
      */
     protected function setMany($field, $value)
     {
-        if ($value instanceof BaseCollection) {
-            $value = new Collection($value->all());
+        if (is_null($value)) {
+            $value = [];
+        } elseif ($value instanceof BaseCollection) {
+            $value = $value->all();
         } elseif (! is_array($value)) {
-            $value = new Collection([$value]);
+            $value = [$value];
         }
 
         // We only want to store Eloquent Collections so we will transform any
         // value input to get a proper formed Eloquent Collection. When done
         // we just have to set it as relationship for the partner instance.
-        return $this->assign($field, $value);
+        return $this->assign($field, new Collection($value));
     }
 
     /**
@@ -166,7 +168,7 @@ class Factory
         // Just in case the user has set any get mutator into the main model
         // that corresponds to a field, we will assume that the user will
         // provide its own output and we will not modify anything else.
-        if ($this->getPartner()->hasGetMutator($key)) {
+        if (is_null($attribute) || $this->getPartner()->hasGetMutator($key)) {
             return $attribute;
         }
 

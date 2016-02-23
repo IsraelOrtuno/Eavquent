@@ -22,8 +22,13 @@ class MorphMany extends BaseMorphMany
         foreach ($models as $model) {
             $key = $model->getAttribute($this->localKey);
 
+            // If we find any records for this model, we will pass for allocation.
+            // Otherwise, we will provide an empty collection to initilaize the
+            // relationships to null and empty collections depending on type.
             if (isset($dictionary[$key])) {
                 $model->factory()->allocate(collect($dictionary[$key]));
+            } else {
+                $model->factory()->allocate(collect());
             }
         }
 
