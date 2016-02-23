@@ -32,13 +32,6 @@ class Value extends Model
     protected $parentProperty = null;
 
     /**
-     * The factory instance.
-     *
-     * @var Factory
-     */
-    protected $factory;
-
-    /**
      * Booting the model.
      */
     public static function boot()
@@ -69,6 +62,48 @@ class Value extends Model
     public function partner()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Creates a new casted instance from builder.
+     *
+     * @param array $attributes
+     * @param null $connection
+     * @return mixed
+     */
+    public function newFromBuilder($attributes = [], $connection = null)
+    {
+        $field = Factory::getValueField($attributes);
+
+        return parent::newFromBuilder($attributes, $connection)
+            ->castValueTo($field);
+    }
+
+    /**
+     * Casts the model to the value type.
+     *
+     * @param $field
+     * @return $this|string
+     */
+    public function castValueTo($field)
+    {
+        // Checking if this object is an instance of ::self would let us know
+        // it this object has been already casted. A little bit tricky but
+        // this will prevent errors if casting is called more than once.
+        if ($this->isCasted()) {
+            return $this;
+        }
+
+        $cast = (new Resolver)->field($field);
+
+        // Once we have guessed what's the value object we are casting to, lets
+        // instantiate and make it look like a copy of the current model. It
+        // will be an exact copy of the base model into a different class.
+        with($cast = new $cast)->setRawAttributes($this->attributes);
+        $cast->setConnection($this->connection);
+        $cast->exists = $this->exists;
+
+        return $cast;
     }
 
     /**
