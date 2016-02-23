@@ -53,11 +53,6 @@ trait Propertier
         );
     }
 
-//    public function values()
-//    {
-//        return $this->morphMany('values', '');
-//    }
-
     /**
      * Get if properties could be accessed.
      *
@@ -213,11 +208,6 @@ trait Propertier
         return $this;
     }
 
-//    public function city()
-//    {
-//        return $this->morphOne(Value::class, 'partner');
-//    }
-
     /**
      * Handling propertier method calls to the manager class.
      *
@@ -228,6 +218,7 @@ trait Propertier
     public function __call($method, $parameters)
     {
         $factory = $this->factory();
+
 
         // If the method we are trying to call is available in the manager class
         // we will prevent the default Model call to the Query Builder calling
@@ -241,7 +232,7 @@ trait Propertier
         // As we are defining every field as a relationship and also creating a
         // dynamic method to access this relationship object, we'll check if
         // the method matches any of these relations and return its value.
-        if (in_array($method, $this->fieldRelations)) {
+        if (array_key_exists($method, $this->fieldRelations)) {
             return call_user_func_array($this->fieldRelations[$method], $parameters);
         }
 

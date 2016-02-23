@@ -18,6 +18,13 @@ class Factory
     protected $partner;
 
     /**
+     * The manager instance.
+     *
+     * @var Manager
+     */
+    protected $manager;
+
+    /**
      * Handler constructor.
      *
      * @param $partner
@@ -25,6 +32,20 @@ class Factory
     public function __construct($partner)
     {
         $this->partner = $partner;
+        $this->manager = new Manager;
+
+        $this->bootPartnerRelations();
+    }
+
+    protected function bootPartnerRelations()
+    {
+        $partner = $this->getPartner();
+
+        foreach ($this->getFields() as $field) {
+            $partner->setFieldRelation(
+                $field->getName(), $this->getRelationClosure($field)
+            );
+        }
     }
 
     /**
@@ -120,15 +141,10 @@ class Factory
      */
     protected function assign($field, $value)
     {
-        $closure = $this->getRelationClosure($field);
-
         // Here is where we assign any value as relationship of any field name.
         // We will set the value of the relation to the given value and also
         // dynamically register the field name as if it's a real relation.
-        with($partner = $this->getPartner())
-            ->setRelation($field->getName(), $value);
-
-        return $partner->setFieldRelation($field, $closure);
+        return $this->getPartner()->setRelation($field->getName(), $value);
     }
 
     /**
@@ -182,7 +198,7 @@ class Factory
      */
     public function getField($key)
     {
-        return $this->getFields()->where('name', $key)->first();
+        return $this->getFields()->get($key);
     }
 
     /**
@@ -193,10 +209,8 @@ class Factory
      */
     public function findConflicts($key)
     {
-        // TODO: Performance could be improved. Consider running this only once as it's currently
-        // TODO: being called every time a value is set and when loading raw it may not be needed.
         return $this->isRelationship($key)
-//        || $this->isModelColumn($key)
+        || $this->isModelColumn($key)
         || $this->isPrimaryKey($key);
     }
 
@@ -208,7 +222,6 @@ class Factory
      */
     public function isRelationship($key)
     {
-        // TODO: Performance may be improved here by storing partner class methods
         if (method_exists($partner = $this->getPartner(), $key)) {
             return $partner->$key() instanceof Relation;
         }
@@ -244,8 +257,53 @@ class Factory
      */
     protected function getFields()
     {
-        // TODO: Cache this query
-        return Field::where('partner', $this->getPartnerClass())->get();
+        return $this->manager->getFields($this->getPartnerClass());
+    }
+
+    /**
+     * Get the base model attribute names.
+     *
+     * @return array
+     */
+    public function getModelColumns()
+    {
+        $class = get_class($this->getPartner());
+
+        // We have to resolve the partner class name in order to access its static
+        // property $modelColums. This property is stored in the model as will
+        // be different from one model to another.
+        if (empty($class::$modelColumns)) {
+            $class::$modelColumns = $this->fetchModelColumns();
+        }
+
+        // If no attributes are listed into $modelColumns property, we will
+        // fetch them from database. This could result into a performance
+        // issue so it should be set manually or when booting the model.
+        return $class::$modelColumns;
+    }
+
+    /**
+     * Check if an attribute corresponds to a model column name.
+     *
+     * @param $attribute
+     * @return bool
+     */
+    public function isModelColumn($attribute)
+    {
+        return in_array($attribute, $this->getModelColumns());
+    }
+
+    /**
+     * Get the model column names.
+     *
+     * @return mixed
+     */
+    public function fetchModelColumns()
+    {
+        return with($partner = $this->getPartner())
+            ->getConnection()
+            ->getSchemaBuilder()
+            ->getColumnListing($partner->getTable());
     }
 
     /**
@@ -267,5 +325,4 @@ class Factory
     {
         return $this->partner;
     }
-
 }
