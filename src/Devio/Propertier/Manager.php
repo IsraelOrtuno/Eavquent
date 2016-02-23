@@ -28,6 +28,12 @@ class Manager
         $this->container = $container ?: Container::getInstance();
     }
 
+    /**
+     * Get the registered fields.
+     *
+     * @param null $partner
+     * @return mixed
+     */
     public function getFields($partner = null)
     {
         $fields = $this->container->make('propertier.fields');
