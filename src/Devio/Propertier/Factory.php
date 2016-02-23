@@ -37,10 +37,16 @@ class Factory
         $this->bootPartnerRelations();
     }
 
+    /**
+     * Booting the partner relations.
+     */
     protected function bootPartnerRelations()
     {
         $partner = $this->getPartner();
 
+        // We will spin through any partner field and register if it were a real
+        // relationship into the partner model. We will dynamically register a
+        // closure which will return a relation object based on the field type.
         foreach ($this->getFields() as $field) {
             $partner->setFieldRelation(
                 $field->getName(), $this->getRelationClosure($field)
@@ -142,8 +148,8 @@ class Factory
     protected function assign($field, $value)
     {
         // Here is where we assign any value as relationship of any field name.
-        // We will set the value of the relation to the given value and also
-        // dynamically register the field name as if it's a real relation.
+        // We will establish the raw value instance either is a plain object
+        // or a collection to the relation which is matching the field key.
         return $this->getPartner()->setRelation($field->getName(), $value);
     }
 
@@ -161,8 +167,8 @@ class Factory
         // This will return a closure fully binded to the partner model instance.
         // This will help us to simulate any relation as if it was handly made
         // in the original partner definition using the function statement.
-        return Closure::bind(function () use ($relation) {
-            return $relation;
+        return Closure::bind(function () use ($relation, $field) {
+            return $relation->where('field_id', $field->id);
         }, $partner, get_class($partner));
     }
 
