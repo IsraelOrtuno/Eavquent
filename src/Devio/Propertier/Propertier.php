@@ -3,6 +3,7 @@
 namespace Devio\Propertier;
 
 use Closure;
+use Devio\Propertier\Listeners\PartnerSaved;
 use Devio\Propertier\Relations\HasMany;
 use Devio\Propertier\Relations\MorphMany;
 use Devio\Propertier\Listeners\EntitySaved;
@@ -38,7 +39,7 @@ trait Propertier
      */
     public static function bootPropertier()
     {
-        static::saved(EntitySaved::class . '@handle');
+        static::saved(PartnerSaved::class . '@handle');
     }
 
     /**
@@ -209,6 +210,14 @@ trait Propertier
         $this->fieldRelations[$key] = $closure;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getFieldRelations()
+    {
+        return array_keys($this->fieldRelations);
     }
 
     /**

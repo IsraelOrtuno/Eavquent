@@ -101,7 +101,9 @@ class Value extends Model
         // will be an exact copy of the base model into a different class.
         with($cast = new $cast)->setRawAttributes($this->attributes);
         $cast->setConnection($this->connection);
-        $cast->exists = $this->exists;
+        if ($cast->exists = $this->exists) {
+            $cast->syncOriginal();
+        }
 
         return $cast;
     }

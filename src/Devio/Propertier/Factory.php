@@ -56,6 +56,19 @@ class Factory
     }
 
     /**
+     * Get the field instance for a value.
+     *
+     * @param $value
+     * @return mixed
+     */
+    public static function getValueField($value)
+    {
+        $fields = with($manager = new Manager)->getFields();
+
+        return $fields->where('id', $value->field_id)->first();
+    }
+
+    /**
      * Create the partner relations from plain array of values.
      *
      * @param BaseCollection $values
@@ -199,7 +212,7 @@ class Factory
         // This will help us to simulate any relation as if it was handly made
         // in the original partner definition using the function statement.
         return Closure::bind(function () use ($relation, $field) {
-            return $relation->where('field_id', $field->getKey());
+            return $relation->where($field->getForeignKey(), $field->getKey());
         }, $partner, get_class($partner));
     }
 
