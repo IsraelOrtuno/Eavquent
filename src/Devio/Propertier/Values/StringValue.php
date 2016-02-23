@@ -2,9 +2,9 @@
 
 namespace Devio\Propertier\Values;
 
-use Devio\Propertier\Value as PropertyValue;
+use Devio\Propertier\Value;
 
-class StringValue extends PropertyValue
+class StringValue extends Value
 {
     /**
      * Value casting.
