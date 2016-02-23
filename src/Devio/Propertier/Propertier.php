@@ -6,7 +6,7 @@ use Closure;
 use Devio\Propertier\Relations\HasMany;
 use Devio\Propertier\Listeners\EntitySaved;
 use Devio\Propertier\Listeners\EntitySaving;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Devio\Propertier\Relations\MorphMany;
 
 trait Propertier
 {
@@ -47,10 +47,9 @@ trait Propertier
     public function fields()
     {
         $table = with($instance = new Value)->getTable();
+        list($type, $id) = $this->getMorphs('partner', null, null);
 
-        return new HasMany(
-            $instance->newQuery(), $this, "$table.partner_id", $this->getKeyName()
-        );
+        return new MorphMany($instance->newQuery(), $this, $table.'.'.$type, $table.'.'.$id, $this->getKeyName());
     }
 
     /**

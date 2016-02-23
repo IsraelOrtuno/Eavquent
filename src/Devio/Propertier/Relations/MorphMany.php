@@ -3,8 +3,9 @@
 namespace Devio\Propertier\Relations;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\MorphMany as BaseMorphMany;
 
-class HasMany extends \Illuminate\Database\Eloquent\Relations\HasMany
+class MorphMany extends BaseMorphMany
 {
     /**
      * Match the eagerly loaded results to their many parents.
