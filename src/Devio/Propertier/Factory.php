@@ -2,68 +2,333 @@
 
 namespace Devio\Propertier;
 
-use RuntimeException;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection as BaseCollection;
 
 class Factory
 {
     /**
-     * All of the value types.
+     * The partner instance.
      *
-     * @var array
+     * @var Model
      */
-    protected static $valueTypes = [];
+    protected $partner;
 
     /**
-     * Register the properties.
+     * The manager instance.
      *
-     * @param $valueTypes
+     * @var Manager
      */
-    public static function register($valueTypes)
+    protected $manager;
+
+    /**
+     * Handler constructor.
+     *
+     * @param $partner
+     */
+    public function __construct($partner)
     {
-        static::$valueTypes = $valueTypes;
+        $this->partner = $partner;
+        $this->manager = new Manager;
+
+        $this->bootPartnerRelations();
     }
 
     /**
-     * Guess the type of value based on the property.
-     *
-     * @param Property $property
-     * @return string
+     * Booting the partner relations.
      */
-    public function property($property)
+    protected function bootPartnerRelations()
     {
-        return $this->getClassName($property);
+        $partner = $this->getPartner();
+
+        // We will spin through any partner field and register if it were a real
+        // relationship into the partner model. We will dynamically register a
+        // closure which will return a relation object based on the field type.
+        foreach ($this->getFields() as $field) {
+            $partner->setFieldRelation(
+                $field->getName(), $this->getRelationClosure($field)
+            );
+        }
     }
 
     /**
-     * Resolves the property classpath.
+     * Create the partner relations from plain array of values.
      *
-     * @param $property
-     * @return PropertyAbstract
+     * @param BaseCollection $values
      */
-    public function getClassName($property)
+    public function allocate(BaseCollection $values)
     {
-        $type = $this->getPropertyType($property);
+        $fields = $this->getFields();
 
-        if (is_null($type) || ! isset(static::$valueTypes[$type])) {
-            throw new RuntimeException('Error when resolving unregisterd property type');
+        $values = $values->groupBy($this->getFieldForeignKey());
+
+        // By grouping values by field id will let us find and access them very
+        // easy. Just iterate to every property linked to this entity and set
+        // the values of any every of them as a regular Eloquent relation.
+        foreach ($fields as $field) {
+            $this->set($field->getName(), $values->get($field->getKey()));
+        }
+    }
+
+    /**
+     * Set the field value.
+     *
+     * @param $key
+     * @param $value
+     * @return Factory
+     */
+    public function set($key, $value)
+    {
+        // We do not want to interfiere into the Eloquent default funcionality of
+        // the partner instance so we'll check for any coincidence between the
+        // field name we are setting and the current partner configuration.
+        if ($this->findConflicts($key)) {
+            throw new \InvalidArgumentException("{$key} is part of the base Model and could not be set / loaded.");
         }
 
-        return static::$valueTypes[$type];
+        // Once we are sure we are not affecting Eloquent workflow, we'll just
+        // set a single (plain Value object) or multiple (Collection) to the
+        // field depending on wether it has been set as multivalued field.
+        $field = $this->getField($key);
+
+        if (! $field->isMultivalue()) {
+            return $this->setOne($field, $value);
+        }
+
+        return $this->setMany($field, $value);
     }
 
     /**
-     * Get the type of a property.
+     * Set a simple value for a field.
      *
-     * @param $property
+     * @param $field
+     * @param $value
+     * @return $this
+     */
+    protected function setOne($field, $value)
+    {
+        if (is_array($value) || $value instanceof BaseCollection) {
+            $value = $value[0];
+        }
+
+        return $this->assign($field, $value);
+    }
+
+    /**
+     * Set value as a collection for multivalued fields.
+     *
+     * @param $field
+     * @param $value
+     * @return $this
+     */
+    protected function setMany($field, $value)
+    {
+        if ($value instanceof BaseCollection) {
+            $value = new Collection($value->all());
+        } elseif (! is_array($value)) {
+            $value = new Collection([$value]);
+        }
+
+        // We only want to store Eloquent Collections so we will transform any
+        // value input to get a proper formed Eloquent Collection. When done
+        // we just have to set it as relationship for the partner instance.
+        return $this->assign($field, $value);
+    }
+
+    /**
+     * Set the value of a partner relationship.
+     *
+     * @param $field
+     * @param $value
+     * @return $this
+     */
+    protected function assign($field, $value)
+    {
+        // Here is where we assign any value as relationship of any field name.
+        // We will establish the raw value instance either is a plain object
+        // or a collection to the relation which is matching the field key.
+        return $this->getPartner()->setRelation($field->getName(), $value);
+    }
+
+    /**
+     * Generate the relation closure.
+     *
+     * @param $field
+     * @return Closure
+     */
+    protected function getRelationClosure($field)
+    {
+        $partner = $this->getPartner();
+        $relation = $this->getBaseRelation($field);
+
+        // This will return a closure fully binded to the partner model instance.
+        // This will help us to simulate any relation as if it was handly made
+        // in the original partner definition using the function statement.
+        return Closure::bind(function () use ($relation, $field) {
+            return $relation->where('field_id', $field->id);
+        }, $partner, get_class($partner));
+    }
+
+    /**
+     * Get the base relation to use.
+     *
+     * @param $field
      * @return mixed
      */
-    protected function getPropertyType($property)
+    protected function getBaseRelation($field)
     {
-        if (is_string($property)) {
-            return $property;
+        $relation = $this->getBaseRelationMethod($field);
+
+        return $this->getPartner()->$relation(Value::class, 'partner');
+    }
+
+    /**
+     * Get the relation name to use.
+     *
+     * @param $field
+     * @return string
+     */
+    protected function getBaseRelationMethod($field)
+    {
+        return $field->isMultivalue() ? 'morphMany' : 'morphOne';
+    }
+
+    /**
+     * Get a field by name.
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function getField($key)
+    {
+        return $this->getFields()->get($key);
+    }
+
+    /**
+     * Check if key matches any partner relation, PK or model column.
+     *
+     * @param $key
+     * @return bool
+     */
+    public function findConflicts($key)
+    {
+        return $this->isRelationship($key)
+        || $this->isModelColumn($key)
+        || $this->isPrimaryKey($key);
+    }
+
+    /**
+     * Check if the key is an existing partner relationship.
+     *
+     * @param $key
+     * @return bool
+     */
+    public function isRelationship($key)
+    {
+        if (method_exists($partner = $this->getPartner(), $key)) {
+            return $partner->$key() instanceof Relation;
         }
 
-        return $property instanceof Property ?
-            $property->getAttribute('type') : null;
+        return $partner->relationLoaded($key);
+    }
+
+    /**
+     * Check if the key corresponds to the partner PK.
+     *
+     * @param $key
+     * @return bool
+     */
+    public function isPrimaryKey($key)
+    {
+        return $this->getPartner()->getKeyName() == $key;
+    }
+
+    /**
+     * Get the field foreign key name.
+     *
+     * @return string
+     */
+    protected function getFieldForeignKey()
+    {
+        return (new Field)->getForeignKey();
+    }
+
+    /**
+     * Get the fields registered for the current partner.
+     *
+     * @return mixed
+     */
+    protected function getFields()
+    {
+        return $this->manager->getFields($this->getPartnerClass());
+    }
+
+    /**
+     * Get the base model attribute names.
+     *
+     * @return array
+     */
+    public function getModelColumns()
+    {
+        $class = get_class($this->getPartner());
+
+        // We have to resolve the partner class name in order to access its static
+        // property $modelColums. This property is stored in the model as will
+        // be different from one model to another.
+        if (empty($class::$modelColumns)) {
+            $class::$modelColumns = $this->fetchModelColumns();
+        }
+
+        // If no attributes are listed into $modelColumns property, we will
+        // fetch them from database. This could result into a performance
+        // issue so it should be set manually or when booting the model.
+        return $class::$modelColumns;
+    }
+
+    /**
+     * Check if an attribute corresponds to a model column name.
+     *
+     * @param $attribute
+     * @return bool
+     */
+    public function isModelColumn($attribute)
+    {
+        return in_array($attribute, $this->getModelColumns());
+    }
+
+    /**
+     * Get the model column names.
+     *
+     * @return mixed
+     */
+    public function fetchModelColumns()
+    {
+        return with($partner = $this->getPartner())
+            ->getConnection()
+            ->getSchemaBuilder()
+            ->getColumnListing($partner->getTable());
+    }
+
+    /**
+     * Get the partner class name.
+     *
+     * @return string
+     */
+    protected function getPartnerClass()
+    {
+        return $this->getPartner()->getMorphClass();
+    }
+
+    /**
+     * Get the partner instance.
+     *
+     * @return Model
+     */
+    public function getPartner()
+    {
+        return $this->partner;
     }
 }

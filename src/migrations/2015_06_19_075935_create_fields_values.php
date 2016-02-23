@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePropertyValues extends Migration
+class CreateFieldValues extends Migration
 {
     /**
      * Run the migrations.
@@ -12,20 +12,20 @@ class CreatePropertyValues extends Migration
      */
     public function up()
     {
-        Schema::create('property_values', function (Blueprint $table)
+        Schema::create('field_values', function (Blueprint $table)
         {
             $table->increments('id');
 
             $table->text('value');
-            $table->integer('property_id');
+            $table->integer('field_id');
 
-            $table->string('entity_type');
-            $table->integer('entity_id');
+            $table->string('partner_type');
+            $table->integer('partner_id');
 
             $table->timestamps();
             
-            $table->index(['property_id', 'entity_id']);
-            $table->index(['entity_type', 'entity_id']);
+            $table->index(['field_id', 'partner_id']);
+            $table->index(['partner_type', 'partner_id']);
         });
     }
 
@@ -36,6 +36,6 @@ class CreatePropertyValues extends Migration
      */
     public function down()
     {
-        Schema::drop('property_values');
+        Schema::drop('field_values');
     }
 }

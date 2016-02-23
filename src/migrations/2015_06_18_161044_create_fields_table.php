@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePropertiesTable extends Migration {
+class CreateFieldsTable extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -11,20 +12,19 @@ class CreatePropertiesTable extends Migration {
      */
     public function up()
     {
-        Schema::create('properties', function (Blueprint $table)
-        {
+        Schema::create('fields', function (Blueprint $table) {
             $table->increments('id');
             $table->string('type', 30);
             $table->string('name', 30);
             $table->boolean('multivalue')->default(false);
-            $table->string('entity');
+            $table->string('partner');
             $table->text('default_value')->nullable();
 
             $table->timestamps();
 
-            $table->index('entity');
+            $table->index('partner');
 
-            $table->unique(['entity', 'name']);
+            $table->unique(['partner', 'name']);
         });
     }
 
@@ -35,6 +35,6 @@ class CreatePropertiesTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('properties');
+        Schema::drop('fields');
     }
 }

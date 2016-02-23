@@ -4,7 +4,7 @@ namespace Devio\Propertier;
 
 use Throwable;
 
-trait SavesUsingTransaction
+trait SaveUsingTransaction
 {
     /**
      * Use transaction while saving.

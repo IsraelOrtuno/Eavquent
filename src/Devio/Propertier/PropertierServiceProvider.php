@@ -29,6 +29,7 @@ class PropertierServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
         $this->registerValueTypes();
+        $this->registerFields();
     }
 
     /**
@@ -36,9 +37,9 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerValueTypes()
     {
-        $properties = $this->app['config']->get('propertier.properties');
+        $properties = $this->app['config']->get('propertier.fields');
 
-        Factory::register($properties);
+        Resolver::register($properties);
     }
 
     /**
@@ -47,6 +48,20 @@ class PropertierServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->mergeConfigFrom($this->base('config/propertier.php'), 'propertier');
+    }
+
+    /**
+     * Register fields.
+     */
+    protected function registerFields()
+    {
+        $this->app->singleton('propertier.fields', function () {
+            $groups = Field::all()->groupBy('partner');
+
+            return $groups->map(function($group) {
+                return $group->keyBy('name');
+            });
+        });
     }
 
     /**

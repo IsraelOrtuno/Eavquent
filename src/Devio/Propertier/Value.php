@@ -15,14 +15,14 @@ class Value extends Model
      *
      * @var array
      */
-    protected $fillable = ['value', 'entity_type', 'entity_id', 'property_id'];
+    protected $fillable = ['value', 'entity_type', 'partner_id', 'field_id'];
 
     /**
      * The table every value will use.
      *
      * @var string
      */
-    protected $table = 'property_values';
+    protected $table = 'field_values';
 
     /**
      * The parent property.
@@ -48,17 +48,17 @@ class Value extends Model
         // Setting up the model event listeners. Much more elegant would be if
         // placed into the Service Provider. As this class is considered as
         // abstract, we have to set up the listeners at children classes.
-        static::saving(ValueSaving::class . '@handle');
+//        static::saving(ValueSaving::class . '@handle');
     }
 
     /**
-     * Relationship to the properties table.
+     * Relationship to the fields table.
      *
      * @return BelongsTo
      */
-    public function property()
+    public function field()
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsTo(Field::class);
     }
 
     /**

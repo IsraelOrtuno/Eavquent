@@ -2,6 +2,7 @@
 
 namespace Devio\Propertier\Relations;
 
+use Devio\Propertier\Property;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,6 +18,13 @@ class HasManyProperties extends HasMany
     protected $entity;
 
     /**
+     * Property field to group by.
+     *
+     * @var string
+     */
+    protected $propertyGroup;
+
+    /**
      * @param Builder $query
      * @param Model $model
      * @param string $entity
@@ -24,6 +32,7 @@ class HasManyProperties extends HasMany
     public function __construct(Builder $query, Model $model, $entity)
     {
         $this->entity = $entity;
+        $this->propertyGroup = (new Property)->getForeignKey();
         parent::__construct($query, $model, 'entity', '');
     }
 
@@ -40,17 +49,12 @@ class HasManyProperties extends HasMany
             return $properties;
         }
 
-        $values = $this->getParent()->exists ?
-            $this->getParent()->values : new Collection;
+        // After having avoided loading the values relation when no properties
+        // have been found we will just set the values related to the entity
+        // and return the name-keyed properties collection as relation result.
+        $this->setPropertyRelations($this->entity, $properties);
 
-        // Loading the values for every property. This task will be automatically
-        // run by the property class. We need to pass the collection of values
-        // this entity. After return the name keyed properties collection.
-        foreach ($properties as $property) {
-            $property->entity($this->getParent())->loadValue($values);
-        }
-
-        return $properties->keyby('name');
+        return $properties->keyBy('name');
     }
 
     /**
@@ -71,32 +75,45 @@ class HasManyProperties extends HasMany
      * @param array $models
      * @param Collection $results
      * @param string $relation
-     * @param string $type
      * @return array
      */
-    protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
+    public function match(array $models, Collection $results, $relation)
     {
-        // We will only load the values relation for all the models if there is
-        // at least one property registered for them. It is pointless to load
-        // the values if there aren't properties so we improve performance.
         if (count($results)) {
             with(new Collection($models))->load('values');
         }
 
-        foreach ($models as $model) {
-            $properties = $results->map(function ($property) use ($model) {
-                // Replicating the existing property will avoid the problem of
-                // many enities pointing to the same property object. Every
-                // entity should have its stand-alone property instances.
-                return $property->entity($model)
-                    ->replicateExisting()
-                    ->loadValue($model->values);
-            });
+        // We will only load the values relation for all the models if there is
+        // at least one property registered for them. The spin over entities
+        // will set its values and set the name-keyed properties relation.
+        foreach ($models as $entity) {
+            $this->setPropertyRelations($entity, $results);
 
-            $model->setRelation($relation, $properties->keyBy('name'));
+            $entity->setRelation($relation, $results->keyBy('name'));
         }
 
         return $models;
+    }
+
+    /**
+     * @param $entity
+     * @param $properties
+     */
+    protected function setPropertyRelations($entity, $properties)
+    {
+        $values = $entity->getRelationValue('values')->groupBy($this->propertyGroup);
+
+        // TODO: Rethink this. Properties may be iterated just once as they are not
+        // TODO: used for relating values anymore.
+        foreach ($properties as $property) {
+            if ($property->isMultivalue()) {
+
+            }
+
+            $entity->setRelation(
+                $property->getName(), $values->get($property->getKey())
+            );
+        }
     }
 
     /**

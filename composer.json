@@ -3,12 +3,11 @@
     "description": "EAV modeling for Laravel and Eloquent.",
     "keywords": [
         "eav",
+        "eloquent",
+        "laravel",
         "dynamic",
         "schema",
-        "entity attribute value",
-        "database",
-        "laravel",
-        "eloquent"
+        "database"
     ],
     "license": "MIT",
     "authors": [
