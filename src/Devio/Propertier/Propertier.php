@@ -57,8 +57,6 @@ trait Propertier
      */
     public function fields()
     {
-        $this->bootPropertierInstanceIfNotBooted();
-
         $table = with($instance = new Value)->getTable();
         list($type, $id) = $this->getMorphs('partner', null, null);
 
@@ -168,7 +166,7 @@ trait Propertier
         // will return its value. Also we will return it as a plain value or raw
         // object based on the key name. If not return parent attribute value.
         if ($this->areFieldsAccessible() && $this->isField($clearKey)) {
-            return $this->factory->get(
+            return $this->factory()->get(
                 $clearKey, $attribute, $this->isGetRawObjectMutator($key)
             );
         }
@@ -270,8 +268,6 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $this->bootPropertierInstanceIfNotBooted();
-
         if ($this->areFieldsAccessible() && $this->isField($method)) {
             // As we are defining every field as a relationship and also creating a
             // dynamic method to access this relationship object, we'll check if
