@@ -58,6 +58,42 @@ trait Propertier
     }
 
     /**
+     * Check if a key corresponds to a field.
+     *
+     * @param $name
+     * @return bool
+     */
+    public function isField($name)
+    {
+        $name = $this->clearGetRawObjectMutator($name);
+
+        return array_key_exists($name, $this->fieldRelations);
+    }
+
+    /**
+     * Determine if a get mutator exists for an attribute.
+     *
+     * @param  string $key
+     * @return bool
+     */
+    public function isGetRawObjectMutator($key)
+    {
+        return preg_match('/^(raw)\w+(\Object)$/', $key);
+    }
+
+    /**
+     * Remove any mutator prefix and suffix.
+     *
+     * @param $key
+     * @return mixed
+     */
+    protected function clearGetRawObjectMutator($key)
+    {
+        return $this->isGetRawObjectMutator($key) ?
+            camel_case(str_replace(['raw', 'Object'], ['', ''], $key)) : $key;
+    }
+
+    /**
      * Get if fields can be accessed.
      *
      * @return bool
@@ -128,15 +164,17 @@ trait Propertier
      */
     public function getAttribute($key)
     {
-        $attribute = parent::getAttribute($key);
+        $clearKey = $this->clearGetRawObjectMutator($key);
 
-        // If the property we are accesing corresponds to a any registered property
-        // we will provide the value of this property if any. Otherwise, we will
-        // access the parent Eloquent model and return its default behaviour.
-        if ($this->areFieldsAccessible() &&
-            array_key_exists($key, $this->fieldRelations)
-        ) {
-            return $this->factory()->get($key, $attribute);
+        $attribute = parent::getAttribute($clearKey);
+
+        // If the attribute we are accesing is a field (either plain or mutator) we
+        // will return its value. Also we will return it as a plain value or raw
+        // object based on the key name. If not return parent attribute value.
+        if ($this->areFieldsAccessible() && $this->isField($clearKey)) {
+            return $this->factory()->get(
+                $clearKey, $attribute, $this->isGetRawObjectMutator($key)
+            );
         }
 
         return $attribute;
@@ -150,22 +188,19 @@ trait Propertier
      * @return Value
      * @throws \Exception
      */
-//    public function setAttribute($key, $value)
-//    {
-//        $factory = $this->propertierQuery();
-//
-//        if ($this->isPropertiesRelationAccessible() &&
-//            $factory->isProperty($key) &&
-//            ! $factory->isModelColumn($key)
-//        ) {
+    public function setAttribute($key, $value)
+    {
+//        $factory = $this->factory();
+
+//        if ($this->areFieldsAccessible() && $this->isField($key) && ! $factory->isModelColumn($key)) {
 //            return $factory->setValue($key, $value);
 //        }
 //
-//        // If the property to set is registered and does not correspond to any
-//        // model column we are free to set its value. Otherwise we will let
-//        // go the default Eloquent behaviour and return its value if any.
-//        return parent::setAttribute($key, $value);
-//    }
+        // If the property to set is registered and does not correspond to any
+        // model column we are free to set its value. Otherwise we will let
+        // go the default Eloquent behaviour and return its value if any.
+        return parent::setAttribute($key, $value);
+    }
 
     /**
      * Get an attribute array of all arrayable attributes.
@@ -229,22 +264,11 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
-        $this->factory();
-
-        if ($this->areFieldsAccessible()) {
-//            // If the method we are trying to call is available in the manager class
-//            // we will prevent the default Model call to the Query Builder calling
-//            // this method in the Manager class passing this existing instance.
-//            if (in_array($method, get_class_methods($factory))) {
-//                return call_user_func_array([$factory, $method], $parameters);
-//            }
-
+        if ($this->areFieldsAccessible() && $this->isField($method)) {
             // As we are defining every field as a relationship and also creating a
             // dynamic method to access this relationship object, we'll check if
             // the method matches any of these relations and return its value.
-            if (array_key_exists($method, $this->fieldRelations)) {
-                return call_user_func_array($this->fieldRelations[$method], $parameters);
-            }
+            return call_user_func_array($this->fieldRelations[$method], $parameters);
         }
 
         return parent::__call($method, $parameters);

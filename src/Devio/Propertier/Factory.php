@@ -174,14 +174,15 @@ class Factory
      *
      * @param $key
      * @param $attribute
+     * @param bool $raw
      * @return mixed
      */
-    public function get($key, $attribute)
+    public function get($key, $attribute, $raw = false)
     {
         // Just in case the user has set any get mutator into the main model
         // that corresponds to a field, we will assume that the user will
         // provide its own output and we will not modify anything else.
-        if (is_null($attribute) || $this->getPartner()->hasGetMutator($key)) {
+        if (is_null($attribute) || $this->getPartner()->hasGetMutator($key) || $raw) {
             return $attribute;
         }
 

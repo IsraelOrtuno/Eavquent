@@ -2,7 +2,6 @@
 
 namespace Devio\Propertier\Listeners;
 
-use Exception;
 use Illuminate\Support\Collection;
 
 class PartnerSaved
