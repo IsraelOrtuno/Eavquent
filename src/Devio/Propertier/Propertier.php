@@ -43,9 +43,9 @@ trait Propertier
     /**
      * Boot the propertier model instance.
      */
-    public function bootPropertierInstanceIfNotBooted()
+    public function refreshPropertierInstance()
     {
-        if (! isset($this->factory)) {
+        if (empty($this->getFieldRelations())) {
             $this->factory = new Factory($this);
         }
     }
@@ -254,7 +254,7 @@ trait Propertier
      */
     public function factory()
     {
-        $this->bootPropertierInstanceIfNotBooted();
+        $this->refreshPropertierInstance();
 
         return $this->factory;
     }
@@ -268,6 +268,8 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
+        $this->refreshPropertierInstance();
+
         if ($this->areFieldsAccessible() && $this->isField($method)) {
             // As we are defining every field as a relationship and also creating a
             // dynamic method to access this relationship object, we'll check if
