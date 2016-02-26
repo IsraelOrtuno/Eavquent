@@ -3,13 +3,11 @@
 namespace Devio\Propertier;
 
 use Closure;
-use Devio\Propertier\Listeners\PartnerSaved;
 use Devio\Propertier\Relations\HasMany;
 use Devio\Propertier\Relations\MorphMany;
 use Devio\Propertier\Listeners\EntitySaved;
+use Devio\Propertier\Listeners\PartnerSaved;
 use Devio\Propertier\Listeners\EntitySaving;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 trait Propertier
 {
