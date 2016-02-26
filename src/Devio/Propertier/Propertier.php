@@ -41,12 +41,24 @@ trait Propertier
     }
 
     /**
+     * Boot the propertier model instance.
+     */
+    public function bootPropertierInstanceIfNotBooted()
+    {
+        if (! isset($this->factory)) {
+            $this->factory = new Factory($this);
+        }
+    }
+
+    /**
      * Polimorphic relationship to the values table.
      *
      * @return MorphMany
      */
     public function fields()
     {
+        $this->bootPropertierInstanceIfNotBooted();
+
         $table = with($instance = new Value)->getTable();
         list($type, $id) = $this->getMorphs('partner', null, null);
 
@@ -141,20 +153,6 @@ trait Propertier
     }
 
     /**
-     * Get the factory instance.
-     *
-     * @return Factory
-     */
-    public function factory()
-    {
-        if (! isset($this->factory)) {
-            $this->factory = new Factory($this);
-        }
-
-        return $this->factory;
-    }
-
-    /**
      * Overriding Eloquent getAttribute method will first read a property.
      *
      * @param $key
@@ -170,7 +168,7 @@ trait Propertier
         // will return its value. Also we will return it as a plain value or raw
         // object based on the key name. If not return parent attribute value.
         if ($this->areFieldsAccessible() && $this->isField($clearKey)) {
-            return $this->factory()->get(
+            return $this->factory->get(
                 $clearKey, $attribute, $this->isGetRawObjectMutator($key)
             );
         }
@@ -254,6 +252,16 @@ trait Propertier
     }
 
     /**
+     * @return Factory
+     */
+    public function factory()
+    {
+        $this->bootPropertierInstanceIfNotBooted();
+
+        return $this->factory;
+    }
+
+    /**
      * Handling propertier method calls to the manager class.
      *
      * @param $method
@@ -262,6 +270,8 @@ trait Propertier
      */
     public function __call($method, $parameters)
     {
+        $this->bootPropertierInstanceIfNotBooted();
+
         if ($this->areFieldsAccessible() && $this->isField($method)) {
             // As we are defining every field as a relationship and also creating a
             // dynamic method to access this relationship object, we'll check if
