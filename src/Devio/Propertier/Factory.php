@@ -2,7 +2,6 @@
 
 namespace Devio\Propertier;
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -34,25 +33,6 @@ class Factory
     {
         $this->partner = $partner;
         $this->manager = $manager ?: new Manager;
-
-        $this->bootPartnerRelations();
-    }
-
-    /**
-     * Booting the partner relations.
-     */
-    protected function bootPartnerRelations()
-    {
-        $partner = $this->getPartner();
-
-        // We will spin through any partner field and register if it were a real
-        // relationship into the partner model. We will dynamically register a
-        // closure which will return a relation object based on the field type.
-        foreach ($this->getFields() as $field) {
-            $partner->setFieldRelation(
-                $field->getName(), $this->getRelationClosure($field)
-            );
-        }
     }
 
     /**
@@ -199,49 +179,6 @@ class Factory
     }
 
     /**
-     * Generate the relation closure.
-     *
-     * @param $field
-     * @return Closure
-     */
-    protected function getRelationClosure($field)
-    {
-        $partner = $this->getPartner();
-        $relation = $this->getBaseRelation($field);
-
-        // This will return a closure fully binded to the partner model instance.
-        // This will help us to simulate any relation as if it was handly made
-        // in the original partner definition using the function statement.
-        return Closure::bind(function () use ($relation, $field) {
-            return $relation->where($field->getForeignKey(), $field->getKey());
-        }, $partner, get_class($partner));
-    }
-
-    /**
-     * Get the base relation to use.
-     *
-     * @param $field
-     * @return mixed
-     */
-    protected function getBaseRelation($field)
-    {
-        $relation = $this->getBaseRelationMethod($field);
-
-        return $this->getPartner()->$relation(Value::class, 'partner');
-    }
-
-    /**
-     * Get the relation name to use.
-     *
-     * @param $field
-     * @return string
-     */
-    protected function getBaseRelationMethod($field)
-    {
-        return $field->isMultivalue() ? 'morphMany' : 'morphOne';
-    }
-
-    /**
      * Check if key matches any partner relation, PK or model column.
      *
      * @param $key
@@ -285,7 +222,7 @@ class Factory
      *
      * @return mixed
      */
-    protected function getFields()
+    public function getFields()
     {
         return $this->manager->getFields($this->getPartnerClass());
     }

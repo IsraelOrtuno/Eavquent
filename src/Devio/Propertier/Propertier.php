@@ -3,13 +3,10 @@
 namespace Devio\Propertier;
 
 use Closure;
-use Devio\Propertier\Listeners\PartnerSaved;
 use Devio\Propertier\Relations\HasMany;
 use Devio\Propertier\Relations\MorphMany;
 use Devio\Propertier\Listeners\EntitySaved;
-use Devio\Propertier\Listeners\EntitySaving;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Devio\Propertier\Listeners\PartnerSaved;
 
 trait Propertier
 {
@@ -43,18 +40,81 @@ trait Propertier
     }
 
     /**
+     * Booting the propertier model instance.
+     */
+    public function bootPropertierIfNotBooted()
+    {
+        if (! isset($this->factory)) {
+            $this->factory = new Factory($this);
+        }
+
+        // We will spin through any partner field and register it as if it were
+        // a real relationship into the partner model. We'll dynamically set
+        // a closure which will return a relation object based on its type.
+        if (empty($this->getFieldRelations())) {
+            foreach ($this->factory->getFields() as $field) {
+                $this->setFieldRelation($field->getName(), $this->getRelationClosure($field));
+            }
+        }
+    }
+
+    /**
      * Polimorphic relationship to the values table.
      *
      * @return MorphMany
      */
     public function fields()
     {
+        $this->bootPropertierIfNotBooted();
+
         $table = with($instance = new Value)->getTable();
         list($type, $id) = $this->getMorphs('partner', null, null);
 
         return new MorphMany(
             $instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $this->getKeyName()
         );
+    }
+
+    /**
+     * Generate the relation closure.
+     *
+     * @param $field
+     * @return Closure
+     */
+    protected function getRelationClosure($field)
+    {
+        $relation = $this->getBaseRelation($field);
+
+        // This will return a closure fully binded to the partner model instance.
+        // This will help us to simulate any relation as if it was handly made
+        // in the original partner definition using the function statement.
+        return Closure::bind(function () use ($relation, $field) {
+            return $relation->where($field->getForeignKey(), $field->getKey());
+        }, $this, get_class());
+    }
+
+    /**
+     * Get the base relation to use.
+     *
+     * @param $field
+     * @return mixed
+     */
+    protected function getBaseRelation($field)
+    {
+        $relation = $this->getBaseRelationMethod($field);
+
+        return $this->$relation(Value::class, 'partner');
+    }
+
+    /**
+     * Get the relation name to use.
+     *
+     * @param $field
+     * @return string
+     */
+    protected function getBaseRelationMethod($field)
+    {
+        return $field->isMultivalue() ? 'morphMany' : 'morphOne';
     }
 
     /**
@@ -142,6 +202,7 @@ trait Propertier
         static::$modelColumns = $columns;
     }
 
+
     /**
      * Get the factory instance.
      *
@@ -172,7 +233,7 @@ trait Propertier
         // will return its value. Also we will return it as a plain value or raw
         // object based on the key name. If not return parent attribute value.
         if ($this->areFieldsAccessible() && $this->isField($clearKey)) {
-            return $this->factory()->get(
+            return $this->factory->get(
                 $clearKey, $attribute, $this->isGetRawObjectMutator($key)
             );
         }
@@ -190,8 +251,6 @@ trait Propertier
      */
     public function setAttribute($key, $value)
     {
-//        $factory = $this->factory();
-
 //        if ($this->areFieldsAccessible() && $this->isField($key) && ! $factory->isModelColumn($key)) {
 //            return $factory->setValue($key, $value);
 //        }
