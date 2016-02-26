@@ -138,7 +138,7 @@ trait Propertier
      */
     public function isGetRawObjectMutator($key)
     {
-        return preg_match('/^(raw)\w+(\Object)$/', $key);
+        return preg_match('/^(raw)\w+(Object)$/', $key);
     }
 
     /**
