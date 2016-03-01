@@ -35,22 +35,14 @@ if (! function_exists('eav_config')) {
      */
     function eav_config($key)
     {
-        return config('eavquent.' . $key);
-    }
-}
+        $key = 'eavquent.' . $key;
 
-if (! function_exists('config')) {
-    /**
-     * Get a config value.
-     *
-     * @param $key
-     * @return mixed
-     */
-    function config($key)
-    {
+        if (defined('LARAVEL_START')) {
+            return config($key);
+        }
+
         return array_get([
             'eavquent' => array_dot(require __DIR__ . '/config/eavquent.php')
         ], $key);
     }
 }
-

@@ -2,13 +2,15 @@
 
 namespace Devio\Eavquent\Contracts;
 
+use Illuminate\Support\Collection;
+
 interface AttributeCache
 {
     public function all();
 
-    public function get($key, $default = null);
+    public function get($attribute);
 
-    public function set($key, $value);
+    public function set(Collection $attributes);
 
     public function flush();
 }

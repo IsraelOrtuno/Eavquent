@@ -2,15 +2,25 @@
 
 namespace Devio\Eavquent\Cache;
 
-use Illuminate\Cache\Repository;
+use Illuminate\Support\Collection;
+use Illuminate\Contracts\Cache\Repository;
 use Devio\Eavquent\Contracts\AttributeCache as Cache;
 
 class AttributeCache implements Cache
 {
     /**
+     * The cache repository.
+     *
      * @var Repository
      */
     protected $cache;
+
+    /**
+     * The cache key.
+     *
+     * @var string
+     */
+    protected $cacheKey;
 
     /**
      * AttributeCache constructor.
@@ -20,6 +30,7 @@ class AttributeCache implements Cache
     public function __construct(Repository $cache)
     {
         $this->cache = $cache;
+        $this->cacheKey = eav_config('cache_key');
     }
 
     /**
@@ -27,23 +38,27 @@ class AttributeCache implements Cache
      */
     public function all()
     {
-        return $this->cache->get(eav_config('cache_key'));
+        return $this->cache->get($this->cacheKey);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null)
+    public function get($attribute)
     {
-        return $this->all()->get($key, $default);
+        return $this->all()->get($attribute);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function set($key, $value)
+    public function set(Collection $attributes)
     {
-        return $this->cache->set($key, $value);
+        $attributes = $attributes->groupBy('code');
+
+        $this->flush();
+
+        return $this->cache->forever($this->cacheKey, $attributes);
     }
 
     /**
@@ -51,6 +66,6 @@ class AttributeCache implements Cache
      */
     public function flush()
     {
-        return $this->cache->forget(eav_config('cache_key'));
+        return $this->cache->forget($this->cacheKey);
     }
 }

@@ -29,11 +29,14 @@
         "orchestra/testbench": "~3.0"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "classmap": [
             "src/migrations"
         ],
         "psr-4": {
-            "Devio\\Propertier\\": "src/Devio/Propertier"
+            "Devio\\Eavquent\\": "src/Devio/Eavquent"
         }
     },
     "autoload-dev": {

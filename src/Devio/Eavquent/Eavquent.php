@@ -2,6 +2,8 @@
 
 namespace Devio\Eavquent;
 
+use Devio\Eavquent\Entity\EntityBootingScope;
+
 trait Eavquent
 {
     protected $attributeRelationsBooted = false;
@@ -13,12 +15,14 @@ trait Eavquent
      */
     public static function bootEntityAttributeValues()
     {
-        static::addGlobalScope(new EntityAttributeValueScope);
+        static::addGlobalScope(new EntityBootingScope);
     }
 
+    /**
+     *
+     */
     public function bootAttributeRelations()
     {
-        var_dump('boot called');
     }
 
     /**

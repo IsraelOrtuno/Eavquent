@@ -1,12 +1,12 @@
 <?php
 
-namespace Devio\Eavquent;
+namespace Devio\Eavquent\Entity;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
-class BootEntityScope implements Scope
+class EntityBootingScope implements Scope
 {
     /**
      * Apply the scope.
