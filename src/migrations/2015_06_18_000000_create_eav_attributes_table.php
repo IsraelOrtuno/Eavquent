@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFieldsTable extends Migration
+class CreateEavAttributesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,19 +12,13 @@ class CreateFieldsTable extends Migration
      */
     public function up()
     {
-        Schema::create('fields', function (Blueprint $table) {
+        Schema::create(eav_table('attributes'), function (Blueprint $table) {
             $table->increments('id');
             $table->string('type', 30);
             $table->string('name', 30);
             $table->boolean('multivalue')->default(false);
             $table->string('partner');
             $table->text('default_value')->nullable();
-
-            $table->timestamps();
-
-            $table->index('partner');
-
-            $table->unique(['partner', 'name']);
         });
     }
 
@@ -35,6 +29,6 @@ class CreateFieldsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('fields');
+        Schema::drop(eav_table('attributes'));
     }
 }
