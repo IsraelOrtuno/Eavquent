@@ -6,9 +6,9 @@ use Illuminate\Support\Collection;
 
 interface AttributeCache
 {
-    public function all();
+    public function exists();
 
-    public function get($attribute);
+    public function get();
 
     public function set(Collection $attributes);
 

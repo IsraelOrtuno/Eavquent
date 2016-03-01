@@ -1,6 +1,6 @@
 <?php
 
-namespace Devio\Eavquent;
+namespace Devio\Eavquent\Attribute;
 
 class AttributeGetter
 {

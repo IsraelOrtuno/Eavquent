@@ -23,6 +23,7 @@
         "illuminate/validation": "~5.2"
     },
     "require-dev": {
+        "phpspec/phpspec": "^2.4",
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "^0.9.4",
         "fzaninotto/faker": "~1.4",

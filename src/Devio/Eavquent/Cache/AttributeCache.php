@@ -36,7 +36,15 @@ class AttributeCache implements Cache
     /**
      * {@inheritdoc}
      */
-    public function all()
+    public function exists()
+    {
+        return $this->cache->has($this->cacheKey);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get()
     {
         return $this->cache->get($this->cacheKey);
     }
@@ -44,18 +52,8 @@ class AttributeCache implements Cache
     /**
      * {@inheritdoc}
      */
-    public function get($attribute)
-    {
-        return $this->all()->get($attribute);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function set(Collection $attributes)
     {
-        $attributes = $attributes->groupBy('code');
-
         $this->flush();
 
         return $this->cache->forever($this->cacheKey, $attributes);

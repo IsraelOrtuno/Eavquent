@@ -1,8 +1,7 @@
 <?php
 
-namespace Devio\Eavquent;
+namespace Devio\Eavquent\Attribute;
 
-use Devio\Eavquent\Attribute\Attribute;
 use Devio\Eavquent\Contracts\AttributeCache;
 
 class AttributeManager
@@ -13,36 +12,57 @@ class AttributeManager
     protected $cache;
 
     /**
+     * @var AttributeRepository
+     */
+    protected $repository;
+
+    /**
      * AttributeManager constructor.
      *
      * @param AttributeCache $cache
+     * @param AttributeRepository $repository
      */
-    public function __construct(AttributeCache $cache)
+    public function __construct(AttributeCache $cache, AttributeRepository $repository)
     {
         $this->cache = $cache;
+        $this->repository = $repository;
     }
 
     /**
      * @param string $entity
-     * @param bool $fresh
      * @return mixed
      */
-    public function get($entity = '*', $fresh = false)
+    public function get($entity = '*')
     {
-        if ($fresh) {
-            $this->refreshAttributes();
-        }
-
-        return $entity == '*' ? $this->cache->all() : $this->cache->get($entity);
+        return $entity == '*' ?
+            $this->cache->all() : $this->cache->get($entity);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function refreshAttributes()
+    public function refresh()
     {
         $this->cache->flush();
 
-        $this->cache->set(Attribute::all());
+        $this->cache->set($this->repository->all());
+
+        return $this;
+    }
+
+    /**
+     * @return AttributeCache
+     */
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    /**
+     * @return AttributeRepository
+     */
+    public function getRepository()
+    {
+        return $this->repository;
     }
 }
