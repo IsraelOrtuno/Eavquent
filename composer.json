@@ -1,6 +1,6 @@
 {
     "name": "devio/eavquent",
-    "description": "EAV modeling for Laravel and Eloquent.",
+    "description": "EAV modeling package for Eloquent and Laravel.",
     "keywords": [
         "eav",
         "eloquent",
