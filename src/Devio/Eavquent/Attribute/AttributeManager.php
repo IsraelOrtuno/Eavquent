@@ -34,8 +34,14 @@ class AttributeManager
      */
     public function get($entity = '*')
     {
+        if (! $this->cache->exists()) {
+            $this->refresh();
+        }
+
+        $attributes = $this->cache->get();
+
         return $entity == '*' ?
-            $this->cache->all() : $this->cache->get($entity);
+            $attributes : $attributes->where(Attribute::COLUMN_ENTITY, $entity);
     }
 
     /**
@@ -43,8 +49,6 @@ class AttributeManager
      */
     public function refresh()
     {
-        $this->cache->flush();
-
         $this->cache->set($this->repository->all());
 
         return $this;

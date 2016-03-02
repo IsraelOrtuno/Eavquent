@@ -20,20 +20,17 @@ class AttributeManagerSpec extends ObjectBehavior
         $this->beConstructedWith($cache, $repository);
     }
 
-//    function it_should_get_attributes´(AttributeCache $cache, AttributeRepository $repository)
-//    {
-//        $cache->all()->shouldBeCalled();
-//        $this->get();
-//
-//        $cache->get('foo')->shouldBeCalled();
-//        $this->get('foo');
-//    }
+    function it_should_get_attributes(AttributeCache $cache, AttributeRepository $repository)
+    {
+        $cache->exists()->shouldBeCalled()->willReturn(true);
+        $cache->get()->shouldBeCalled();
+        $this->get();
+    }
 
     function it_should_refresh_attributes_cache(AttributeCache $cache, AttributeRepository $repository)
     {
         $collection = new Collection();
 
-        $cache->flush()->shouldBeCalled();
         $repository->all()->shouldBeCalled()->willReturn($collection);
         $cache->set($collection)->shouldBeCalled();
 
