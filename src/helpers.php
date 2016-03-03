@@ -24,7 +24,7 @@ if (! function_exists('eav_value_table')) {
      */
     function eav_value_table($name)
     {
-        return eav_table(eav_config('prefix.value_tables')) . studly_case($name);
+        return eav_table(eav_config('prefix.value_tables')) . snake_case($name);
     }
 }
 
