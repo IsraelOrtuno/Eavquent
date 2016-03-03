@@ -20,7 +20,8 @@
         "php": ">=5.5.9",
         "illuminate/support": "~5.2",
         "illuminate/database": "~5.2",
-        "illuminate/validation": "~5.2"
+        "illuminate/validation": "~5.2",
+        "illuminate/config": "~5.2"
     },
     "require-dev": {
         "phpspec/phpspec": "^2.4",

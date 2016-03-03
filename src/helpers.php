@@ -1,5 +1,7 @@
 <?php
 
+use Devio\Eavquent\Agnostic\ConfigRepository;
+
 if (! function_exists('eav_table')) {
     /**
      * Get the base package table name.
@@ -22,7 +24,7 @@ if (! function_exists('eav_value_table')) {
      */
     function eav_value_table($name)
     {
-        return eav_table(eav_config('prefix.value_tables')) . $name;
+        return eav_table(eav_config('prefix.value_tables')) . studly_case($name);
     }
 }
 
@@ -33,16 +35,12 @@ if (! function_exists('eav_config')) {
      * @param $key
      * @return mixed
      */
-    function eav_config($key)
+    function eav_config($key = null)
     {
-        $key = 'eavquent.' . $key;
-
         if (defined('LARAVEL_START')) {
-            return config($key);
+            return config($key ?: 'eavquent.' . $key);
         }
 
-        return array_get([
-            'eavquent' => array_dot(require __DIR__ . '/config/eavquent.php')
-        ], $key);
+        return ConfigRepository::getInstance()->get($key);
     }
 }

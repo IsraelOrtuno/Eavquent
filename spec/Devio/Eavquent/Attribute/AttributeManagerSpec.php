@@ -27,6 +27,15 @@ class AttributeManagerSpec extends ObjectBehavior
         $this->get();
     }
 
+    function it_should_refresh_if_cache_is_unset(AttributeCache $cache, AttributeRepository $repository)
+    {
+        $cache->exists()->shouldBeCalled()->willReturn(false);
+        $this->it_should_refresh_attributes_cache($cache, $repository);
+        $cache->get()->shouldBeCalled();
+
+        $this->get();
+    }
+
     function it_should_refresh_attributes_cache(AttributeCache $cache, AttributeRepository $repository)
     {
         $collection = new Collection();
