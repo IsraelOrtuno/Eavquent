@@ -1,6 +1,6 @@
 {
-    "name": "devio/propertier",
-    "description": "EAV modeling for Laravel and Eloquent.",
+    "name": "devio/eavquent",
+    "description": "EAV modeling package for Eloquent and Laravel.",
     "keywords": [
         "eav",
         "eloquent",
@@ -20,20 +20,25 @@
         "php": ">=5.5.9",
         "illuminate/support": "~5.2",
         "illuminate/database": "~5.2",
-        "illuminate/validation": "~5.2"
+        "illuminate/validation": "~5.2",
+        "illuminate/config": "~5.2"
     },
     "require-dev": {
+        "phpspec/phpspec": "^2.4",
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "^0.9.4",
         "fzaninotto/faker": "~1.4",
         "orchestra/testbench": "~3.0"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "classmap": [
             "src/migrations"
         ],
         "psr-4": {
-            "Devio\\Propertier\\": "src/Devio/Propertier"
+            "Devio\\Eavquent\\": "src/Devio/Eavquent"
         }
     },
     "autoload-dev": {

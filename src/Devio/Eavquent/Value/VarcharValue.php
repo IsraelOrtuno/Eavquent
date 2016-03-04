@@ -1,10 +1,8 @@
 <?php
 
-namespace Devio\Propertier\Values;
+namespace Devio\Eavquent\Value;
 
-use Devio\Propertier\Value;
-
-class StringValue extends Value
+class VarcharValue extends Value
 {
     /**
      * Value casting.

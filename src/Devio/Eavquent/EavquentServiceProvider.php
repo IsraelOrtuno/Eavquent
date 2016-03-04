@@ -1,10 +1,12 @@
 <?php
 
-namespace Devio\Propertier;
+namespace Devio\Eavquent;
 
 use Illuminate\Support\ServiceProvider;
+use Devio\Eavquent\Cache\AttributeCache;
+use Devio\Eavquent\Contracts\AttributeCache as AttributeCacheContract;
 
-class PropertierServiceProvider extends ServiceProvider
+class EavquentServiceProvider extends ServiceProvider
 {
     /**
      * Booting the service provider.
@@ -15,7 +17,7 @@ class PropertierServiceProvider extends ServiceProvider
         // will make them available from the main application folders.
         // They both are tagged in case they have to run separetely.
         $this->publishes(
-            [$this->base('config/propertier.php') => config_path('propertier.php')], 'config'
+            [$this->base('config/eavquent.php') => config_path('eavquent.php')], 'config'
         );
         $this->publishes(
             [$this->base('migrations/') => database_path('migrations')], 'migrations'
@@ -28,18 +30,7 @@ class PropertierServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
-        $this->registerValueTypes();
-        $this->registerFields();
-    }
-
-    /**
-     * Will register the configured properties into the service container.
-     */
-    protected function registerValueTypes()
-    {
-        $properties = $this->app['config']->get('propertier.fields');
-
-        Resolver::register($properties);
+        $this->registerBindings();
     }
 
     /**
@@ -47,21 +38,12 @@ class PropertierServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->mergeConfigFrom($this->base('config/propertier.php'), 'propertier');
+        $this->mergeConfigFrom($this->base('config/eavquent.php'), 'eavquent');
     }
 
-    /**
-     * Register fields.
-     */
-    protected function registerFields()
+    protected function registerBindings()
     {
-        $this->app->singleton('propertier.fields', function () {
-            $groups = Field::all()->groupBy('partner');
-
-            return $groups->map(function($group) {
-                return $group->keyBy('name');
-            });
-        });
+        $this->app->bind(AttributeCacheContract::class, AttributeCache::class);
     }
 
     /**
