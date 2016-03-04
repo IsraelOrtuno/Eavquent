@@ -38,7 +38,7 @@ if (! function_exists('eav_config')) {
     function eav_config($key = null)
     {
         if (defined('LARAVEL_START')) {
-            return config($key ?: 'eavquent.' . $key);
+            return config($key ? 'eavquent.' . $key : $key);
         }
 
         return ConfigRepository::getInstance()->get($key);

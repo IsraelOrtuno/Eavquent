@@ -4,8 +4,15 @@ namespace Devio\Eavquent\Value;
 
 use Illuminate\Database\Eloquent\Model;
 
-abstract class AbstractValue extends Model
+abstract class Value extends Model
 {
+    /**
+     * Model timestamps.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
     /**
      * Attribute constructor.
      *
@@ -25,7 +32,7 @@ abstract class AbstractValue extends Model
      */
     private function getAttributeTableName()
     {
-        $class = str_replace('Value', '', get_class());
+        $class = str_replace('Value', '', class_basename($this));
 
         return eav_value_table($class);
     }

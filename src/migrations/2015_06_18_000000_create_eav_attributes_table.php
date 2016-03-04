@@ -14,11 +14,12 @@ class CreateEavAttributesTable extends Migration
     {
         Schema::create(eav_table('attributes'), function (Blueprint $table) {
             $table->increments('id');
-            $table->string('type', 30);
-            $table->string('name', 30);
-            $table->boolean('multivalue')->default(false);
-            $table->string('partner');
+            $table->string('code');
+            $table->string('label');
+            $table->string('model');
+            $table->string('entity');
             $table->text('default_value')->nullable();
+            $table->boolean('multivalue')->default(false);
         });
     }
 

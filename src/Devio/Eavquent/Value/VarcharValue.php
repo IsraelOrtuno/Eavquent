@@ -2,15 +2,8 @@
 
 namespace Devio\Eavquent\Value;
 
-class VarcharValue extends AbstractValue
+class VarcharValue extends Value
 {
-    /**
-     * Table name.
-     *
-     * @var string
-     */
-    public $table = 'eav_values_varchar';
-
     /**
      * Value casting.
      *

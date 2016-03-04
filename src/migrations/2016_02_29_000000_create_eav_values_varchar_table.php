@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFieldStringValuesTable extends Migration
+class CreateEavValuesVarcharTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateFieldStringValuesTable extends Migration
      */
     public function up()
     {
-        Schema::create(Value::TABLE_PREFIX . 'string', function (Blueprint $table)
+        Schema::create(eav_value_table('varchar'), function (Blueprint $table)
         {
             $table->increments('id');
 
@@ -21,8 +21,6 @@ class CreateFieldStringValuesTable extends Migration
 
             $table->string('entity_type');
             $table->integer('entity_id');
-
-            $table->timestamps();
         });
     }
 
@@ -33,6 +31,6 @@ class CreateFieldStringValuesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Value::TABLE_PREFIX . 'string');
+        Schema::drop(eav_value_table('varchar'));
     }
 }
