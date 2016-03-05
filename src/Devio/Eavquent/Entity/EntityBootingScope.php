@@ -35,12 +35,13 @@ class EntityBootingScope implements Scope
     {
         $eagerLoads = $builder->getEagerLoads();
 
+        // If there is any eagerload matching the eav key, we will replace it with
+        // all the registered properties for the model. We'll simulate as if the
+        // user has manually added any of these withs in purpose when querying.
         if (array_key_exists('eav', $eagerLoads)) {
             $eagerLoads = array_merge($eagerLoads, $model->getAttributeRelations());
 
             $builder->setEagerLoads(array_except($eagerLoads, 'eav'));
         }
     }
-
-
 }
