@@ -110,7 +110,7 @@ trait EntityAttributeValues
      */
     public function isGetRawAttributeMutator($key)
     {
-        return (bool)preg_match('/^raw(\w+)object$/i', $key);
+        return (bool) preg_match('/^raw(\w+)object$/i', $key);
     }
 
     /**
@@ -123,6 +123,16 @@ trait EntityAttributeValues
     {
         return $this->isGetRawAttributeMutator($key) ?
             camel_case(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
+    }
+
+    /**
+     * Get the model attribute relations.
+     *
+     * @return array
+     */
+    public function getAttributeRelations()
+    {
+        return static::$attributeRelations;
     }
 
     /**
@@ -175,15 +185,5 @@ trait EntityAttributeValues
         }
 
         return parent::__call($method, $parameters);
-    }
-
-    /**
-     * TODO REMOVE
-     *
-     * @return array
-     */
-    public function getAttributeRelations()
-    {
-        return static::$attributeRelations;
     }
 }

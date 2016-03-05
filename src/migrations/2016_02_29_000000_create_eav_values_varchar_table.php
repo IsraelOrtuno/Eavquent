@@ -12,8 +12,7 @@ class CreateEavValuesVarcharTable extends Migration
      */
     public function up()
     {
-        Schema::create(eav_value_table('varchar'), function (Blueprint $table)
-        {
+        Schema::create(eav_value_table('varchar'), function (Blueprint $table) {
             $table->increments('id');
 
             $table->string('value');
