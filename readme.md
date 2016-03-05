@@ -1,6 +1,6 @@
 Eavquent - EAV modeling for Eloquent
 ======================================
-[![Build Status](https://travis-ci.org/IsraelOrtuno/Propertier.svg?branch=master)](https://travis-ci.org/IsraelOrtuno/Propertier)
+[![Build Status](https://travis-ci.org/IsraelOrtuno/Eavquent.svg?branch=master)](https://travis-ci.org/IsraelOrtuno/Eavquent)
 
 This package will help you to provide an EAV structure and functionality to your Eloquent models.
 
