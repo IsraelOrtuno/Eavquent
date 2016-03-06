@@ -45,11 +45,13 @@ class Manager
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return $this
      */
     public function refresh()
     {
-        $this->cache->set($this->repository->all());
+        $attributes = $this->repository->all();
+
+        $this->cache->set($attributes->groupBy(Attribute::COLUMN_CODE));
 
         return $this;
     }

@@ -18,7 +18,7 @@ trait EntityAttributeValues
     /**
      * @var Manager
      */
-    public $attributeManager;
+    protected $attributeManager;
 
     /**
      * @var array
@@ -63,9 +63,20 @@ trait EntityAttributeValues
      *
      * @return mixed
      */
-    protected function getEntityAttributes()
+    public function getEntityAttributes()
     {
+        // TODO: remove refresh
         return $this->attributeManager->refresh()->get($this->getMorphClass());
+    }
+
+    /**
+     * Check if the key corresponds to an entity attribute.
+     *
+     * @param $key
+     */
+    public function isEntityAttribute($key)
+    {
+        $this->getEntityAttributes()->has($key);
     }
 
     /**
@@ -146,6 +157,14 @@ trait EntityAttributeValues
         $this->attributeManager = $manager;
 
         return $this;
+    }
+
+    /**
+     * @return Manager
+     */
+    public function getAttributeManager()
+    {
+        return $this->attributeManager;
     }
 
     /**

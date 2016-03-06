@@ -32,7 +32,7 @@ class EntityAttributeValuesSpec extends ObjectBehavior
     {
         $this->createAttributeManager();
 
-        $this->attributeManager->shouldBeAnInstanceOf(Manager::class);
+        $this->getAttributeManager()->shouldBeAnInstanceOf(Manager::class);
     }
 }
 
