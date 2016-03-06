@@ -21,14 +21,19 @@ trait EntityAttributeValues
     protected $attributeManager;
 
     /**
+     * @var
+     */
+    protected static $entityAttributes;
+
+    /**
      * @var array
      */
-    protected static $attributeRelations = [];
+    protected $attributeRelations = [];
 
     /**
      * @var bool
      */
-    protected static $attributeRelationsBooted = false;
+    protected $attributeRelationsBooted = false;
 
     /**
      * Booting the trait.
@@ -43,30 +48,43 @@ trait EntityAttributeValues
      */
     public function bootEavRelationsIfNotBooted()
     {
-        if (static::$attributeRelationsBooted) {
+        if ($this->attributeRelationsBooted) {
             return;
         }
 
-        $this->createAttributeManager();
+        $this->loadEntityAttributes();
 
-        foreach ($this->getEntityAttributes() as $attribute) {
+        foreach ($this->getEntityAttributes()->flatten() as $attribute) {
             $relation = $this->getAttributeRelationClosure($attribute);
 
-            array_set(static::$attributeRelations, $attribute->getCode(), $relation);
+            array_set($this->attributeRelations, $attribute->getCode(), $relation);
         }
 
-        static::$attributeRelationsBooted = true;
+        $this->attributeRelationsBooted = true;
+    }
+
+    public function newFromBuilder($attributes = [], $connection = null)
+    {
+        echo "<pre>", var_dump('newFromBuilder'), "</pre>";
+        return parent::newFromBuilder($attributes, $connection);
     }
 
     /**
-     * Get the attributes related to this entity.
+     * Load the attributes related to this entity.
      *
      * @return mixed
      */
-    public function getEntityAttributes()
+    public function loadEntityAttributes()
     {
         // TODO: remove refresh
-        return $this->attributeManager->refresh()->get($this->getMorphClass());
+        $attributes = $this->getAttributeManager()->refresh()->get($this->getMorphClass());
+
+        static::$entityAttributes = $attributes->groupBy(Attribute::COLUMN_CODE);
+    }
+
+    public function getEntityAttributes()
+    {
+        return static::$entityAttributes;
     }
 
     /**
@@ -76,7 +94,7 @@ trait EntityAttributeValues
      */
     public function isEntityAttribute($key)
     {
-        $this->getEntityAttributes()->has($key);
+        return $this->getEntityAttributes()->has($key);
     }
 
     /**
@@ -136,6 +154,15 @@ trait EntityAttributeValues
             camel_case(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
     }
 
+    public function getAttribute($key)
+    {
+        if ($this->isEntityAttribute($key)) {
+            return $this->getRelationshipFromMethod($key);
+        }
+
+        return parent::getAttribute($key);
+    }
+
     /**
      * Get the model attribute relations.
      *
@@ -164,22 +191,7 @@ trait EntityAttributeValues
      */
     public function getAttributeManager()
     {
-        return $this->attributeManager;
-    }
-
-    /**
-     * Get the attribute manager instance.
-     *
-     * @return AttributeManager
-     */
-    public function createAttributeManager()
-    {
-        if (is_null($this->attributeManager)) {
-            $manager = $this->container->make(Manager::class);
-            $this->setAttributeManager($manager);
-        }
-
-        return $this->attributeManager;
+        return $this->getContainer()->make(Manager::class);
     }
 
     /**
@@ -191,6 +203,18 @@ trait EntityAttributeValues
     }
 
     /**
+     * @return Container
+     */
+    public function getContainer()
+    {
+        if (is_null($this->container)) {
+            $this->container = \Illuminate\Container\Container::getInstance();
+        }
+
+        return $this->container;
+    }
+
+    /**
      * Dynamically pipe calls to attribute relations.
      *
      * @param  string $method
@@ -199,8 +223,10 @@ trait EntityAttributeValues
      */
     public function __call($method, $parameters)
     {
-        if (isset(static::$attributeRelations[$method])) {
-            return call_user_func_array(static::$attributeRelations[$method], $parameters);
+        $this->bootEavRelationsIfNotBooted();
+
+        if (isset($this->attributeRelations[$method])) {
+            return call_user_func_array($this->attributeRelations[$method], $parameters);
         }
 
         return parent::__call($method, $parameters);

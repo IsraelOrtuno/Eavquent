@@ -6,13 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attribute extends Model
 {
-    // Attribute code column
+    /**
+     * Attribute code column
+     */
     const COLUMN_CODE = 'code';
-    // Attribute type column
+
+    /**
+     * Attribute type column
+     */
     const COLUMN_MODEL = 'model';
-    // Entity the attribute belongs to.
+
+    /**
+     * Entity the attribute belongs to.
+     */
     const COLUMN_ENTITY = 'entity';
-    // Attribute default value column.
+
+    /**
+     * Attribute default value column.
+     */
     const COLUMN_DEFAULT_VALUE = 'default_value';
 
     /**

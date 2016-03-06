@@ -41,6 +41,9 @@ class EavquentServiceProvider extends ServiceProvider
         $this->mergeConfigFrom($this->base('config/eavquent.php'), 'eavquent');
     }
 
+    /**
+     * Register container bindings.
+     */
     protected function registerBindings()
     {
         $this->app->bind(AttributeCacheContract::class, AttributeCache::class);

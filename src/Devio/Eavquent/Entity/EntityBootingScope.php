@@ -2,7 +2,6 @@
 
 namespace Devio\Eavquent\Entity;
 
-use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,10 +17,6 @@ class EntityBootingScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        $model->setContainer(Container::getInstance());
-
-        $model->bootEavRelationsIfNotBooted();
-
         $this->parseEagerLoads($builder, $model);
     }
 

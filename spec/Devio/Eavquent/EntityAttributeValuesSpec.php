@@ -30,8 +30,6 @@ class EntityAttributeValuesSpec extends ObjectBehavior
 
     function it_should_resolve_attribute_manager_from_container()
     {
-        $this->createAttributeManager();
-
         $this->getAttributeManager()->shouldBeAnInstanceOf(Manager::class);
     }
 }

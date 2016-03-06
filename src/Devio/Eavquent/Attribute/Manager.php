@@ -12,7 +12,9 @@ class Manager
     protected $cache;
 
     /**
-     * @var AttributeRepository
+     * The repository instance.
+     *
+     * @var Repository
      */
     protected $repository;
 
@@ -29,6 +31,8 @@ class Manager
     }
 
     /**
+     * Get all the attributes registered or just for a single entity.
+     *
      * @param string $entity
      * @return mixed
      */
@@ -45,18 +49,20 @@ class Manager
     }
 
     /**
+     * Refresh the cache content.
+     *
      * @return $this
      */
     public function refresh()
     {
-        $attributes = $this->repository->all();
-
-        $this->cache->set($attributes->groupBy(Attribute::COLUMN_CODE));
+        $this->cache->set($this->repository->all());
 
         return $this;
     }
 
     /**
+     * Get the cache instance.
+     *
      * @return AttributeCache
      */
     public function getCache()
@@ -65,6 +71,8 @@ class Manager
     }
 
     /**
+     * Get the repository instance.
+     *
      * @return Repository
      */
     public function getRepository()
