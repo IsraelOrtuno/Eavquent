@@ -202,11 +202,15 @@ trait Eavquent
     public function getAttributeManager()
     {
 <<<<<<< HEAD:src/Devio/Eavquent/Eavquent.php
+<<<<<<< HEAD:src/Devio/Eavquent/Eavquent.php
         if (is_null($this->attributeManager)) {
             $this->setAttributeManager($this->getContainer()->make(AttributeManager::class));
         }
 
         return $this->attributeManager;
+=======
+        return $this->getContainer()->make(Manager::class);
+>>>>>>> parent of 0cc13cd... Few changes:src/Devio/Eavquent/EntityAttributeValues.php
 =======
         return $this->getContainer()->make(Manager::class);
 >>>>>>> parent of 0cc13cd... Few changes:src/Devio/Eavquent/EntityAttributeValues.php
