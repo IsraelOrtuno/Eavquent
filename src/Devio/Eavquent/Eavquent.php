@@ -197,22 +197,22 @@ trait Eavquent
     }
 
     /**
-     * Get the attribute manager instance.
-     *
      * @return Manager
      */
     public function getAttributeManager()
     {
+<<<<<<< HEAD:src/Devio/Eavquent/Eavquent.php
         if (is_null($this->attributeManager)) {
             $this->setAttributeManager($this->getContainer()->make(AttributeManager::class));
         }
 
         return $this->attributeManager;
+=======
+        return $this->getContainer()->make(Manager::class);
+>>>>>>> parent of 0cc13cd... Few changes:src/Devio/Eavquent/EntityAttributeValues.php
     }
 
     /**
-     * Set the container instance.
-     *
      * @param Container $container
      */
     public function setContainer(Container $container)
@@ -221,8 +221,6 @@ trait Eavquent
     }
 
     /**
-     * Get the container instance.
-     *
      * @return Container
      */
     public function getContainer()
