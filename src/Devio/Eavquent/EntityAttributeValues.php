@@ -50,7 +50,13 @@ trait EntityAttributeValues
      */
     public static function bootEntityAttributeValues()
     {
-        static::addGlobalScope(new EntityBootingScope);
+        $instance = new static;
+        $manager = $instance->getAttributeManager();
+
+        $attributes = $manager->get($instance->getMorphClass());
+        static::$entityAttributes = $attributes->groupBy(Attribute::COLUMN_CODE);
+
+        static::addGlobalScope(new ParseWithScope);
     }
 
     /**
@@ -62,8 +68,6 @@ trait EntityAttributeValues
             return;
         }
 
-        $this->fetchAttributes();
-
         foreach ($this->getEntityAttributes()->flatten() as $attribute) {
             $relation = $this->getAttributeRelationClosure($attribute);
 
@@ -74,18 +78,6 @@ trait EntityAttributeValues
     }
 
     /**
-     * Load the attributes related to this entity.
-     *
-     * @return mixed
-     */
-    public function fetchAttributes()
-    {
-        $attributes = $this->getAttributeManager()->refresh()->get($this->getMorphClass());
-
-        static::$entityAttributes = $attributes->groupBy(Attribute::COLUMN_CODE);
-    }
-
-    /**
      * Get the entity attributes.
      *
      * @return mixed
@@ -93,50 +85,6 @@ trait EntityAttributeValues
     public function getEntityAttributes()
     {
         return static::$entityAttributes;
-    }
-
-    /**
-     * Check if the key corresponds to an entity attribute.
-     *
-     * @param $key
-     */
-    public function isEntityAttribute($key)
-    {
-        return $this->getEntityAttributes()->has($key);
-    }
-
-    /**
-     * Generate the relation closure.
-     *
-     * @param $attribute
-     * @return Closure
-     */
-    protected function getAttributeRelationClosure(Attribute $attribute)
-    {
-        // This will return a closure fully binded to the current model instance.
-        // This will help us to simulate any relation as if it was handly made
-        // in the original model class definition using a function statement.
-        return Closure::bind(function () use ($attribute) {
-            $method = $this->getAttributeRelationMethod($attribute);
-
-            $relation = $this->$method($attribute->getModelClass(), Attribute::COLUMN_ENTITY);
-
-            // We add a where clausule in order to fetch only the elements that
-            // are related to the given attribute. Without this condition it
-            // would fetch all the values related to the entity
-            return $relation->where($attribute->getForeignKey(), $attribute->getKey());
-        }, $this, get_class());
-    }
-
-    /**
-     * Get the relation name to use.
-     *
-     * @param Attribute $attribute
-     * @return string
-     */
-    protected function getAttributeRelationMethod(Attribute $attribute)
-    {
-        return $attribute->isCollection() ? 'morphMany' : 'morphOne';
     }
 
     /**
@@ -179,6 +127,20 @@ trait EntityAttributeValues
     public function getAttributeRelations()
     {
         return static::$attributeRelations;
+    }
+
+    /**
+     * Set an attribute relation.
+     *
+     * @param $relation
+     * @param $value
+     * @return $this
+     */
+    public function setAttributeRelation($relation, $value)
+    {
+        $this->attributeRelations[$relation] = $value;
+
+        return $this;
     }
 
     /**
