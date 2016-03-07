@@ -1,17 +1,17 @@
 <?php
 
-namespace spec\Devio\Eavquent\Attribute;
+namespace spec\Devio\Eavquent\Cache;
 
+use Illuminate\Support\Collection;
 use Prophecy\Argument;
 use PhpSpec\ObjectBehavior;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Cache\Repository;
 
 class AttributeCacheSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Devio\Eavquent\Attribute\AttributeCache');
+        $this->shouldHaveType('Devio\Eavquent\Cache\AttributeCache');
     }
 
     function let(Repository $cache)

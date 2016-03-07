@@ -1,6 +1,6 @@
 <?php
 
-namespace Devio\Eavquent\Attribute;
+namespace Devio\Eavquent\Cache;
 
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Cache\Repository;

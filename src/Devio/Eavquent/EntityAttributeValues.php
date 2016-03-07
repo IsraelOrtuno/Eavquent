@@ -3,13 +3,12 @@
 namespace Devio\Eavquent;
 
 use Closure;
+use Devio\Eavquent\Attribute\Manager;
 use Devio\Eavquent\Attribute\Attribute;
-use Devio\Eavquent\Entity\ParseWithScope;
-use Illuminate\Contracts\Container\Container;
 use Devio\Eavquent\Entity\EntityBootingScope;
-use Devio\Eavquent\Attribute\AttributeManager;
+use Illuminate\Contracts\Container\Container;
 
-trait Eavquent
+trait EntityAttributeValues
 {
     /**
      * The container instance.
@@ -19,16 +18,9 @@ trait Eavquent
     protected $container;
 
     /**
-     * The
-     *
-     * @var EavquentManager
-     */
-    protected $eavquentManager;
-
-    /**
      * The manager instance.
      *
-     * @var AttributeManager
+     * @var Manager
      */
     protected $attributeManager;
 
@@ -58,7 +50,7 @@ trait Eavquent
      */
     public static function bootEntityAttributeValues()
     {
-        static::addGlobalScope(new ParseWithScope);
+        static::addGlobalScope(new EntityBootingScope);
     }
 
     /**
@@ -148,6 +140,29 @@ trait Eavquent
         return $attribute->isCollection() ? 'morphMany' : 'morphOne';
     }
 
+    /**
+     * Determine if a get mutator exists for an attribute.
+     *
+     * @param  string $key
+     * @return bool
+     */
+    public function isGetRawAttributeMutator($key)
+    {
+        return (bool) preg_match('/^raw(\w+)object$/i', $key);
+    }
+
+    /**
+     * Remove any mutator prefix and suffix.
+     *
+     * @param $key
+     * @return mixed
+     */
+    protected function clearGetRawAttributeMutator($key)
+    {
+        return $this->isGetRawAttributeMutator($key) ?
+            camel_case(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
+    }
+
     public function getAttribute($key)
     {
         if ($this->isEntityAttribute($key)) {
@@ -165,22 +180,6 @@ trait Eavquent
     public function getAttributeRelations()
     {
         return static::$attributeRelations;
-    }
-
-    public function setEavquentManager($manager)
-    {
-        $this->eavquentManager = $manager;
-
-        return $this;
-    }
-
-    public function getEavquentManager()
-    {
-        if (is_null($this->eavquentManager)) {
-            $this->setEavquentManager($this->getContainer()->make(EavquentManager::class));
-        }
-
-        return $this->eavquentManager;
     }
 
     /**
@@ -204,7 +203,7 @@ trait Eavquent
 <<<<<<< HEAD:src/Devio/Eavquent/Eavquent.php
 <<<<<<< HEAD:src/Devio/Eavquent/Eavquent.php
         if (is_null($this->attributeManager)) {
-            $this->setAttributeManager($this->getContainer()->make(AttributeManager::class));
+            $this->setAttributeManager($this->getContainer()->make(Manager::class));
         }
 
         return $this->attributeManager;

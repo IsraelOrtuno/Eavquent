@@ -2,7 +2,7 @@
 
 namespace Devio\Eavquent\Attribute;
 
-class AttributeRepository
+class Repository
 {
     /**
      * Will return all attributes.

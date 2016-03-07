@@ -2,12 +2,12 @@
 
 namespace Devio\Eavquent\Attribute;
 
-use Devio\Eavquent\Contracts\AttributeCache as Cache;
+use Devio\Eavquent\Contracts\AttributeCache;
 
-class AttributeManager
+class Manager
 {
     /**
-     * @var Cache
+     * @var AttributeCache
      */
     protected $cache;
 
@@ -21,10 +21,10 @@ class AttributeManager
     /**
      * AttributeManager constructor.
      *
-     * @param Cache $cache
-     * @param AttributeRepository $repository
+     * @param AttributeCache $cache
+     * @param Repository $repository
      */
-    public function __construct(Cache $cache, AttributeRepository $repository)
+    public function __construct(AttributeCache $cache, Repository $repository)
     {
         $this->cache = $cache;
         $this->repository = $repository;
@@ -63,7 +63,7 @@ class AttributeManager
     /**
      * Get the cache instance.
      *
-     * @return Cache
+     * @return AttributeCache
      */
     public function getCache()
     {
