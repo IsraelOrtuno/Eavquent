@@ -5,17 +5,17 @@ namespace spec\Devio\Eavquent\Attribute;
 use Prophecy\Argument;
 use PhpSpec\ObjectBehavior;
 use Illuminate\Support\Collection;
-use Devio\Eavquent\Attribute\Repository;
 use Devio\Eavquent\Contracts\AttributeCache;
+use Devio\Eavquent\Attribute\AttributeRepository;
 
-class ManagerSpec extends ObjectBehavior
+class AttributeManagerSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Devio\Eavquent\Attribute\Manager');
+        $this->shouldHaveType('Devio\Eavquent\Attribute\AttributeManager');
     }
 
-    function let(AttributeCache $cache, Repository $repository)
+    function let(AttributeCache $cache, AttributeRepository $repository)
     {
         $this->beConstructedWith($cache, $repository);
     }
@@ -27,7 +27,7 @@ class ManagerSpec extends ObjectBehavior
         $this->get();
     }
 
-    function it_should_refresh_if_cache_is_unset(AttributeCache $cache, Repository $repository)
+    function it_should_refresh_if_cache_is_unset(AttributeCache $cache, AttributeRepository $repository)
     {
         $cache->exists()->shouldBeCalled()->willReturn(false);
         $this->it_should_refresh_attributes_cache($cache, $repository);
@@ -36,7 +36,7 @@ class ManagerSpec extends ObjectBehavior
         $this->get();
     }
 
-    function it_should_refresh_attributes_cache(AttributeCache $cache, Repository $repository)
+    function it_should_refresh_attributes_cache(AttributeCache $cache, AttributeRepository $repository)
     {
         $collection = new Collection();
 

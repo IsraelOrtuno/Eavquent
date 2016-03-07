@@ -3,7 +3,7 @@
 namespace Devio\Eavquent;
 
 use Illuminate\Support\ServiceProvider;
-use Devio\Eavquent\Cache\AttributeCache;
+use Devio\Eavquent\Attribute\AttributeCache;
 use Devio\Eavquent\Contracts\AttributeCache as AttributeCacheContract;
 
 class EavquentServiceProvider extends ServiceProvider
