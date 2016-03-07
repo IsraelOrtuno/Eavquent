@@ -62,7 +62,7 @@ trait EntityAttributeValues
             return;
         }
 
-        $this->loadAttributes();
+        $this->fetchAttributes();
 
         foreach ($this->getEntityAttributes()->flatten() as $attribute) {
             $relation = $this->getAttributeRelationClosure($attribute);
@@ -78,9 +78,8 @@ trait EntityAttributeValues
      *
      * @return mixed
      */
-    public function loadAttributes()
+    public function fetchAttributes()
     {
-        // TODO: remove refresh
         $attributes = $this->getAttributeManager()->refresh()->get($this->getMorphClass());
 
         static::$entityAttributes = $attributes->groupBy(Attribute::COLUMN_CODE);

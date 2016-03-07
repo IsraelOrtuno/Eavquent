@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
-class EntityBootingScope implements Scope
+class ParseWithScope implements Scope
 {
     /**
      * Apply the scope.
