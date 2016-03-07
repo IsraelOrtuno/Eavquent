@@ -196,14 +196,22 @@ trait EntityAttributeValues
     }
 
     /**
+     * Get the attribute manager instance.
+     *
      * @return Manager
      */
     public function getAttributeManager()
     {
-        return $this->getContainer()->make(Manager::class);
+        if (is_null($this->attributeManager)) {
+            $this->setAttributeManager($this->getContainer()->make(Manager::class));
+        }
+
+        return $this->attributeManager;
     }
 
     /**
+     * Set the container instance.
+     *
      * @param Container $container
      */
     public function setContainer(Container $container)
@@ -212,6 +220,8 @@ trait EntityAttributeValues
     }
 
     /**
+     * Get the container instance.
+     *
      * @return Container
      */
     public function getContainer()
