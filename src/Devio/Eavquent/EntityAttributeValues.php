@@ -11,26 +11,36 @@ use Illuminate\Contracts\Container\Container;
 trait EntityAttributeValues
 {
     /**
+     * The container instance.
+     *
      * @var Container
      */
     protected $container;
 
     /**
+     * The manager instance.
+     *
      * @var Manager
      */
     protected $attributeManager;
 
     /**
+     * The attributes related to the entity.
+     *
      * @var
      */
     protected static $entityAttributes;
 
     /**
+     * The attribute relations closures.
+     *
      * @var array
      */
     protected $attributeRelations = [];
 
     /**
+     * Set if the relations have been booted.
+     *
      * @var bool
      */
     protected $attributeRelationsBooted = false;
@@ -52,7 +62,7 @@ trait EntityAttributeValues
             return;
         }
 
-        $this->loadEntityAttributes();
+        $this->loadAttributes();
 
         foreach ($this->getEntityAttributes()->flatten() as $attribute) {
             $relation = $this->getAttributeRelationClosure($attribute);
@@ -63,18 +73,12 @@ trait EntityAttributeValues
         $this->attributeRelationsBooted = true;
     }
 
-    public function newFromBuilder($attributes = [], $connection = null)
-    {
-        echo "<pre>", var_dump('newFromBuilder'), "</pre>";
-        return parent::newFromBuilder($attributes, $connection);
-    }
-
     /**
      * Load the attributes related to this entity.
      *
      * @return mixed
      */
-    public function loadEntityAttributes()
+    public function loadAttributes()
     {
         // TODO: remove refresh
         $attributes = $this->getAttributeManager()->refresh()->get($this->getMorphClass());
@@ -82,6 +86,11 @@ trait EntityAttributeValues
         static::$entityAttributes = $attributes->groupBy(Attribute::COLUMN_CODE);
     }
 
+    /**
+     * Get the entity attributes.
+     *
+     * @return mixed
+     */
     public function getEntityAttributes()
     {
         return static::$entityAttributes;
