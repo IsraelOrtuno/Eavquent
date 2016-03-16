@@ -2,8 +2,7 @@
 
 namespace Devio\Eavquent;
 
-
-class SetQuery extends Query
+class WriteQuery extends Query
 {
 
 }
