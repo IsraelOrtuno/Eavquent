@@ -22,7 +22,7 @@ trait EntityAttributeValues
      * @var ReadQuery
      */
     protected $readQuery;
-    
+
     /**
      * The attribute setter instance.
      *
@@ -87,12 +87,12 @@ trait EntityAttributeValues
      * Creates a new instance and rebinds relations.
      *
      * @param array $attributes
-     * @param null $connection
+     * @param bool $exists
      * @return mixed
      */
-    public function newFromBuilder($attributes = [], $connection = null)
+    public function newInstance($attributes = [], $exists = false)
     {
-        $model = parent::newFromBuilder($attributes, $connection);
+        $model = parent::newInstance($attributes, $exists);
 
         $model->bootEavquentIfNotBooted();
 
@@ -114,7 +114,7 @@ trait EntityAttributeValues
         // In case any relation value is found, we will just provide it as is.
         // Otherwise, we will check if exists any attribute relation for the
         // given key. If so, we will load the relation calling its method.
-        if (isset($this->attributeRelations[$key])) {
+        if ($this->isAttributeRelation($key)) {
             return $this->getRelationshipFromMethod($key);
         }
     }
@@ -186,6 +186,18 @@ trait EntityAttributeValues
     public function isAttributeRelation($key)
     {
         return isset($this->attributeRelations[$key]);
+    }
+
+    /**
+     * Get the attribute relations.
+     *
+     * @return array
+     */
+    public function getAttributeRelations()
+    {
+        $this->bootEavquentIfNotBooted();
+
+        return $this->attributeRelations;
     }
 
     /**
