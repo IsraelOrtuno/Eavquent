@@ -20,8 +20,6 @@ This package will help you to provide an EAV structure and functionality to your
 - [Converting to array/json](#converting-array)
 - [Querying models](#querying-models)
 - [Eager loading](#eager-loading)
-  - [Lazy eager loading](#lazy-eager-loading)
-  - [Autoloading with $with](#the-with-property)
 - [Events](#events)
 
 <a name="introduction"></a>
@@ -118,8 +116,7 @@ Eavquent takes into account the powerful Eloquent eager loading system. When acc
 
 Eavquent has a special relationship name reserved for loading all the registered attributes. This relationship is called `eav`. When using `eav` for loading values, it will load all the attributes related to the entity we are playing with.
 
-<a name="lazy-eager-loading"></a>
-### Lazy eager loading
+#### Lazy eager loading
 
 Again, as any regular Eloquent relationship we can decide when to load our attributes. Do it as if you were normally loading a relationship:
 
@@ -129,8 +126,7 @@ $company->load('eav');
 $company->load('city', 'colors');
 ```
 
-<a name="the-with-property"></a>
-### Autoloading with $with
+#### Autoloading with $with
 
 Eloquent ships with a `$with` which accepts an array of relationships that should be eager loaded. We can use it as well:
 
