@@ -23,6 +23,7 @@ class ReadQuery extends Query
      * Get the content of the given attribute.
      *
      * @param $key
+     * @return null
      */
     public function getContent($key)
     {
@@ -36,7 +37,7 @@ class ReadQuery extends Query
             return $value->pluck('content', 'id');
         }
 
-        return $value->getContent();
+        return ! is_null($value) ? $value->getContent() : null;
     }
 
     /**

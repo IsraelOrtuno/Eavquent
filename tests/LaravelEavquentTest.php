@@ -16,7 +16,7 @@ class LaravelEavquentTest extends LaravelTestCase
     {
         $company = Company::with('eav')->first();
 
-        $this->assertTrue($company->relationLoaded('color'));
+        $this->assertTrue($company->relationLoaded('colors'));
         $this->assertTrue($company->relationLoaded('city'));
     }
 
@@ -25,7 +25,7 @@ class LaravelEavquentTest extends LaravelTestCase
     {
         $company = Company::with('city')->first();
 
-        $this->assertFalse($company->relationLoaded('color'));
+        $this->assertFalse($company->relationLoaded('colors'));
         $this->assertTrue($company->relationLoaded('city'));
     }
 
@@ -35,7 +35,10 @@ class LaravelEavquentTest extends LaravelTestCase
         $company = Company::with('eav')->first();
 
         $this->assertInternalType('string', $company->city);
-        $this->assertInternalType('string', $company->color);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $company->colors);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $company->sizes);
+        $this->assertNull($company->address);
+        $this->assertCount(0, $company->sizes);
     }
 
     /** @test */
@@ -46,40 +49,73 @@ class LaravelEavquentTest extends LaravelTestCase
         $this->assertInstanceOf(VarcharValue::class, $company->rawCityObject);
     }
 
+    /** @test */
+    public function attributes_are_included_in_array_as_keys()
+    {
+        $company = Company::with('eav')->first()->toArray();
+
+        $this->assertArrayHasKey('city', $company);
+        $this->assertArrayHasKey('colors', $company);
+        $this->assertArrayHasKey('address', $company);
+        $this->assertArrayHasKey('sizes', $company);
+    }
+
     public function createDummyData()
     {
         $faker = Faker\Factory::create();
 
+        // Simple attribute with values
         $cityAttribute = Attribute::create([
-            'code' => 'city',
-            'label' => 'City',
-            'model' => VarcharValue::class,
-            'entity' => Company::class,
+            'code'          => 'city',
+            'label'         => 'City',
+            'model'         => VarcharValue::class,
+            'entity'        => Company::class,
             'default_value' => null
         ]);
 
-        $colorAttribute = Attribute::create([
-            'code' => 'color',
-            'label' => 'Color',
-            'model' => VarcharValue::class,
-            'entity' => Company::class,
+        // Collection attribute with values
+        $colorsAttribute = Attribute::create([
+            'code'          => 'colors',
+            'label'         => 'Colors',
+            'model'         => VarcharValue::class,
+            'entity'        => Company::class,
+            'default_value' => null,
+            'collection'    => true
+        ]);
+
+        // Simple attribute without any value
+        $addressAttribute = Attribute::create([
+            'code'          => 'address',
+            'label'         => 'Address',
+            'model'         => VarcharValue::class,
+            'entity'        => Company::class,
             'default_value' => null
         ]);
 
-        factory(Company::class, 5)->create()->each(function ($item) use ($faker, $cityAttribute, $colorAttribute) {
-            $varchar = new VarcharValue;
-            $varchar->content = $faker->city;
-            $varchar->attribute_id = $cityAttribute->id;
-            $varchar->entity_type = Company::class;
-            $varchar->entity_id = $item->getKey();
-            $varchar->save();
+        // Collection attribute without any value
+        $sizesAttribute = Attribute::create([
+            'code'          => 'sizes',
+            'label'         => 'Sizes',
+            'model'         => VarcharValue::class,
+            'entity'        => Company::class,
+            'default_value' => null,
+            'collection' => true
+        ]);
 
-            $varchar = new VarcharValue;
-            $varchar->content = $faker->colorName;
-            $varchar->attribute_id = $colorAttribute->id;
-            $varchar->entity_type = Company::class;
-            $varchar->entity_id = $item->getKey();
-            $varchar->save();
+        factory(Company::class, 5)->create()->each(function ($item) use ($faker, $cityAttribute, $colorsAttribute) {
+            factory(VarcharValue::class)->create([
+                'content'      => $faker->city,
+                'attribute_id' => $cityAttribute->id,
+                'entity_type'  => Company::class,
+                'entity_id'    => $item->getKey()
+            ]);
+
+            factory(VarcharValue::class, 2)->create([
+                'content'      => $faker->colorName,
+                'attribute_id' => $colorsAttribute->id,
+                'entity_type'  => Company::class,
+                'entity_id'    => $item->getKey()
+            ]);
         });
     }
 }
