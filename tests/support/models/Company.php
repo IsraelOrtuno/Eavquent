@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    use \Devio\Eavquent\EntityAttributeValues;
+    use \Devio\Eavquent\Eavquent;
 
     protected $fillable = ['name'];
 

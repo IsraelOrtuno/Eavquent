@@ -2,10 +2,12 @@
 
 namespace Devio\Eavquent;
 
+use Devio\Eavquent\Relation\Builder;
 use Devio\Eavquent\Attribute\Manager;
+use Devio\Eavquent\Relation\EagerLoadScope;
 use Illuminate\Contracts\Container\Container;
 
-trait EntityAttributeValues
+trait Eavquent
 {
     /**
      * The container instance.
@@ -15,18 +17,11 @@ trait EntityAttributeValues
     protected $container;
 
     /**
-     * The attribute reader instance.
+     * The interactor instance (set, get, isset).
      *
-     * @var ReadQuery
+     * @var Interactor
      */
-    protected $readQuery;
-
-    /**
-     * The attribute setter instance.
-     *
-     * @var WriteQuery
-     */
-    protected $writeQuery;
+    protected $interactor;
 
     /**
      * The manager instance.
@@ -59,7 +54,7 @@ trait EntityAttributeValues
     /**
      * Booting the trait.
      */
-    public static function bootEntityAttributeValues()
+    public static function bootEavquent()
     {
         $instance = new static;
         $manager = $instance->getAttributeManager();
@@ -67,7 +62,7 @@ trait EntityAttributeValues
         $attributes = $manager->get($instance->getMorphClass());
         static::$entityAttributes = $attributes->keyBy('code');
 
-        static::addGlobalScope(new ParseWithScope);
+        static::addGlobalScope(new EagerLoadScope);
     }
 
     /**
@@ -76,7 +71,7 @@ trait EntityAttributeValues
     public function bootEavquentIfNotBooted()
     {
         if (! $this->attributeRelationsBooted) {
-            $this->getRelationLoader()->load($this);
+            $this->getRelationBuilder()->build($this);
             $this->attributeRelationsBooted = true;
         }
     }
@@ -135,30 +130,20 @@ trait EntityAttributeValues
      */
     public function getAttribute($key)
     {
-        $query = $this->readQuery();
+        $interactor = $this->interactor();
 
-        return $query->isAttribute($key)
-            ? $query->read($key) : parent::getAttribute($key);
+        return $interactor->isAttribute($key)
+            ? $interactor->get($key) : parent::getAttribute($key);
     }
 
     /**
-     * Get the ReadQuery instance.
+     * Get the interactor instance.
      *
      * @return ReadQuery
      */
-    public function readQuery()
+    public function interactor()
     {
-        return $this->readQuery = $this->readQuery ?: $this->getContainer()->make(ReadQuery::class, [$this]);
-    }
-
-    /**
-     * Get the SetQuery instance.
-     *
-     * @return WriteQuery
-     */
-    public function writeQuery()
-    {
-        return $this->writeQuery = $this->writeQuery ?: $this->getContainer()->make(WriteQuery::class, [$this]);
+        return $this->interactor = $this->interactor ?: $this->getContainer()->make(Interactor::class, [$this]);
     }
 
     /**
@@ -213,9 +198,9 @@ trait EntityAttributeValues
      *
      * @return RelationLoader
      */
-    public function getRelationLoader()
+    public function getRelationBuilder()
     {
-        return $this->getContainer()->make(RelationLoader::class);
+        return $this->getContainer()->make(Builder::class);
     }
 
     /**

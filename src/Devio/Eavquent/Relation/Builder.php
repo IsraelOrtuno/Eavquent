@@ -1,19 +1,19 @@
 <?php
 
-namespace Devio\Eavquent;
+namespace Devio\Eavquent\Relation;
 
 use Closure;
 use Devio\Eavquent\Attribute\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
-class RelationLoader
+class Builder
 {
     /**
-     * Load the entity attributes as relationships.
+     * Build the relations for the entity attributes.
      *
      * @param Model $entity
      */
-    public function load(Model $entity)
+    public function build(Model $entity)
     {
         $attributes = $entity->getEntityAttributes();
 

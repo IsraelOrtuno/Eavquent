@@ -2,15 +2,66 @@
 
 namespace Devio\Eavquent;
 
-class ReadQuery extends Query
+use Illuminate\Database\Eloquent\Model;
+
+class Interactor
 {
+    /**
+     * The entity instance.
+     *
+     * @var Model
+     */
+    protected $entity;
+
+    /**
+     * The entity attributes.
+     *
+     * @var Collection
+     */
+    protected $attributes;
+
+    /**
+     * Query constructor.
+     *
+     * @param Model $entity
+     */
+    public function __construct(Model $entity)
+    {
+        $this->entity = $entity;
+        $this->attributes = $entity->getEntityAttributes();
+    }
+
+    /**
+     * Check if the key is an attribute.
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function isAttribute($key)
+    {
+        $key = $this->clearGetRawAttributeMutator($key);
+
+        return $this->attributes->has($key);
+    }
+
+    /**
+     * Get an attribute.
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function getAttribute($key)
+    {
+        return $this->attributes->get($key);
+    }
+
     /**
      * Read the content of an attribute.
      *
      * @param $key
      * @return mixed|void
      */
-    public function read($key)
+    public function get($key)
     {
         if ($this->isGetRawAttributeMutator($key)) {
             return $this->getRawContent($key);
@@ -25,7 +76,7 @@ class ReadQuery extends Query
      * @param $key
      * @return null
      */
-    public function getContent($key)
+    protected function getContent($key)
     {
         $value = $this->getRawContent($key);
         $attribute = $this->getAttribute($key);
@@ -38,19 +89,6 @@ class ReadQuery extends Query
         }
 
         return ! is_null($value) ? $value->getContent() : null;
-    }
-
-    /**
-     * Check if the key corresponds to an attribute.
-     *
-     * @param $key
-     * @return mixed
-     */
-    public function isAttribute($key)
-    {
-        $key = $this->clearGetRawAttributeMutator($key);
-
-        return parent::isAttribute($key);
     }
 
     /**
@@ -89,3 +127,5 @@ class ReadQuery extends Query
             camel_case(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
     }
 }
+
+// TODO: add schema column check here.

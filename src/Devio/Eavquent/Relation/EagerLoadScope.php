@@ -1,12 +1,12 @@
 <?php
 
-namespace Devio\Eavquent;
+namespace Devio\Eavquent\Relation;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
-class ParseWithScope implements Scope
+class EagerLoadScope implements Scope
 {
     /**
      * Apply the scope.
