@@ -10,12 +10,19 @@ This package will help you to provide an EAV structure and functionality to your
   - [Laravel set up](#laravel-setup)
   - [Framework agnositc set up](#framework-agnostic)
 - [Configuring the Eloquent model](#configuring-eloquent)
-- [Registering attributes](#registering-attributes)
+- [Attributes](#attributes)
+  - [Registering an attribute](#registering-attribute)
+  - [Multivalued attributes](#attribute-collections)
   - [Creating your own value types](#creating-value-types)
+- [Getting/setting values](#getting-setting-values)
+  - [Saving values](#saving-values)
+  - [Accesing to relationships](#underlaying-relations)
+- [Converting to array/json](#converting-array)
 - [Querying models](#querying-models)
-  - [Eager loading](#eager-loading)
+- [Eager loading](#eager-loading)
   - [Lazy eager loading](#lazy-eager-loading)
   - [Autoloading with $with](#the-with-property)
+- Events
 
 <a name="introduction"></a>
 ## Introduction
@@ -105,7 +112,7 @@ $companies = Company::whereHas('city', function ($query) {
 ```
 
 <a name="eager-loading"></a>
-### Eager loading
+## Eager loading
 
 Eavquent takes into account the powerful Eloquent eager loading system. When accessing to a Eavquent attribute in a Eloquent model, it will be loaded just in time as Eloquent does when working with relationships. However we can work with Eavquent using Eloquent eager loading for better performance and avoid the n+1 query problem.
 
