@@ -1,7 +1,7 @@
 <?php
 
-use Devio\Eavquent\Attribute\Attribute;
 use Devio\Eavquent\Value\VarcharValue;
+use Devio\Eavquent\Attribute\Attribute;
 
 class LaravelEavquentTest extends LaravelTestCase
 {
@@ -18,6 +18,24 @@ class LaravelEavquentTest extends LaravelTestCase
 
         $this->assertTrue($company->relationLoaded('colors'));
         $this->assertTrue($company->relationLoaded('city'));
+    }
+
+    /** @test */
+    public function eagerload_all_attributes_from_withs_model_property()
+    {
+        $model = CompanyWithEavStub::first();
+
+        $this->assertTrue($model->relationLoaded('colors'));
+        $this->assertTrue($model->relationLoaded('city'));
+    }
+
+    /** @test */
+    public function eagerload_attributes_from_withs_model_property()
+    {
+        $model = CompanyWithCityStub::first();
+
+        $this->assertFalse($model->relationLoaded('colors'));
+        $this->assertTrue($model->relationLoaded('city'));
     }
 
     /** @test */
@@ -99,7 +117,7 @@ class LaravelEavquentTest extends LaravelTestCase
             'model'         => VarcharValue::class,
             'entity'        => Company::class,
             'default_value' => null,
-            'collection' => true
+            'collection'    => true
         ]);
 
         factory(Company::class, 5)->create()->each(function ($item) use ($faker, $cityAttribute, $colorsAttribute) {
@@ -118,4 +136,20 @@ class LaravelEavquentTest extends LaravelTestCase
             ]);
         });
     }
+}
+
+class CompanyWithEavStub extends Company
+{
+    public $table = 'companies';
+    public $morphClass = 'Company';
+
+    protected $with = ['eav'];
+}
+
+class CompanyWithCityStub extends Company
+{
+    public $table = 'companies';
+    public $morphClass = 'Company';
+
+    protected $with = ['city'];
 }
