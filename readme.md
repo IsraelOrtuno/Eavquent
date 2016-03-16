@@ -12,7 +12,7 @@ This package will help you to provide an EAV structure and functionality to your
 - [Configuring the Eloquent model](#configuring-eloquent)
 - [Attributes](#attributes)
   - [Registering an attribute](#registering-attribute)
-  - [Multivalued attributes](#attribute-collections)
+  - [Collection of values](#attribute-collections)
   - [Creating your own value types](#creating-value-types)
 - [Getting/setting values](#getting-setting-values)
   - [Saving values](#saving-values)
