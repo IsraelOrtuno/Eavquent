@@ -67,7 +67,7 @@ trait EntityAttributeValues
         $manager = $instance->getAttributeManager();
 
         $attributes = $manager->get($instance->getMorphClass());
-        static::$entityAttributes = $attributes->keyBy(Attribute::COLUMN_CODE);
+        static::$entityAttributes = $attributes->keyBy('code');
 
         static::addGlobalScope(new ParseWithScope);
     }

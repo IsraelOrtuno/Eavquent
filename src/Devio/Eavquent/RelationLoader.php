@@ -28,27 +28,6 @@ class RelationLoader
     }
 
     /**
-     * Rebinding current relation closures.
-     *
-     * @param Model $entity
-     */
-    public function bind(Model $entity)
-    {
-        // In case the entity has already loaded its attribute relations, this
-        // method will spin through them and rebind the relation closures to
-        // any new model instance that could have been previously binded.
-        //
-        // This happens mainly when Eloquent creates new instances when loading
-        // relations using methods such as newFromBuilder, newInstance and so
-        // on. This method updates the closure binding to the new instance.
-        foreach ($entity->getAttributeRelations() as $attribute => $relation) {
-            $newBind = $relation->bindTo($entity, get_class($entity));
-
-            $entity->setAttributeRelation($attribute, $newBind);
-        }
-    }
-
-    /**
      * Generate the relation closure.
      *
      * @param Model $entity
@@ -63,7 +42,7 @@ class RelationLoader
         // This will help us to simulate any relation as if it was handly made
         // in the original model class definition using a function statement.
         return Closure::bind(function () use ($entity, $attribute, $method) {
-            $relation = $entity->$method($attribute->getModelClass(), Attribute::COLUMN_ENTITY);
+            $relation = $entity->$method($attribute->getModelClass(), 'entity');
 
             // We add a where clausule in order to fetch only the elements that
             // are related to the given attribute. If no condition is set, it

@@ -45,7 +45,7 @@ class Manager
         $attributes = $this->cache->get();
 
         return $entity == '*' ?
-            $attributes : $attributes->where(Attribute::COLUMN_ENTITY, $entity);
+            $attributes : $attributes->where('entity', $entity);
     }
 
     /**

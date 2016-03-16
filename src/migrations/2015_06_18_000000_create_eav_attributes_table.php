@@ -18,8 +18,8 @@ class CreateEavAttributesTable extends Migration
             $table->string('label');
             $table->string('model');
             $table->string('entity');
+            $table->boolean('collection')->default(false);
             $table->text('default_value')->nullable();
-            $table->boolean('multivalue')->default(false);
         });
     }
 

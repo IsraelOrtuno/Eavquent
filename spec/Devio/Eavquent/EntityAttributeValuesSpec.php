@@ -17,17 +17,6 @@ class EntityAttributeValuesSpec extends ObjectBehavior
         $this->setContainer($container);
     }
 
-    function it_should_identify_get_raw_attribute()
-    {
-        $this->isGetRawAttributeMutator('foo')->shouldBe(false);
-        $this->isGetRawAttributeMutator('rawFoo')->shouldBe(false);
-        $this->isGetRawAttributeMutator('fooObject')->shouldBe(false);
-
-        $this->isGetRawAttributeMutator('rawfooobject')->shouldBe(true);
-        $this->isGetRawAttributeMutator('rawfooObject')->shouldBe(true);
-        $this->isGetRawAttributeMutator('rawFooObject')->shouldBe(true);
-    }
-
     function it_should_resolve_attribute_manager_from_container()
     {
         $this->getAttributeManager()->shouldBeAnInstanceOf(Manager::class);

@@ -5,41 +5,47 @@ namespace Devio\Eavquent;
 class ReadQuery extends Query
 {
     /**
+     * Read the content of an attribute.
+     *
      * @param $key
      * @return mixed|void
      */
     public function read($key)
     {
         if ($this->isGetRawAttributeMutator($key)) {
-            return $this->getRawValue($key);
+            return $this->getRawContent($key);
         }
 
-        return $this->getValue($key);
+        return $this->getContent($key);
     }
 
     /**
+     * Get the content of the given attribute.
+     *
      * @param $key
      */
-    public function getValue($key)
+    public function getContent($key)
     {
-        $value = $this->getRawValue($key);
-//        $attribute = $this->getAttribute($key);
+        $value = $this->getRawContent($key);
+        $attribute = $this->getAttribute($key);
 
         // In case we are accessing to a multivalued attribute, we will return
         // a collection with pairs of id and value content. Otherwise we'll
         // just return the single model value content as a plain result.
-//        if ($attribute->isMultivalue()) {
-//            return $value->pluck('content', $value->getKey());
-//        }
+        if ($attribute->isCollection()) {
+            return $value->pluck('content', 'id');
+        }
 
-        return $value->getAttribute('content');
+        return $value->getContent();
     }
 
     /**
+     * Get the raw content of the attribute (raw relationship).
+     *
      * @param $key
      * @return mixed
      */
-    protected function getRawValue($key)
+    protected function getRawContent($key)
     {
         $key = $this->clearGetRawAttributeMutator($key);
 
