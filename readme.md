@@ -14,6 +14,8 @@ This package will help you to provide an EAV structure and functionality to your
   - [Creating your own value types](#creating-value-types)
 - [Querying models](#querying-models)
   - [Eager loading](#eager-loading)
+  - [Lazy eager loading](#lazy-eager-loading)
+  - [Autoloading with $with](#the-with-property)
 
 <a name="introduction"></a>
 ## Introduction
@@ -93,7 +95,7 @@ That's it, we only have to include that trait in our Eloquent model!
 <a name="querying-models"></a>
 ## Querying models
 
-Eavquent tries to do everything in the same way Eloquent normally would do. When loading a model it internally creates a regular relationship for every entity attribute. This means we can query filtering by our registered attribute values like we would normally do when querying Eloquent relationships:
+Eavquent tries to do everything in the same way Eloquent would normally do. When loading a model it internally creates a regular relationship for every entity attribute. This means we can query filtering by our registered attribute values like we would normally do when querying Eloquent relationships:
 
 ```php
 // city is an eav attribute
@@ -102,13 +104,14 @@ $companies =  Company::whereHas('city', function ($query) {
 })->get();
 ```
 
-TODO
-
 <a name="eager-loading"></a>
 ### Eager loading
 
 Eavquent takes into account the powerful Eloquent eager loading system. When accessing to a Eavquent attribute in a Eloquent model, it will be loaded just in time as Eloquent does when working with relationships. However we can work with Eavquent using Eloquent eager loading for better performance and avoid the n+1 query problem.
 
+Eavquent has a special relationship name reserved for loading all the registered attributes. This relationship is called `eav`. When using `eav` for loading values, it will load all the attributes related to the entity we are playing with.
+
+<a name="lazy-eager-loading"></a>
 ### Lazy eager loading
 
 Again, as any regular Eloquent relationship we can decide when to load our attributes. Do it as if you were normally loading a relationship:
@@ -119,7 +122,8 @@ $company->load('eav');
 $company->load('city', 'colors');
 ```
 
-#### Using the $with property
+<a name="the-with-property"></a>
+### Autoloading with $with
 
 Eloquent ships with a `$with` which accepts an array of relationships that should be eager loaded. We can use it as well:
 
@@ -134,5 +138,3 @@ class Company extends Model
     protected $with = ['city', 'colors'];
 }
 ```
-
-TODO
