@@ -40,6 +40,19 @@ class ReadQuery extends Query
     }
 
     /**
+     * Check if the key corresponds to an attribute.
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function isAttribute($key)
+    {
+        $key = $this->clearGetRawAttributeMutator($key);
+
+        return parent::isAttribute($key);
+    }
+
+    /**
      * Get the raw content of the attribute (raw relationship).
      *
      * @param $key

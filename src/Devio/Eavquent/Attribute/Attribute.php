@@ -41,6 +41,6 @@ class Attribute extends Model
      */
     public function isCollection()
     {
-        return (bool) $this->getAttribute('code');
+        return (bool) $this->getAttribute('collection');
     }
 }

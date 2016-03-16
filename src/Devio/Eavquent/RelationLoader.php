@@ -23,7 +23,7 @@ class RelationLoader
         foreach ($attributes as $attribute) {
             $relation = $this->getRelationClosure($entity, $attribute);
 
-            $entity->setAttributeRelation($attribute->getCode(), $relation);
+            $entity->setAttributeRelation($attribute->code, $relation);
         }
     }
 
@@ -42,7 +42,7 @@ class RelationLoader
         // This will help us to simulate any relation as if it was handly made
         // in the original model class definition using a function statement.
         return Closure::bind(function () use ($entity, $attribute, $method) {
-            $relation = $entity->$method($attribute->getModelClass(), 'entity');
+            $relation = $entity->$method($attribute->model, 'entity');
 
             // We add a where clausule in order to fetch only the elements that
             // are related to the given attribute. If no condition is set, it

@@ -5,9 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    use Propertier;
-
-    protected $morphClass = 'Company';
+    use \Devio\Eavquent\EntityAttributeValues;
 
     protected $fillable = ['name'];
 
