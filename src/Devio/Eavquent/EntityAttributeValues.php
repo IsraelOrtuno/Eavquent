@@ -3,7 +3,6 @@
 namespace Devio\Eavquent;
 
 use Devio\Eavquent\Attribute\Manager;
-use Devio\Eavquent\Entity\ParseWithScope;
 use Illuminate\Contracts\Container\Container;
 
 trait EntityAttributeValues
