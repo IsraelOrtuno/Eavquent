@@ -5,15 +5,21 @@ Eavquent - EAV modeling for Eloquent
 This package will help you to provide an EAV structure and functionality to your Eloquent models.
 
 - [Introduction](#introduction)
+  - [Performance](#performance)
 - [Install](#install)
   - [Set up with Laravel](#laravel-setup)
   - [Framework agnositc](#framework-agnostic)
 - [Configuring the Eloquent model](#configuring-eloquent)
 - [Registering attributes](#registering-attributes)
   - [Creating your own value types](#creating-value-types)
+- [Querying models](#querying-models)
+  - [Eager loading](#eager-loading)
 
 <a name="introduction"></a>
 ## Introduction
+
+<a name="performance"></a>
+### Performance
 
 <a name="install"></a>
 ## Install
@@ -21,14 +27,14 @@ This package will help you to provide an EAV structure and functionality to your
 You can install the package via composer require command:
 
 ```shell
-composer require devio/eavquent
+composer require xxx/xxx
 ```
 
 Or simply add it to your `composer.json` dependences and run composer update:
 
 ```json
 "require": {
-    "devio/eavquent": "dev-master"
+    "xxx/xxx": "dev-master"
 }
 ```
 
@@ -83,3 +89,50 @@ That's it, we only have to include that trait in our Eloquent model!
 
 <a name="creating-value-types"></a>
 ### Registering your own value types
+
+<a name="querying-models"></a>
+## Querying models
+
+Eavquent tries to do everything in the same way Eloquent normally would do. When loading a model it internally creates a regular relationship for every entity attribute. This means we can query filtering by our registered attribute values like we would normally do when querying Eloquent relationships:
+
+```php
+// city is an eav attribute
+$companies =  Company::whereHas('city', function ($query) {
+  $query->where('content', 'Madrid');
+})->get();
+```
+
+TODO
+
+<a name="eager-loading"></a>
+### Eager loading
+
+Eavquent takes into account the powerful Eloquent eager loading system. When accessing to a Eavquent attribute in a Eloquent model, it will be loaded just in time as Eloquent does when working with relationships. However we can work with Eavquent using Eloquent eager loading for better performance and avoid the n+1 query problem.
+
+### Lazy eager loading
+
+Again, as any regular Eloquent relationship we can decide when to load our attributes. Do it as if you were normally loading a relationship:
+
+```php
+$company->load('eav');
+//
+$company->load('city', 'colors');
+```
+
+#### Using the $with property
+
+Eloquent ships with a `$with` which accepts an array of relationships that should be eager loaded. We can use it as well:
+
+```php
+class Company extends Model
+{
+    use Devio\Eavquent\EntityAttributeValues;
+
+    // Eager loading all the registered attributes
+    protected $with = ['eav']; 
+    // Or just load a few of them
+    protected $with = ['city', 'colors'];
+}
+```
+
+TODO
