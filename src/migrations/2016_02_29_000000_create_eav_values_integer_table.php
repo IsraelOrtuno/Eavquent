@@ -2,7 +2,7 @@
 
 use Devio\Eavquent\Value\Migration;
 
-class CreateEavValuesVarcharTable extends Migration
+class CreateEavValuesIntegerTable extends Migration
 {
     /**
      * The table name.
@@ -11,7 +11,7 @@ class CreateEavValuesVarcharTable extends Migration
      */
     protected function tableName()
     {
-        return 'varchar';
+        return 'integer';
     }
 
     /**
@@ -23,6 +23,6 @@ class CreateEavValuesVarcharTable extends Migration
      */
     protected function contentColumn(\Illuminate\Database\Schema\Blueprint $table, $name)
     {
-        $table->string($name);
+        $table->integer($name);
     }
 }
