@@ -2,6 +2,9 @@
 
 namespace Devio\Eavquent;
 
+use Closure;
+use Devio\Eavquent\Attribute\Attribute;
+use Illuminate\Database\Eloquent\Model;
 
 class RelationLoader
 {
@@ -21,6 +24,27 @@ class RelationLoader
             $relation = $this->getRelationClosure($entity, $attribute);
 
             $entity->setAttributeRelation($attribute->getCode(), $relation);
+        }
+    }
+
+    /**
+     * Rebinding current relation closures.
+     *
+     * @param Model $entity
+     */
+    public function bind(Model $entity)
+    {
+        // In case the entity has already loaded its attribute relations, this
+        // method will spin through them and rebind the relation closures to
+        // any new model instance that could have been previously binded.
+        //
+        // This happens mainly when Eloquent creates new instances when loading
+        // relations using methods such as newFromBuilder, newInstance and so
+        // on. This method updates the closure binding to the new instance.
+        foreach ($entity->getAttributeRelations() as $attribute => $relation) {
+            $newBind = $relation->bindTo($entity, get_class($entity));
+
+            $entity->setAttributeRelation($attribute, $newBind);
         }
     }
 
