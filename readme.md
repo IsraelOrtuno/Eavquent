@@ -99,8 +99,8 @@ Eavquent tries to do everything in the same way Eloquent would normally do. When
 
 ```php
 // city is an eav attribute
-$companies =  Company::whereHas('city', function ($query) {
-  $query->where('content', 'Madrid');
+$companies = Company::whereHas('city', function ($query) {
+    $query->where('content', 'Madrid');
 })->get();
 ```
 
