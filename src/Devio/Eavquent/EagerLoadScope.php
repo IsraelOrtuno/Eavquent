@@ -1,6 +1,6 @@
 <?php
 
-namespace Devio\Eavquent\Relation;
+namespace Devio\Eavquent;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;

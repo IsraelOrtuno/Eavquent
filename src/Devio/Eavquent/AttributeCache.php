@@ -1,6 +1,6 @@
 <?php
 
-namespace Devio\Eavquent\Contracts;
+namespace Devio\Eavquent;
 
 use Illuminate\Support\Collection;
 

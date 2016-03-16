@@ -2,9 +2,8 @@
 
 namespace Devio\Eavquent;
 
+use Devio\Eavquent\Attribute\Cache;
 use Illuminate\Support\ServiceProvider;
-use Devio\Eavquent\Cache\AttributeCache;
-use Devio\Eavquent\Contracts\AttributeCache as AttributeCacheContract;
 
 class EavquentServiceProvider extends ServiceProvider
 {
@@ -46,7 +45,7 @@ class EavquentServiceProvider extends ServiceProvider
      */
     protected function registerBindings()
     {
-        $this->app->bind(AttributeCacheContract::class, AttributeCache::class);
+        $this->app->bind(AttributeCache::class, Cache::class);
     }
 
     /**

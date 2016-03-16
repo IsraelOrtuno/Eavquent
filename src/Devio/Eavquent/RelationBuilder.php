@@ -1,12 +1,12 @@
 <?php
 
-namespace Devio\Eavquent\Relation;
+namespace Devio\Eavquent;
 
 use Closure;
 use Devio\Eavquent\Attribute\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
-class Builder
+class RelationBuilder
 {
     /**
      * Build the relations for the entity attributes.

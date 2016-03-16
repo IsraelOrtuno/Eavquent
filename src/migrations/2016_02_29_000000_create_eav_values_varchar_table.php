@@ -1,6 +1,6 @@
 <?php
 
-use Devio\Eavquent\Value\Migration;
+use Devio\Eavquent\Migration;
 
 class CreateEavValuesVarcharTable extends Migration
 {

@@ -2,7 +2,7 @@
 
 namespace Devio\Eavquent\Attribute;
 
-use Devio\Eavquent\Contracts\AttributeCache;
+use Devio\Eavquent\AttributeCache;
 
 class Manager
 {

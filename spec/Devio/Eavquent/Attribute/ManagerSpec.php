@@ -5,8 +5,8 @@ namespace spec\Devio\Eavquent\Attribute;
 use Prophecy\Argument;
 use PhpSpec\ObjectBehavior;
 use Illuminate\Support\Collection;
+use Devio\Eavquent\AttributeCache;
 use Devio\Eavquent\Attribute\Repository;
-use Devio\Eavquent\Contracts\AttributeCache;
 
 class ManagerSpec extends ObjectBehavior
 {

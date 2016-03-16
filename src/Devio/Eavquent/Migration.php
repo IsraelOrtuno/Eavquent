@@ -1,6 +1,6 @@
 <?php
 
-namespace Devio\Eavquent\Value;
+namespace Devio\Eavquent;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration as DatabaseMigration;

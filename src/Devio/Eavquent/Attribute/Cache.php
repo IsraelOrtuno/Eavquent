@@ -1,12 +1,12 @@
 <?php
 
-namespace Devio\Eavquent\Cache;
+namespace Devio\Eavquent\Attribute;
 
+use Devio\Eavquent\AttributeCache;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Cache\Repository;
-use Devio\Eavquent\Contracts\AttributeCache as Cache;
 
-class AttributeCache implements Cache
+class Cache implements AttributeCache
 {
     /**
      * The cache repository.

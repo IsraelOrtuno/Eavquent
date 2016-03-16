@@ -2,9 +2,7 @@
 
 namespace Devio\Eavquent;
 
-use Devio\Eavquent\Relation\Builder;
 use Devio\Eavquent\Attribute\Manager;
-use Devio\Eavquent\Relation\EagerLoadScope;
 use Illuminate\Contracts\Container\Container;
 
 trait Eavquent
@@ -200,7 +198,7 @@ trait Eavquent
      */
     public function getRelationBuilder()
     {
-        return $this->getContainer()->make(Builder::class);
+        return $this->getContainer()->make(RelationBuilder::class);
     }
 
     /**
