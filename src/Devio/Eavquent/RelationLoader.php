@@ -57,12 +57,12 @@ class RelationLoader
      */
     protected function getRelationClosure(Model $entity, Attribute $attribute)
     {
+        $method = $method = $this->guessRelationMethod($attribute);
+
         // This will return a closure fully binded to the current model instance.
         // This will help us to simulate any relation as if it was handly made
         // in the original model class definition using a function statement.
-        return Closure::bind(function () use ($entity, $attribute) {
-            $method = $this->guessRelationMethod($attribute);
-
+        return Closure::bind(function () use ($entity, $attribute, $method) {
             $relation = $entity->$method($attribute->getModelClass(), Attribute::COLUMN_ENTITY);
 
             // We add a where clausule in order to fetch only the elements that

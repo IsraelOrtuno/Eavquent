@@ -26,6 +26,16 @@ abstract class Value extends Model
     }
 
     /**
+     * Get the content.
+     *
+     * @return mixed
+     */
+    public function getContent()
+    {
+        return $this->getAttribute('content');
+    }
+
+    /**
      * Get the attribute table name.
      *
      * @return string

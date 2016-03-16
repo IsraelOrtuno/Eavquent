@@ -2,10 +2,9 @@
 
 namespace Devio\Eavquent;
 
-use Closure;
 use Devio\Eavquent\Attribute\Manager;
 use Devio\Eavquent\Attribute\Attribute;
-use Devio\Eavquent\Entity\EntityBootingScope;
+use Devio\Eavquent\Entity\ParseWithScope;
 use Illuminate\Contracts\Container\Container;
 
 trait EntityAttributeValues
@@ -16,6 +15,20 @@ trait EntityAttributeValues
      * @var Container
      */
     protected $container;
+
+    /**
+     * The attribute reader instance.
+     *
+     * @var ReadQuery
+     */
+    protected $readQuery;
+    
+    /**
+     * The attribute setter instance.
+     *
+     * @var WriteQuery
+     */
+    protected $writeQuery;
 
     /**
      * The manager instance.
@@ -43,7 +56,7 @@ trait EntityAttributeValues
      *
      * @var bool
      */
-    protected $attributeRelationsBooted = false;
+    public $attributeRelationsBooted = false;
 
     /**
      * Booting the trait.
@@ -54,7 +67,7 @@ trait EntityAttributeValues
         $manager = $instance->getAttributeManager();
 
         $attributes = $manager->get($instance->getMorphClass());
-        static::$entityAttributes = $attributes->groupBy(Attribute::COLUMN_CODE);
+        static::$entityAttributes = $attributes->keyBy(Attribute::COLUMN_CODE);
 
         static::addGlobalScope(new ParseWithScope);
     }
@@ -62,19 +75,48 @@ trait EntityAttributeValues
     /**
      * Booting the registered attributes as relations.
      */
-    public function bootEavRelationsIfNotBooted()
+    public function bootEavquentIfNotBooted()
     {
-        if ($this->attributeRelationsBooted) {
-            return;
+        if (! $this->attributeRelationsBooted) {
+            $this->getRelationLoader()->load($this);
+            $this->attributeRelationsBooted = true;
+        }
+    }
+
+    /**
+     * Creates a new instance and rebinds relations.
+     *
+     * @param array $attributes
+     * @param null $connection
+     * @return mixed
+     */
+    public function newFromBuilder($attributes = [], $connection = null)
+    {
+        $model = parent::newFromBuilder($attributes, $connection);
+
+        $model->bootEavquentIfNotBooted();
+
+        return $model;
+    }
+
+    /**
+     * Get the relation value from attribute relations.
+     *
+     * @param $key
+     * @return mixed
+     */
+    public function getRelationValue($key)
+    {
+        if (! is_null($result = parent::getRelationValue($key))) {
+            return $result;
         }
 
-        foreach ($this->getEntityAttributes()->flatten() as $attribute) {
-            $relation = $this->getAttributeRelationClosure($attribute);
-
-            array_set($this->attributeRelations, $attribute->getCode(), $relation);
+        // In case any relation value is found, we will just provide it as is.
+        // Otherwise, we will check if exists any attribute relation for the
+        // given key. If so, we will load the relation calling its method.
+        if (isset($this->attributeRelations[$key])) {
+            return $this->getRelationshipFromMethod($key);
         }
-
-        $this->attributeRelationsBooted = true;
     }
 
     /**
@@ -88,45 +130,37 @@ trait EntityAttributeValues
     }
 
     /**
-     * Determine if a get mutator exists for an attribute.
-     *
-     * @param  string $key
-     * @return bool
-     */
-    public function isGetRawAttributeMutator($key)
-    {
-        return (bool) preg_match('/^raw(\w+)object$/i', $key);
-    }
-
-    /**
-     * Remove any mutator prefix and suffix.
+     * Get an attribute.
      *
      * @param $key
      * @return mixed
      */
-    protected function clearGetRawAttributeMutator($key)
-    {
-        return $this->isGetRawAttributeMutator($key) ?
-            camel_case(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
-    }
-
     public function getAttribute($key)
     {
-        if ($this->isEntityAttribute($key)) {
-            return $this->getRelationshipFromMethod($key);
-        }
+        $query = $this->readQuery();
 
-        return parent::getAttribute($key);
+        return $query->isAttribute($key)
+            ? $query->read($key) : parent::getAttribute($key);
     }
 
     /**
-     * Get the model attribute relations.
+     * Get the ReadQuery instance.
      *
-     * @return array
+     * @return ReadQuery
      */
-    public function getAttributeRelations()
+    public function readQuery()
     {
-        return static::$attributeRelations;
+        return $this->readQuery = $this->readQuery ?: $this->getContainer()->make(ReadQuery::class, [$this]);
+    }
+
+    /**
+     * Get the SetQuery instance.
+     *
+     * @return WriteQuery
+     */
+    public function writeQuery()
+    {
+        return $this->writeQuery = $this->writeQuery ?: $this->getContainer()->make(WriteQuery::class, [$this]);
     }
 
     /**
@@ -144,28 +178,34 @@ trait EntityAttributeValues
     }
 
     /**
-     * Set the attribute manager instance.
+     * Check if key is an attribute relation.
      *
-     * @param $manager
-     * @return $this
+     * @param $key
+     * @return bool
      */
-    public function setAttributeManager($manager)
+    public function isAttributeRelation($key)
     {
-        $this->attributeManager = $manager;
-
-        return $this;
+        return isset($this->attributeRelations[$key]);
     }
 
     /**
+     * Get the attribtue manager instance.
+     *
      * @return Manager
      */
     public function getAttributeManager()
     {
-        if (is_null($this->attributeManager)) {
-            $this->setAttributeManager($this->getContainer()->make(Manager::class));
-        }
+        return $this->attributeManager ?: $this->getContainer()->make(Manager::class);
+    }
 
-        return $this->attributeManager;
+    /**
+     * Get the relation loader instance.
+     *
+     * @return RelationLoader
+     */
+    public function getRelationLoader()
+    {
+        return $this->getContainer()->make(RelationLoader::class);
     }
 
     /**
@@ -181,11 +221,7 @@ trait EntityAttributeValues
      */
     public function getContainer()
     {
-        if (is_null($this->container)) {
-            $this->container = \Illuminate\Container\Container::getInstance();
-        }
-
-        return $this->container;
+        return $this->container = $this->container ?: \Illuminate\Container\Container::getInstance();
     }
 
     /**
@@ -197,9 +233,9 @@ trait EntityAttributeValues
      */
     public function __call($method, $parameters)
     {
-        $this->bootEavRelationsIfNotBooted();
+        $this->bootEavquentIfNotBooted();
 
-        if (isset($this->attributeRelations[$method])) {
+        if ($this->isAttributeRelation($method)) {
             return call_user_func_array($this->attributeRelations[$method], $parameters);
         }
 
