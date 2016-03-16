@@ -22,7 +22,7 @@ This package will help you to provide an EAV structure and functionality to your
 - [Eager loading](#eager-loading)
   - [Lazy eager loading](#lazy-eager-loading)
   - [Autoloading with $with](#the-with-property)
-- Events
+- [Events](#events)
 
 <a name="introduction"></a>
 ## Introduction
