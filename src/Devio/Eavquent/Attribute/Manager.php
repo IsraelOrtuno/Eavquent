@@ -7,6 +7,8 @@ use Devio\Eavquent\Contracts\AttributeCache;
 class Manager
 {
     /**
+     * The attribute cache instance.
+     *
      * @var AttributeCache
      */
     protected $cache;
