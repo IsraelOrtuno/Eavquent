@@ -37,7 +37,7 @@ abstract class Value extends Model
     }
 
     /**
-     * Polimorphic relationship to the entity instance.
+     * Polymorphic relationship to the entity instance.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
