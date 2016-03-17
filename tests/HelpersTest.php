@@ -7,9 +7,9 @@ class HelpersTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         ConfigRepository::getInstance([
-            'prefix' => [
+            'prefix'    => [
                 'package_tables' => 'eav_',
-                'value_tables' => 'values_'
+                'value_tables'   => 'values_'
             ],
             'cache_key' => 'eav',
         ]);

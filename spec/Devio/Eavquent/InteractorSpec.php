@@ -33,8 +33,12 @@ class InteractorSpec extends ObjectBehavior
         $this->get('foo')->shouldBe('bar');
     }
 
-    function it_should_read_collection_content(ReadModelStub $model, Varchar $value, Attribute $attribute, Collection $values)
-    {
+    function it_should_read_collection_content(
+        ReadModelStub $model,
+        Varchar $value,
+        Attribute $attribute,
+        Collection $values
+    ) {
         $model->getEntityAttributes()->willReturn(collect(['foo' => $attribute]));
 
         $attribute->isCollection()->willReturn(true);
