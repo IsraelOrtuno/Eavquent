@@ -5,6 +5,7 @@ Eavquent - EAV modeling for Eloquent
 This package will help you to provide an EAV structure and functionality to your Eloquent models.
 
 - [Introduction](#introduction)
+  - [Basics](#basics)
   - [Performance](#performance)
 - [Install](#install)
   - [Laravel set up](#laravel-setup)
@@ -26,6 +27,23 @@ This package will help you to provide an EAV structure and functionality to your
 
 <a name="introduction"></a>
 ## Introduction
+
+<a name="basics"></a>
+### Basics
+
+#### Entity
+
+An entity represents a real element which needs to extend its attributes dynamically. Example: elemenents such as `product`, `customer` or `sale` are likely to be entities.
+
+#### Attribute
+
+The attribute act as the "column" we would like to add to an entity. An attribute gets a name such as `price`, `city` or `colors` to get identified and will be linked to an entity object. It will also play very closely with a data type instance which will cast or format its value when writing or reading from database.
+
+This element will also be responsible of defining some default behaviour like data validation or default values.
+
+#### Value
+
+In Eavquent implementation, a Value instance will represent the content of an attribute related to a particular entity instance. It will contain the real value of the `price` attribute we have registered for a `product` entity.
 
 <a name="performance"></a>
 ### Performance
