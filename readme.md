@@ -67,7 +67,7 @@ select * from `eav_values_varchar` where `attribute_id` = '3' and `eav_values_va
 select * from `eav_values_varchar` where `attribute_id` = '4' and `eav_values_varchar`.`entity_id` in ('1', '2', '3', '4', '5') and `eav_values_varchar`.`entity_type` = 'App\Company'
 ```
 
-### The flexibility win
+### The gained flexibility
 
 However, despite the performance issues, EAV provides a very high flexibility. It let us have dynamic attributes that can be added / removed at any time without afecting database structure. It also helps when working with columns that will mainly store `NULL` values.
 
