@@ -52,33 +52,11 @@ In Eavquent implementation, a Value instance will represent the content of an at
 Values are stored in different tables based on their data type. String values will be stored in a table called (by default) `eav_values_varchar` when integer values would use `eav_values_integer` instead. Both tables columns are identical except the data type of the `content` column which is adapted to the data type they store.
 
 <a name="performance"></a>
-### Performance
+### The performance loss
 
-EAV modeling is known for its lack of performance. It is also known for its complexity in terms of querying data if compared with the cost of querying any other horizontal structure. This paradigm has been tagged as anti-pattern in many articles and should be avoided if possible.
+EAV modeling is known for its lack of performance. It is also known for its complexity in terms of querying data if compared with the cost of querying any other horizontal structure. This paradigm has been tagged as anti-pattern in many articles and there is a lot of polemic about whether it should be used.
 
-Since we are storing our Entity, Attribute and Value in different tables, it's required to perform multiple queries to perform any operation.
-
-However, despite the performance issues, EAV provides a very high flexibility. It let us have dynamic attributes that can be added / removed at any time without afectin database structure. It also helps when working with columns that will mainly store `NULL` values.
-
-### Flexibility
-
-Considering the user accepts the lack of performance EAV comes with, the package has been developed with flexibility in mind so at least the user can fight that performance issue.
-
-Performance could be improved by loading all the entity related values in a single query and letting a bit of PHP logic organize them into relationships but decided not to, in favour of making database querying more flexible.
-
-As explained below, this package load the Entity values as if they were custom Eloquent relationships. Is for this reason we can easily query through them as if they were a regular Eloquent relation.
-
-#### The benefit
-
-Loading values as relationships will let us load only those values we may require for a certain situation, leaving some others just unloaded.
-
-It will also let us make use of the powerful Eloquent tools for querying relations so we could easily filter the entities we are fetching from database based on conditions we will directly apply to the values content.
-
-#### The price
-
-When loading the attributes for an entity as a relantionship, we will perform a query for every registered attribute. This means, even if all attribues are of type `Varchar` and stored at the same `eav_values_varchar` table, Eavquent will peform a single query for every of them.
-
-This means if we have 4 attributes registered for an entity, the package will perform the folloing 5 queries:
+Since we are storing our entity, attribute and value in different tables, it's required to perform multiple queries to perform any operation. This means if we have 4 attributes registered for an entity, the package will perform at least 5 queries:
 
 ```php
 select * from `companies`
@@ -88,7 +66,15 @@ select * from `eav_values_varchar` where `attribute_id` = '3' and `eav_values_va
 select * from `eav_values_varchar` where `attribute_id` = '4' and `eav_values_varchar`.`entity_id` in ('1', '2', '3', '4', '5') and `eav_values_varchar`.`entity_type` = 'App\Company'
 ```
 
-First one for obtaining the entity records and the 4 following for fetching every registered attribute.
+### The flexibility win
+
+However, despite the performance issues, EAV provides a very high flexibility. It let us have dynamic attributes that can be added / removed at any time without afecting database structure. It also helps when working with columns that will mainly store `NULL` values.
+
+Considering the user accepts the lack of performance EAV comes with, the package has been developed with flexibility in mind so at least the user can fight that performance issue. Performance could be improved by loading all the entity related values in a single query and letting a bit of PHP logic organize them into relationships but decided not to, in favour of making database querying more flexible. 
+
+As explained below, this package loads the entity values as if they were custom Eloquent relationships. Is for this reason we can easily query through them as if they were a regular Eloquent relation.
+
+Loading values as relationships will let us load only those values we may require for a certain situation, leaving some others just unloaded. It will also let us make use of the powerful Eloquent tools for querying relations so we could easily filter the entities we are fetching from database based on conditions we will directly apply to the values content.
 
 <a name="install"></a>
 ## Install
