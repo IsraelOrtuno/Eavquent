@@ -35,6 +35,8 @@ This package will help you to provide an EAV structure and functionality to your
 
 An entity represents a real element which needs to extend its attributes dynamically. Example: elemenents such as `product`, `customer` or `sale` are likely to be entities.
 
+In our case, an entity will be represented by any Eloquent model.
+
 #### Attribute
 
 The attribute act as the "column" we would like to add to an entity. An attribute gets a name such as `price`, `city` or `colors` to get identified and will be linked to an entity object. It will also play very closely with a data type instance which will cast or format its value when writing or reading from database.
@@ -43,7 +45,11 @@ This element will also be responsible of defining some default behaviour like da
 
 #### Value
 
-In Eavquent implementation, a Value instance will represent the content of an attribute related to a particular entity instance. It will contain the real value of the `price` attribute we have registered for a `product` entity.
+This parameter is responsible of storing data values related to a certain attribute and to a particular entity instance (row). 
+
+In Eavquent implementation, a Value instance will represent the content of an attribute related to a particular entity instance. It will contain the real value of the `price` attribute we have registered for a `product[id=1]` entity.
+
+Values are stored in different tables based on their data type. String values will be stored in a table called (by default) `eav_values_varchar` when integer values would use `eav_values_integer` instead. Both tables columns are identical except the data type of the `content` column which is adapted to the data type they store.
 
 <a name="performance"></a>
 ### Performance
