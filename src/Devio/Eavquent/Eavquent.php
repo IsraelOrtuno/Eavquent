@@ -137,7 +137,7 @@ trait Eavquent
     /**
      * Get the interactor instance.
      *
-     * @return ReadQuery
+     * @return Interactor
      */
     public function interactor()
     {
