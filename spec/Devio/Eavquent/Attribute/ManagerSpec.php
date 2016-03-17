@@ -20,23 +20,14 @@ class ManagerSpec extends ObjectBehavior
         $this->beConstructedWith($cache, $repository);
     }
 
-    function it_should_get_attributes(AttributeCache $cache)
+    function it_gets_all_registered_attributes(AttributeCache $cache)
     {
         $cache->exists()->shouldBeCalled()->willReturn(true);
         $cache->get()->shouldBeCalled();
         $this->get();
     }
 
-    function it_should_refresh_if_cache_is_unset(AttributeCache $cache, Repository $repository)
-    {
-        $cache->exists()->shouldBeCalled()->willReturn(false);
-        $this->it_should_refresh_attributes_cache($cache, $repository);
-        $cache->get()->shouldBeCalled();
-
-        $this->get();
-    }
-
-    function it_should_refresh_attributes_cache(AttributeCache $cache, Repository $repository)
+    function it_refreshes_attributes_cache(AttributeCache $cache, Repository $repository)
     {
         $collection = new Collection();
 

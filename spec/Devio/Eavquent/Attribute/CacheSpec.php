@@ -19,7 +19,7 @@ class CacheSpec extends ObjectBehavior
         $this->beConstructedWith($cache);
     }
 
-    function it_should_check_if_cache_exists(Repository $cache)
+    function it_checks_for_cache_existance(Repository $cache)
     {
         $cache->has('eav')->shouldBeCalled()->willReturn(false);
         $this->exists()->shouldBe(false);
@@ -28,7 +28,7 @@ class CacheSpec extends ObjectBehavior
         $this->exists()->shouldBe(true);
     }
 
-    function it_should_get_all_attributes(Repository $cache)
+    function it_gets_all_cached_attributes(Repository $cache)
     {
         $collection = new Collection(['foo', 'bar']);
         $cache->get('eav')->shouldBeCalled()->willReturn($collection);
@@ -36,7 +36,7 @@ class CacheSpec extends ObjectBehavior
         $this->get()->shouldBe($collection);
     }
 
-    function it_should_store_given_attributes(Repository $cache)
+    function it_stores_given_attributes(Repository $cache)
     {
         $collection = new Collection;
 
