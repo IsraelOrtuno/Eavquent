@@ -70,7 +70,9 @@ As explained below, this package load the Entity values as if they were custom E
 
 #### The benefit
 
+Loading values as relationships will let us load only those values we may require for a certain situation, leaving some others just unloaded.
 
+It will also let us make use of the powerful Eloquent tools for querying relations so we could easily filter the entities we are fetching from database based on conditions we will directly apply to the values content.
 
 #### The price
 
