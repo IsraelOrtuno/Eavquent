@@ -17,7 +17,7 @@ class EavquentServiceProvider extends ServiceProvider
         // will make them available from the main application folders.
         // They both are tagged in case they have to run separetely.
         $this->publishes(
-            [$this->base('config/eavquent.php') => config_path('eavquent.php')], 'config'
+            [$this->base('config.php') => config_path('eavquent.php')], 'config'
         );
         $this->publishes(
             [$this->base('migrations/') => database_path('migrations')], 'migrations'
@@ -38,7 +38,7 @@ class EavquentServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->mergeConfigFrom($this->base('config/eavquent.php'), 'eavquent');
+        $this->mergeConfigFrom($this->base('config.php'), 'eavquent');
     }
 
     /**

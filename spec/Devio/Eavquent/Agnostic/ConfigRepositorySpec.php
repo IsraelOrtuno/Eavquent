@@ -2,8 +2,8 @@
 
 namespace spec\Devio\Eavquent\Agnostic;
 
-use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use PhpSpec\ObjectBehavior;
 
 class ConfigRepositorySpec extends ObjectBehavior
 {
