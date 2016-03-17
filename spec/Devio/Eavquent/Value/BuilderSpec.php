@@ -2,12 +2,12 @@
 
 namespace spec\Devio\Eavquent\Value;
 
-use Devio\Eavquent\Value\Data\Varchar;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Prophecy\Argument;
 use PhpSpec\ObjectBehavior;
+use Devio\Eavquent\Value\Data\Varchar;
 use Devio\Eavquent\Attribute\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BuilderSpec extends ObjectBehavior
 {
