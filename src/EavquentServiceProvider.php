@@ -4,6 +4,7 @@ namespace Devio\Eavquent;
 
 use Devio\Eavquent\Attribute\Cache;
 use Illuminate\Support\ServiceProvider;
+use Devio\Eavquent\Value\Builder as ValueBuilder;
 
 class EavquentServiceProvider extends ServiceProvider
 {
@@ -46,8 +47,9 @@ class EavquentServiceProvider extends ServiceProvider
     protected function registerBindings()
     {
         $this->app->bind(AttributeCache::class, Cache::class);
+        
         $this->app->bind(Interactor::class, function ($app, $params) {
-            $builder = $this->app->make(\Devio\Eavquent\Value\Builder::class);
+            $builder = $this->app->make(ValueBuilder::class);
 
             return new Interactor($builder, $params[0]);
         });
