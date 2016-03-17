@@ -6,7 +6,8 @@ This package will help you to provide an EAV structure and functionality to your
 
 - [Introduction](#introduction)
   - [Basics](#basics)
-  - [Performance](#performance)
+  - [The performance loss](#performance)
+  - [The gained flexibility](#flexibility)
 - [Install](#install)
   - [Laravel set up](#laravel-setup)
   - [Framework agnositc set up](#framework-agnostic)
