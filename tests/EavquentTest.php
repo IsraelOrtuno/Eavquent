@@ -2,7 +2,7 @@
 
 use Devio\Eavquent\Value\Data\Varchar;
 
-class LaravelEavquentTest extends LaravelTestCase
+class EavquentTest extends LaravelTestCase
 {
     public function setUp()
     {
