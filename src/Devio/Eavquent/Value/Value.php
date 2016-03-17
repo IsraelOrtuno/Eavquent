@@ -2,6 +2,8 @@
 
 namespace Devio\Eavquent\Value;
 
+use Devio\Eavquent\Collection;
+use Devio\Eavquent\Attribute\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class Value extends Model
@@ -26,6 +28,37 @@ abstract class Value extends Model
     }
 
     /**
+     * Relationship to the attributes table.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
+    }
+
+    /**
+     * Polimorphic relationship to the entity instance.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function entity()
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * Set the content.
+     *
+     * @param $content
+     * @return mixed
+     */
+    public function setContent($content)
+    {
+        return $this->setAttribute('content', $content);
+    }
+
+    /**
      * Get the content.
      *
      * @return mixed
@@ -45,5 +78,33 @@ abstract class Value extends Model
         $class = str_replace('Value', '', class_basename($this));
 
         return eav_value_table($class);
+    }
+
+    /**
+     * Return an Eavquent Collection instead.
+     *
+     * @param  array  $models
+     * @return Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new Collection($models);
+    }
+
+    /**
+     * Create a new value instance.
+     *
+     * @param Model $entity
+     * @param $attribute
+     * @param $value
+     */
+    public static function build(Model $entity, Attribute $attribute, $value)
+    {
+        $instance = new static;
+
+        $instance->entity()->associate($entity);
+        $instance->attribute()->associate($attribute);
+
+        return $instance->setContent($value);
     }
 }
