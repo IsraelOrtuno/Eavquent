@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent;
 
+use Devio\Eavquent\Value\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Interactor
@@ -21,14 +22,23 @@ class Interactor
     protected $attributes;
 
     /**
-     * Query constructor.
+     * The value builder instance.
      *
+     * @var Builder
+     */
+    protected $builder;
+
+    /**
+     * Interactor constructor.
+     *
+     * @param Builder $builder
      * @param Model $entity
      */
-    public function __construct(Model $entity)
+    public function __construct(Builder $builder, Model $entity)
     {
         $this->entity = $entity;
         $this->attributes = $entity->getEntityAttributes();
+        $this->builder = $builder;
     }
 
     /**
@@ -79,13 +89,12 @@ class Interactor
     protected function getContent($key)
     {
         $value = $this->getRawContent($key);
-        $attribute = $this->getAttribute($key);
 
         // In case we are accessing to a multivalued attribute, we will return
         // a collection with pairs of id and value content. Otherwise we'll
         // just return the single model value content as a plain result.
-        if ($attribute->isCollection()) {
-            return $value->pluck('content', 'id');
+        if ($this->getAttribute($key)->isCollection()) {
+            return $value;
         }
 
         return ! is_null($value) ? $value->getContent() : null;
@@ -102,6 +111,11 @@ class Interactor
         $key = $this->clearGetRawAttributeMutator($key);
 
         return $this->entity->getRelationValue($key);
+    }
+
+    public function set($key, $value)
+    {
+        $attribute = $this->getAttribute($key);
     }
 
     /**

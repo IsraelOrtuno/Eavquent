@@ -6,6 +6,6 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(\Devio\Eavquent\Value\VarcharValue::class, function (Faker\Generator $faker) {
+$factory->define(\Devio\Eavquent\Value\Data\Varchar::class, function (Faker\Generator $faker) {
     return [];
 });

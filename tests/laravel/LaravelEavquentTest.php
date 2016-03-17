@@ -1,6 +1,6 @@
 <?php
 
-use Devio\Eavquent\Value\VarcharValue;
+use Devio\Eavquent\Value\Data\Varchar;
 
 class LaravelEavquentTest extends LaravelTestCase
 {
@@ -64,7 +64,7 @@ class LaravelEavquentTest extends LaravelTestCase
     {
         $company = Company::with('eav')->first();
 
-        $this->assertInstanceOf(VarcharValue::class, $company->rawCityObject);
+        $this->assertInstanceOf(Varchar::class, $company->rawCityObject);
     }
 
     /** @test */
@@ -83,7 +83,7 @@ class LaravelEavquentTest extends LaravelTestCase
     {
         $company = Company::with('eav')->first();
 
-        $this->assertInstanceOf(\Devio\Eavquent\Collection::class, $company->rawColorsObject);
+        $this->assertInstanceOf(\Devio\Eavquent\Value\Collection::class, $company->rawColorsObject);
     }
 }
 

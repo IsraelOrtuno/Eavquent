@@ -1,6 +1,6 @@
 <?php
 
-use Devio\Eavquent\Value\VarcharValue;
+use Devio\Eavquent\Value\Data\Varchar;
 use Devio\Eavquent\Attribute\Attribute;
 
 class Dummy
@@ -13,7 +13,7 @@ class Dummy
         $cityAttribute = Attribute::create([
             'code'          => 'city',
             'label'         => 'City',
-            'model'         => VarcharValue::class,
+            'model'         => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null
         ]);
@@ -22,7 +22,7 @@ class Dummy
         $colorsAttribute = Attribute::create([
             'code'          => 'colors',
             'label'         => 'Colors',
-            'model'         => VarcharValue::class,
+            'model'         => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null,
             'collection'    => true
@@ -32,7 +32,7 @@ class Dummy
         $addressAttribute = Attribute::create([
             'code'          => 'address',
             'label'         => 'Address',
-            'model'         => VarcharValue::class,
+            'model'         => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null
         ]);
@@ -41,21 +41,21 @@ class Dummy
         $sizesAttribute = Attribute::create([
             'code'          => 'sizes',
             'label'         => 'Sizes',
-            'model'         => VarcharValue::class,
+            'model'         => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null,
             'collection'    => true
         ]);
 
         factory(Company::class, 5)->create()->each(function ($item) use ($faker, $cityAttribute, $colorsAttribute) {
-            factory(VarcharValue::class)->create([
+            factory(Varchar::class)->create([
                 'content'      => $faker->city,
                 'attribute_id' => $cityAttribute->id,
                 'entity_type'  => Company::class,
                 'entity_id'    => $item->getKey()
             ]);
 
-            factory(VarcharValue::class, 2)->create([
+            factory(Varchar::class, 2)->create([
                 'content'      => $faker->colorName,
                 'attribute_id' => $colorsAttribute->id,
                 'entity_type'  => Company::class,

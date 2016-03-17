@@ -2,11 +2,12 @@
 
 namespace spec\Devio\Eavquent;
 
+use Devio\Eavquent\Value\Builder;
 use Prophecy\Argument;
 use PhpSpec\ObjectBehavior;
 use Devio\Eavquent\Eavquent;
 use Illuminate\Support\Collection;
-use Devio\Eavquent\Value\VarcharValue;
+use Devio\Eavquent\Value\Data\Varchar;
 use Illuminate\Database\Eloquent\Model;
 use Devio\Eavquent\Attribute\Attribute;
 
@@ -17,12 +18,12 @@ class InteractorSpec extends ObjectBehavior
         $this->shouldHaveType('Devio\Eavquent\Interactor');
     }
 
-    function let(ReadModelStub $model)
+    function let(Builder $builder, ReadModelStub $model)
     {
-        $this->beConstructedWith($model);
+        $this->beConstructedWith($builder, $model);
     }
 
-    function it_should_read_single_content(ReadModelStub $model, VarcharValue $value)
+    function it_should_read_single_content(ReadModelStub $model, Varchar $value)
     {
         $model->getEntityAttributes()->willReturn(collect(['foo' => new Attribute()]));
 
@@ -32,16 +33,16 @@ class InteractorSpec extends ObjectBehavior
         $this->get('foo')->shouldBe('bar');
     }
 
-    function it_should_read_collection_content(ReadModelStub $model, VarcharValue $value, Attribute $attribute, Collection $values)
+    function it_should_read_collection_content(ReadModelStub $model, Varchar $value, Attribute $attribute, Collection $values)
     {
         $model->getEntityAttributes()->willReturn(collect(['foo' => $attribute]));
 
         $attribute->isCollection()->willReturn(true);
 
-        $values->pluck('content', 'id')->shouldBeCalled()->willReturn(['foo' => 'bar']);
-        $model->getRelationValue('foo')->willReturn($values);
+//        $values->pluck('content', 'id')->shouldBeCalled()->willReturn(['foo' => 'bar']);
+        $model->getRelationValue('foo')->shouldBeCalled()->willReturn($values); //->willReturn($values);
 
-        $this->get('foo')->shouldBe(['foo' => 'bar']);
+        $this->get('foo')->shouldBe($values);
     }
 
     function it_should_return_raw_object(ReadModelStub $model)

@@ -6,18 +6,18 @@ class LaravelTestCase extends Orchestra\Testbench\TestCase
     {
         parent::setUp();
 
-        $this->withFactories(__DIR__ . '/factories');
+        $this->withFactories(__DIR__ . '/../factories');
 
         // Running package migrations
         $this->artisan('migrate', [
             '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__ . '/../src/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../../migrations'),
         ]);
 
         // Running testing migrations
         $this->artisan('migrate', [
             '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__ . '/support/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../support/migrations'),
         ]);
     }
 

@@ -141,7 +141,8 @@ trait Eavquent
      */
     public function interactor()
     {
-        return $this->interactor = $this->interactor ?: $this->getContainer()->make(Interactor::class, [$this]);
+        return $this->interactor = $this->interactor
+            ?: $this->getContainer()->make(Interactor::class, [$this]);
     }
 
     /**

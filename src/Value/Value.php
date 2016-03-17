@@ -2,7 +2,6 @@
 
 namespace Devio\Eavquent\Value;
 
-use Devio\Eavquent\Collection;
 use Devio\Eavquent\Attribute\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
@@ -83,28 +82,11 @@ abstract class Value extends Model
     /**
      * Return an Eavquent Collection instead.
      *
-     * @param  array  $models
+     * @param  array $models
      * @return Collection
      */
     public function newCollection(array $models = [])
     {
         return new Collection($models);
-    }
-
-    /**
-     * Create a new value instance.
-     *
-     * @param Model $entity
-     * @param $attribute
-     * @param $value
-     */
-    public static function build(Model $entity, Attribute $attribute, $value)
-    {
-        $instance = new static;
-
-        $instance->entity()->associate($entity);
-        $instance->attribute()->associate($attribute);
-
-        return $instance->setContent($value);
     }
 }

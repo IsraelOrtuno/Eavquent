@@ -21,7 +21,7 @@ class ConfigRepository extends Repository
     public function __construct(array $items = [])
     {
         $items = array_merge(
-            require __DIR__ . '/../../../config/eavquent.php',
+            require __DIR__ . '/../../config/eavquent.php',
             $items
         );
 

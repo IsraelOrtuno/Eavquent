@@ -35,10 +35,10 @@
             "src/helpers.php"
         ],
         "classmap": [
-            "src/migrations"
+            "migrations"
         ],
         "psr-4": {
-            "Devio\\Eavquent\\": "src/Devio/Eavquent"
+            "Devio\\Eavquent\\": "src"
         }
     },
     "autoload-dev": {

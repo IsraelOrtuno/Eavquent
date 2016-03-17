@@ -46,6 +46,11 @@ class EavquentServiceProvider extends ServiceProvider
     protected function registerBindings()
     {
         $this->app->bind(AttributeCache::class, Cache::class);
+        $this->app->bind(Interactor::class, function ($app, $params) {
+            $builder = $this->app->make(\Devio\Eavquent\Value\Builder::class);
+
+            return new Interactor($builder, $params[0]);
+        });
     }
 
     /**
@@ -56,6 +61,6 @@ class EavquentServiceProvider extends ServiceProvider
      */
     protected function base($path)
     {
-        return __DIR__ . "/../../{$path}";
+        return __DIR__ . "/../{$path}";
     }
 }
