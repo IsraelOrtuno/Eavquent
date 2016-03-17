@@ -2,6 +2,9 @@
 
 namespace Devio\Eavquent\Value;
 
+use Devio\Eavquent\Attribute\Attribute;
+use Illuminate\Database\Eloquent\Model;
+
 class Builder
 {
     /**
@@ -13,22 +16,11 @@ class Builder
      */
     public function build(Model $entity, Attribute $attribute, $value)
     {
-        $instance = $this->getAttributeModelInstance($attribute);
+        $instance = $attribute->getModelInstance();
 
         $instance->entity()->associate($entity);
         $instance->attribute()->associate($attribute);
 
         return $instance->setContent($value);
-    }
-
-    /**
-     * Create the attribute model instance.
-     *
-     * @param Attribute $attribute
-     * @return mixed
-     */
-    protected function getAttributeModelInstance(Attribute $attribute)
-    {
-        return new $attribute->getModel();
     }
 }

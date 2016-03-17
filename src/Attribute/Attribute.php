@@ -35,6 +35,18 @@ class Attribute extends Model
     }
 
     /**
+     * Return the model class.
+     *
+     * @return mixed
+     */
+    public function getModelInstance()
+    {
+        $class = $this->getAttribute('model');
+
+        return new $class;
+    }
+
+    /**
      * Check if attribute is multivalued.
      *
      * @return bool

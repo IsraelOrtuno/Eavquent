@@ -47,7 +47,7 @@ class EavquentServiceProvider extends ServiceProvider
     protected function registerBindings()
     {
         $this->app->bind(AttributeCache::class, Cache::class);
-        
+
         $this->app->bind(Interactor::class, function ($app, $params) {
             $builder = $this->app->make(ValueBuilder::class);
 
