@@ -35,7 +35,7 @@ This package will help you to provide an EAV structure and functionality to your
 
 An entity represents a real element which needs to extend its attributes dynamically. Example: elemenents such as `Product`, `Customer` or `Sale` are likely to be entities.
 
-In our case, an entity will be represented by any Eloquent model.
+In this case an entity will be represented by an Eloquent model.
 
 #### Attribute
 
