@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Devio\Eavquent\Agnostic\ConfigRepository;
 
 if (! function_exists('eav_table')) {
@@ -24,7 +25,7 @@ if (! function_exists('eav_value_table')) {
      */
     function eav_value_table($name)
     {
-        return eav_table(eav_config('prefix.value_tables')) . snake_case($name);
+        return eav_table(eav_config('prefix.value_tables')) . Str::snake($name);
     }
 }
 
