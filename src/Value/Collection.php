@@ -22,7 +22,39 @@ class Collection extends EloquentCollection
 
     public function link($entity, $attribute)
     {
+        $this->setEntity($entity);
+        $this->setAttribute($attribute);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param mixed $entity
+     */
+    public function setEntity($entity)
+    {
         $this->entity = $entity;
-        $this->attribute =$attribute;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * @param mixed $attribute
+     */
+    public function setAttribute($attribute)
+    {
+        $this->attribute = $attribute;
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use Devio\Eavquent\Value\Data\Varchar;
+use Illuminate\Database\Eloquent\Model;
+use Devio\Eavquent\Attribute\Attribute;
 
 trait EavquentTestTrait
 {
@@ -9,6 +11,24 @@ trait EavquentTestTrait
         parent::setUp();
 
         Dummy::createDummyData();
+    }
+
+    /** @test */
+    public function collections_are_linked_to_entity_and_attribute_when_lazy_load()
+    {
+        $company = Company::first();
+
+        $this->assertEquals('colors', $company->colors->getAttribute()->code);
+        $this->assertEquals($company, $company->colors->getEntity());
+    }
+    
+    /** @test */
+    public function collections_are_linked_to_entity_and_attribute_when_eager_load()
+    {
+        $company = Company::with('eav')->first();
+
+        $this->assertEquals('colors', $company->colors->getAttribute()->code);
+        $this->assertEquals($company, $company->colors->getEntity());
     }
 
     /** @test */

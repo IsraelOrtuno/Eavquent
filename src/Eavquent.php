@@ -91,16 +91,16 @@ trait Eavquent
      */
     public function getRelationValue($key)
     {
-        if (! is_null($result = parent::getRelationValue($key))) {
-            return $result;
-        }
+        $result = parent::getRelationValue($key);
 
         // In case any relation value is found, we will just provide it as is.
         // Otherwise, we will check if exists any attribute relation for the
         // given key. If so, we will load the relation calling its method.
-        if ($this->isAttributeRelation($key)) {
+        if (is_null($result) && $this->isAttributeRelation($key)) {
             $result = $this->getRelationshipFromMethod($key);
+        }
 
+        if (! is_null($result)) {
             $this->bootEavquentCollections();
 
             return $result;
@@ -113,13 +113,17 @@ trait Eavquent
     protected function bootEavquentCollections()
     {
         foreach ($this->getEntityAttributes() as $attribute) {
+            if (! $attribute->isCollection()) {
+                continue;
+            }
+
             $relation = $attribute->code;
 
             // This method is supposed to be called once every relations is loaded.
             // We can now them just link the attribute and the current entity to
             // any multivalued relation to make it accessible when get / set.
-            if ($this->relationLoaded($relation) && $attribute->isCollection()) {
-                $this->getAttribute($relation)->link($this, $attribute);
+            if ($this->relationLoaded($relation)) {
+                $this->getRelation($relation)->link($this, $attribute);
             }
         }
     }
