@@ -49,6 +49,6 @@ abstract class Migration extends DatabaseMigration
      */
     public function down()
     {
-        Schema::drop(eav_value_table($this->tableName()));
+        \Schema::drop(eav_value_table($this->tableName()));
     }
 }
