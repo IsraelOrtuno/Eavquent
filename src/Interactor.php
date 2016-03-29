@@ -112,16 +112,7 @@ class Interactor
     {
         $key = $this->clearGetRawAttributeMutator($key);
 
-        $value = $this->entity->getRelationValue($key);
-
-        // In case our value is a Collection (Eavquent), we will make sure the
-        // links between the collection, entity and attribute are made so it
-        // will be the only way the collection will know who it belongs to.
-        if ($value instanceof Collection) {
-            $value->link($this->entity, $this->getAttribute($key));
-        }
-
-        return $value;
+        return $this->entity->getRelationValue($key);
     }
 
     public function set($key, $value)

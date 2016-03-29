@@ -22,13 +22,6 @@ trait Eavquent
     protected $interactor;
 
     /**
-     * The manager instance.
-     *
-     * @var Manager
-     */
-    protected $attributeManager;
-
-    /**
      * The attributes related to the entity.
      *
      * @var
@@ -106,7 +99,28 @@ trait Eavquent
         // Otherwise, we will check if exists any attribute relation for the
         // given key. If so, we will load the relation calling its method.
         if ($this->isAttributeRelation($key)) {
-            return $this->getRelationshipFromMethod($key);
+            $result = $this->getRelationshipFromMethod($key);
+
+            $this->bootEavquentCollections();
+
+            return $result;
+        }
+    }
+
+    /**
+     * Boot multivalued relations.
+     */
+    protected function bootEavquentCollections()
+    {
+        foreach ($this->getEntityAttributes() as $attribute) {
+            $relation = $attribute->code;
+
+            // This method is supposed to be called once every relations is loaded.
+            // We can now them just link the attribute and the current entity to
+            // any multivalued relation to make it accessible when get / set.
+            if ($this->relationLoaded($relation) && $attribute->isCollection()) {
+                $this->getAttribute($relation)->link($this, $attribute);
+            }
         }
     }
 
@@ -189,7 +203,7 @@ trait Eavquent
      */
     public function getAttributeManager()
     {
-        return $this->attributeManager ?: $this->getContainer()->make(Manager::class);
+        return $this->getContainer()->make(Manager::class);
     }
 
     /**
