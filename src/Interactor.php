@@ -116,6 +116,8 @@ class Interactor
     public function set($key, $value)
     {
         $attribute = $this->getAttribute($key);
+
+
     }
 
     /**
@@ -143,3 +145,10 @@ class Interactor
 }
 
 // TODO: add schema column check here.
+
+// TODO: When doing GET to a object, we have to link the
+// TODO: attribute to the collection in order to be able
+// TODO: to identify what type of attribute we are setting.
+// TODO: Maybe we have to do same with entity as we do not
+// TODO: know what is the entity we have to relate the value
+// TODO: with.
