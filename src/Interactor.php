@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent;
 
+use Illuminate\Support\Str;
 use Devio\Eavquent\Value\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -140,7 +141,7 @@ class Interactor
     protected function clearGetRawAttributeMutator($key)
     {
         return $this->isGetRawAttributeMutator($key) ?
-            camel_case(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
+            Str::camel(str_ireplace(['raw', 'object'], ['', ''], $key)) : $key;
     }
 }
 
