@@ -6,6 +6,8 @@ php:
   - 7.0.1
   - hhvm
 
-install: travis_retry composer install --no-interaction --prefer-source
+install:
+  - composer self-update
+  - travis_retry composer install --no-interaction --prefer-source
 
 script: vendor/bin/phpspec run && vendor/bin/phpunit
