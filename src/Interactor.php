@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent;
 
+use Devio\Eavquent\Value\Collection;
 use Illuminate\Support\Str;
 use Devio\Eavquent\Value\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -111,7 +112,16 @@ class Interactor
     {
         $key = $this->clearGetRawAttributeMutator($key);
 
-        return $this->entity->getRelationValue($key);
+        $value = $this->entity->getRelationValue($key);
+
+        // In case our value is a Collection (Eavquent), we will make sure the
+        // links between the collection, entity and attribute are made so it
+        // will be the only way the collection will know who it belongs to.
+        if ($value instanceof Collection) {
+            $value->link($this->entity, $this->getAttribute($key));
+        }
+
+        return $value;
     }
 
     public function set($key, $value)
