@@ -1,7 +1,7 @@
 Eavquent - EAV modeling for Eloquent
 ======================================
 
-** NOTE: ** STILL UNDER DEVELOPMENT.
+**NOTE:** STILL UNDER DEVELOPMENT.
 
 [![Build Status](https://travis-ci.org/IsraelOrtuno/Eavquent.svg?branch=master)](https://travis-ci.org/IsraelOrtuno/Eavquent)
 
