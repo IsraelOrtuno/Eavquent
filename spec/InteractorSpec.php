@@ -42,8 +42,6 @@ class InteractorSpec extends ObjectBehavior
         $model->getEntityAttributes()->willReturn(collect(['foo' => $attribute]));
 
         $attribute->isCollection()->willReturn(true);
-
-//        $values->pluck('content', 'id')->shouldBeCalled()->willReturn(['foo' => 'bar']);
         $model->getRelationValue('foo')->shouldBeCalled()->willReturn($values); //->willReturn($values);
 
         $this->get('foo')->shouldBe($values);
