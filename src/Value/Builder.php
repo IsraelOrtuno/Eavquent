@@ -13,14 +13,30 @@ class Builder
      * @param Model $entity
      * @param $attribute
      * @param $value
+     *
+     * @return Model
      */
     public function build(Model $entity, Attribute $attribute, $value)
     {
         $instance = $attribute->getModelInstance();
 
-        $instance->entity()->associate($entity);
-        $instance->attribute()->associate($attribute);
+        $this->ensure($entity, $attribute, $instance);
 
         return $instance->setContent($value);
+    }
+
+    /**
+     * @param Model $entity
+     * @param Attribute $attribute
+     * @param Value $value
+     *
+     * @return Value
+     */
+    public function ensure(Model $entity, Attribute $attribute, Value $value)
+    {
+        $value->entity()->associate($entity);
+        $value->attribute()->associate($attribute);
+
+        return $value;
     }
 }
