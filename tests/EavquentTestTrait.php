@@ -1,8 +1,6 @@
 <?php
 
 use Devio\Eavquent\Value\Data\Varchar;
-use Illuminate\Database\Eloquent\Model;
-use Devio\Eavquent\Attribute\Attribute;
 
 trait EavquentTestTrait
 {

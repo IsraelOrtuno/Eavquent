@@ -221,6 +221,8 @@ trait Eavquent
     }
 
     /**
+     * Set the container instance.
+     *
      * @param Container $container
      */
     public function setContainer(Container $container)
@@ -229,6 +231,8 @@ trait Eavquent
     }
 
     /**
+     * Get the container instance.
+     *
      * @return Container
      */
     public function getContainer()
