@@ -45,12 +45,36 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Add new values to the collection.
+     *
+     * @param array $values
+     * @return $this
+     */
+    public function add($values = [])
+    {
+        if ($values instanceof Collection) {
+            $values = $values->toArray();
+        }
+
+        $values = is_array($values) ? $values : func_get_args();
+
+        // Once we have made sure our input is an array of values, we will convert
+        // them into value model objects (if no model instances are given) when
+        // done we only have to merge them into the current collection items.
+        foreach ($values as $value) {
+            $this->push($this->buildValue($value));
+        }
+
+        return $this;
+    }
+
+    /**
      * Queue for deletion current items and set news.
      *
      * @param $values
      * @return $this
      */
-    public function replace($values)
+    public function replace($values = [])
     {
         if ($values instanceof Collection) {
             $values = $values->toArray();
@@ -87,21 +111,32 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Build a value instance.
+     *
+     * @param $value
+     * @return Model
+     */
+    public function buildValue($value)
+    {
+        $builder = $this->getBuilder();
+
+        return $value instanceof Model ?
+            $value : $builder->build($this->getEntity(), $this->getAttribute(), $value);
+    }
+
+    /**
      * Build value objects from array.
      *
      * @param array $values
      * @return mixed
      */
-    protected function buildValues(array $values = [])
+    public function buildValues(array $values = [])
     {
-        $builder = $this->getBuilder();
-
         // We will map the entire array of values and transform every item into
         // into the data type object linked of this collection. We will also
         // omit any model found so an user could also set models directly.
-        return array_map(function ($value) use ($builder) {
-            return $value instanceof Model ?
-                $value : $builder->build($this->getEntity(), $this->getAttribute(), $value);
+        return array_map(function ($value) {
+            return $this->buildValue($value);
         }, $values);
     }
 

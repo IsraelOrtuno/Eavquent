@@ -24,7 +24,21 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function replace_current_items()
+    public function add_new_value()
+    {
+        list($entity, $attribute, $builder) = [$this->collection->getEntity(), $this->collection->getAttribute(), $this->collection->getBuilder()];
+
+        $builder->shouldReceive('build')->with($entity, $attribute, 'baz')
+            ->andReturn((new UnexistingValueStub)->setRawAttributes(['content' => 'baz']));
+
+        $this->collection->add('baz');
+
+        $this->assertCount(3, $this->collection);
+        $this->assertCount(1, $this->collection->where('content', 'baz'));
+    }
+
+    /** @test */
+    public function replace_current_values()
     {
         list($entity, $attribute, $builder) = [$this->collection->getEntity(), $this->collection->getAttribute(), $this->collection->getBuilder()];
 
