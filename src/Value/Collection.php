@@ -118,10 +118,13 @@ class Collection extends EloquentCollection
      */
     public function buildValue($value)
     {
-        $builder = $this->getBuilder();
+        if ($value instanceof Model) {
+            return $value;
+        }
 
-        return $value instanceof Model ?
-            $value : $builder->build($this->getEntity(), $this->getAttribute(), $value);
+        return $this->getBuilder()->build(
+            $this->getEntity(), $this->getAttribute(), $value
+        );
     }
 
     /**
