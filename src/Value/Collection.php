@@ -59,8 +59,8 @@ class Collection extends EloquentCollection
         $values = is_array($values) ? $values : func_get_args();
 
         // Once we have made sure our input is an array of values, we will convert
-        // them into value model objects (if no model instances are given) when
-        // done we only have to merge them into the current collection items.
+        // them into value model objects (if no model instances are given). When
+        // done we will just push all values into the current collection items.
         foreach ($values as $value) {
             $this->push($this->buildValue($value));
         }
@@ -132,12 +132,16 @@ class Collection extends EloquentCollection
      */
     public function buildValues(array $values = [])
     {
+        $result = [];
+
         // We will map the entire array of values and transform every item into
         // into the data type object linked of this collection. We will also
         // omit any model found so an user could also set models directly.
-        return array_map(function ($value) {
-            return $this->buildValue($value);
-        }, $values);
+        foreach ($values as $value) {
+            $result[] = $this->buildValue($value);
+        }
+
+        return $result;
     }
 
     /**
