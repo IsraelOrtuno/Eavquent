@@ -146,7 +146,7 @@ trait Eavquent
      */
     public function getAttribute($key)
     {
-        $interactor = $this->interactor();
+        $interactor = $this->getInteractor();
 
         return $interactor->isAttribute($key)
             ? $interactor->get($key) : parent::getAttribute($key);
@@ -157,7 +157,7 @@ trait Eavquent
      *
      * @return Interactor
      */
-    public function interactor()
+    public function getInteractor()
     {
         return $this->interactor = $this->interactor
             ?: $this->getContainer()->make(Interactor::class, [$this]);

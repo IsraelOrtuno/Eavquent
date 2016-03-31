@@ -119,7 +119,11 @@ class Interactor
     {
         $attribute = $this->getAttribute($key);
 
+        if ($attribute->isCollection()) {
+            $current = $this->getRawContent($key);
 
+            $current->replace($value);
+        }
     }
 
     /**

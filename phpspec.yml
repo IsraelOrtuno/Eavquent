@@ -1,5 +1,0 @@
-suites:
-    main:
-        namespace: Devio\Eavquent
-        psr4_prefix: Devio\Eavquent
-        src_path: src
