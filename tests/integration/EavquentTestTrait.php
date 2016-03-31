@@ -103,6 +103,17 @@ trait EavquentTestTrait
 
         $this->assertInstanceOf(\Devio\Eavquent\Value\Collection::class, $company->rawColorsObject);
     }
+    
+    /** @test */
+    public function collections_are_linked_to_entity_and_attribute()
+    {
+        $company = Company::with('eav')->first();
+
+        $attribute = $company->getEntityAttributes('colors')['colors'];
+
+        $this->assertEquals($company, $company->colors->getEntity());
+        $this->assertEquals($attribute, $company->colors->getAttribute());
+    }
 }
 
 class CompanyWithEavStub extends Company
