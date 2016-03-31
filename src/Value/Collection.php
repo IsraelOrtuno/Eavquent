@@ -29,6 +29,13 @@ class Collection extends EloquentCollection
      */
     protected $replaced;
 
+    /**
+     * Link the collection to entity and attribute.
+     *
+     * @param $entity
+     * @param $attribute
+     * @return $this
+     */
     public function link($entity, $attribute)
     {
         $this->setEntity($entity);
@@ -37,6 +44,12 @@ class Collection extends EloquentCollection
         return $this;
     }
 
+    /**
+     * Queue for deletion current items and set news.
+     *
+     * @param $values
+     * @return $this
+     */
     public function replace($values)
     {
         if ($values instanceof Collection) {
@@ -45,9 +58,14 @@ class Collection extends EloquentCollection
 
         $values = is_array($values) ? $values : func_get_args();
 
+        // We will just store the current value items to the replaced collection
+        // and replacing them with the new given values. These values will be
+        // transformed into a data type value based on the linked attribute.
         $this->replaceCurrentItems();
 
         $this->items = $this->buildValues($values);
+
+        return $this;
     }
 
     /**
@@ -68,6 +86,12 @@ class Collection extends EloquentCollection
             new BaseCollection($items) : $this->replaced->merge($items);
     }
 
+    /**
+     * Build value objects from array.
+     *
+     * @param array $values
+     * @return mixed
+     */
     protected function buildValues(array $values = [])
     {
         $builder = $this->getBuilder();
@@ -82,6 +106,8 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Get the builder instance.
+     *
      * @return Builder
      */
     protected function getBuilder()
@@ -90,6 +116,8 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Get the replaced values.
+     *
      * @return BaseCollection
      */
     public function getReplaced()
@@ -98,6 +126,8 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Get the entity instance.
+     *
      * @return mixed
      */
     public function getEntity()
@@ -106,6 +136,8 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Set the entity instance.
+     *
      * @param mixed $entity
      */
     public function setEntity($entity)
@@ -114,6 +146,8 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Get the attribute instance.
+     *
      * @return mixed
      */
     public function getAttribute()
@@ -122,6 +156,8 @@ class Collection extends EloquentCollection
     }
 
     /**
+     * Set the attribute instance.
+     *
      * @param mixed $attribute
      */
     public function setAttribute($attribute)
