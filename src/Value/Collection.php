@@ -52,11 +52,9 @@ class Collection extends EloquentCollection
      */
     public function add($values = [])
     {
-        if ($values instanceof Collection) {
-            $values = $values->toArray();
+        if (! is_array($values) && ! $values instanceof BaseCollection) {
+            $values = func_get_args();
         }
-
-        $values = is_array($values) ? $values : func_get_args();
 
         // Once we have made sure our input is an array of values, we will convert
         // them into value model objects (if no model instances are given). When
@@ -76,11 +74,9 @@ class Collection extends EloquentCollection
      */
     public function replace($values = [])
     {
-        if ($values instanceof Collection) {
-            $values = $values->toArray();
+        if (! is_array($values) && ! $values instanceof BaseCollection) {
+            $values = func_get_args();
         }
-
-        $values = is_array($values) ? $values : func_get_args();
 
         // We will just store the current value items to the replaced collection
         // and replacing them with the new given values. These values will be
