@@ -2,9 +2,10 @@
 
 namespace Devio\Eavquent;
 
-use Devio\Eavquent\Value\Collection;
 use Illuminate\Support\Str;
+use Devio\Eavquent\Value\Value;
 use Devio\Eavquent\Value\Builder;
+use Devio\Eavquent\Value\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Interactor
@@ -117,13 +118,60 @@ class Interactor
 
     public function set($key, $value)
     {
+        $current = $this->getRawContent($key);
         $attribute = $this->getAttribute($key);
 
+        // $current will always contain a collection when an attribute is multivalued
+        // as morphMany provides collections even if no values were matched, making
+        // us assume at least an empty collection object will be always provided.
         if ($attribute->isCollection()) {
-            $current = $this->getRawContent($key);
-
             $current->replace($value);
+
+            return $this;
         }
+
+        // If the attribute to set is a collection, it will be replaced by the
+        // new value. If the value model does not exist, we will just create
+        // and set a new value model, otherwise its value will get updated.
+        if (is_null($current)) {
+            return $this->setContent($attribute, $value);
+        }
+
+        return $this->updateContent($current, $value);
+    }
+
+    /**
+     * Set the content of an unexisting value.
+     *
+     * @param $attribute
+     * @param $value
+     * @return mixed
+     */
+    protected function setContent($attribute, $value)
+    {
+        if (! $value instanceof Value) {
+            $value = $this->builder->build($value);
+        }
+
+        return $this->entity->setAttributeRelation(
+            $attribute->code, $value
+        );
+    }
+
+    /**
+     * Update the content of an existing value.
+     *
+     * @param $current
+     * @param $new
+     * @return mixed
+     */
+    protected function updateContent($current, $new)
+    {
+        if ($new instanceof Value) {
+            $new = $new->getContent();
+        }
+
+        return $current->setContent($new);
     }
 
     /**
