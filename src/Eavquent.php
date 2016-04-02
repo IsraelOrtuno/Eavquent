@@ -129,6 +129,44 @@ trait Eavquent
     }
 
     /**
+     * Check for auto pushing.
+     *
+     * @return bool
+     */
+    public function isAutoPush()
+    {
+        if (property_exists($this, 'autoPush')) {
+            return $this->autoPush;
+        }
+
+        return true;
+    }
+
+    /**
+     * Enable auto pushing.
+     *
+     * @return bool
+     */
+    public function enableAutoPush()
+    {
+        $this->autoPush = true;
+
+        return $this;
+    }
+
+    /**
+     * Disable auto pushing.
+     *
+     * @return bool
+     */
+    public function disableAutoPush()
+    {
+        $this->autoPush = false;
+
+        return $this;
+    }
+
+    /**
      * Get the entity attributes.
      *
      * @return mixed
