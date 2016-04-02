@@ -15,7 +15,7 @@ class EavquentServiceProvider extends ServiceProvider
     {
         // Publishing the package configuration file and migrations. This
         // will make them available from the main application folders.
-        // They both are tagged in case they have to run separetely.
+        // They both are tagged in case they have to run separately.
         $this->publishes(
             [$this->base('config.php') => config_path('eavquent.php')], 'config'
         );
