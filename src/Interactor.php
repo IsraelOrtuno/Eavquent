@@ -113,6 +113,10 @@ class Interactor
     {
         $key = $this->clearGetRawAttributeMutator($key);
 
+        if ($this->entity->relationLoaded($key)) {
+            return $this->entity->getRelation($key);
+        }
+
         return $this->entity->getRelationValue($key);
     }
 

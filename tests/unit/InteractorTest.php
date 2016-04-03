@@ -20,7 +20,8 @@ class InteractorTest extends PHPUnit_Framework_TestCase
 
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => new Attribute]));
         $value->shouldReceive('getContent')->andReturn('bar');
-        $entity->shouldReceive('getRelationValue')->with('foo')->andReturn($value);
+        $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
+        $entity->shouldReceive('getRelation')->with('foo')->andReturn($value);
 
         $interactor = new Interactor($builder, $entity);
 
@@ -36,7 +37,8 @@ class InteractorTest extends PHPUnit_Framework_TestCase
 
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
         $attribute->shouldReceive('isCollection')->once()->andReturn(true);
-        $entity->shouldReceive('getRelationValue')->with('foo')->andReturn(new Collection);
+        $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
+        $entity->shouldReceive('getRelation')->with('foo')->andReturn(new Collection);
 
         $interactor = new Interactor($builder, $entity);
 
@@ -50,7 +52,9 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity = m::mock(InteractorModelStub::class);
 
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => new Attribute]));
-        $entity->shouldReceive('getRelationValue')->with('foo')->andReturn('bar');
+        $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
+        $entity->shouldReceive('getRelation')->with('foo')->andReturn('bar');
+//        $entity->shouldReceive('getRelationValue')->with('foo')->andReturn('bar');
 
         $interactor = new Interactor($builder, $entity);
 

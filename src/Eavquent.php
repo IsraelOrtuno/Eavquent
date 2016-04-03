@@ -3,6 +3,7 @@
 namespace Devio\Eavquent;
 
 use Devio\Eavquent\Attribute\Manager;
+use Devio\Eavquent\Value\Collection;
 use Illuminate\Contracts\Container\Container;
 
 trait Eavquent
@@ -84,6 +85,22 @@ trait Eavquent
     }
 
     /**
+     * Overwrite to link before setting when eager loading.
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function setRelation($key, $value)
+    {
+        if ($value instanceof Collection) {
+            $this->linkRelationCollection($key, $value);
+        }
+
+        return parent::setRelation($key, $value);
+    }
+
+    /**
      * Get the relation value from attribute relations.
      *
      * @param $key
@@ -96,36 +113,30 @@ trait Eavquent
         // In case any relation value is found, we will just provide it as is.
         // Otherwise, we will check if exists any attribute relation for the
         // given key. If so, we will load the relation calling its method.
-        if (is_null($result) && $this->isAttributeRelation($key)) {
+        if (is_null($result) && ! $this->relationLoaded($key) && $this->isAttributeRelation($key)) {
             $result = $this->getRelationshipFromMethod($key);
         }
 
-        if (! is_null($result)) {
-            $this->bootEavquentCollections();
-
-            return $result;
+        // When doing lazy loading, setRelation method is not triggered. Eloquent
+        // just sets the result of the relation to the key into the $relations
+        // array so we have to link the relation value collection here again.
+        if (! is_null($result) && $result instanceof Collection) {
+            $this->linkRelationCollection($key, $result);
         }
+
+        return $result;
     }
 
     /**
-     * Boot multivalued relations.
+     * Links a Value collection to the current entity and attribute.
+     *
+     * @param $key
+     * @param Collection $value
      */
-    protected function bootEavquentCollections()
+    protected function linkRelationCollection($key, Collection $value)
     {
-        foreach ($this->getEntityAttributes() as $attribute) {
-            if (! $attribute->isCollection()) {
-                continue;
-            }
-
-            $relation = $attribute->code;
-
-            // This method is supposed to be called once every relations is loaded.
-            // We can now them just link the attribute and the current entity to
-            // any multivalued relation to make it accessible when get / set.
-            if ($this->relationLoaded($relation)) {
-                $this->getRelation($relation)->link($this, $attribute);
-            }
-        }
+        $attributes = $this->getEntityAttributes();
+        $value->link($this, $attributes->get($key));
     }
 
     /**
