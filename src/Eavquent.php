@@ -176,6 +176,14 @@ trait Eavquent
         return static::$entityAttributes;
     }
 
+    public function setAttribute($key, $value)
+    {
+        $interactor = $this->getInteractor();
+
+        return $interactor->isAttribute($key) ?
+            $interactor->set($key, $value) : parent::setAttribute($key, $value);
+    }
+
     /**
      * Get an attribute.
      *
@@ -186,8 +194,18 @@ trait Eavquent
     {
         $interactor = $this->getInteractor();
 
-        return $interactor->isAttribute($key)
-            ? $interactor->get($key) : parent::getAttribute($key);
+        return $interactor->isAttribute($key) ?
+            $interactor->get($key) : parent::getAttribute($key);
+    }
+
+    /**
+     * Get the morph type column.
+     *
+     * @return mixed
+     */
+    public function getMorphKeys()
+    {
+        return $this->getMorphs('entity', null, null);
     }
 
     /**

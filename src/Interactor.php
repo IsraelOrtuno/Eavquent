@@ -150,10 +150,10 @@ class Interactor
     protected function setContent($attribute, $value)
     {
         if (! $value instanceof Value) {
-            $value = $this->builder->build($value);
+            $value = $this->builder->build($this->entity, $attribute, $value);
         }
 
-        return $this->entity->setAttributeRelation(
+        return $this->entity->setRelation(
             $attribute->code, $value
         );
     }

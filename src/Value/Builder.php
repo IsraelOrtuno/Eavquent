@@ -34,8 +34,11 @@ class Builder
      */
     public function ensure(Model $entity, Attribute $attribute, Value $value)
     {
-        $value->entity()->associate($entity);
-        $value->attribute()->associate($attribute);
+        list($type, $id) = $entity->getMorphKeys();
+
+        $value->setAttribute($id, $entity->getKey());
+        $value->setAttribute($type, $entity->getMorphClass());
+        $value->setAttribute($attribute->getForeignKey(), $attribute->getKey());
 
         return $value;
     }

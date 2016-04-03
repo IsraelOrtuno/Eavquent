@@ -20,15 +20,20 @@ class BuilderTest extends PHPUnit_Framework_TestCase
     public function build_class_based_on_attribute()
     {
         $entity = new BuilderEntityStub;
+        $entity->setRawAttributes(['id' => 101]);
         $value = m::mock(Varchar::class);
         $attribute = m::mock(Attribute::class);
-        $relation = m::mock(BelongsTo::class)->shouldIgnoreMissing();
 
         $attribute->shouldReceive('getModelInstance')->once()->andReturn($value);
-        $value->shouldReceive('entity')->andReturn($relation);
-        $value->shouldReceive('attribute')->andReturn($relation);
 
-        $value->shouldReceive('setContent')->once()->andReturn($value);
+        $attribute->shouldReceive('getForeignKey')->once()->andReturn('attribute_id');
+        $attribute->shouldReceive('getKey')->once()->andReturn(202);
+
+        $value->shouldReceive('setAttribute')->with('entity_id', 101)->once();
+        $value->shouldReceive('setAttribute')->with('entity_type', 'BuilderEntityStub')->once();
+        $value->shouldReceive('setAttribute')->with('attribute_id', 202)->once();
+
+        $value->shouldReceive('setContent')->with('foo')->once()->andReturn($value);
 
         $result = $this->builder->build($entity, $attribute, 'foo');
 
@@ -39,15 +44,16 @@ class BuilderTest extends PHPUnit_Framework_TestCase
     public function ensure_entity_is_related()
     {
         $entity = new BuilderEntityStub;
+        $entity->setRawAttributes(['id' => 101]);
         $attribute = m::mock(Attribute::class);
-        $relation = m::mock(BelongsTo::class);
         $value = m::mock(Varchar::class);
+        
+        $attribute->shouldReceive('getForeignKey')->once()->andReturn('attribute_id');
+        $attribute->shouldReceive('getKey')->once()->andReturn(202);
 
-        $value->shouldReceive('entity')->andReturn($relation);
-        $value->shouldReceive('attribute')->andReturn($relation);
-
-        $relation->shouldReceive('associate')->with($attribute)->once();
-        $relation->shouldReceive('associate')->with($entity)->once();
+        $value->shouldReceive('setAttribute')->with('entity_id', 101)->once();
+        $value->shouldReceive('setAttribute')->with('entity_type', 'BuilderEntityStub')->once();
+        $value->shouldReceive('setAttribute')->with('attribute_id', 202)->once();
 
         $this->builder->ensure($entity, $attribute, $value);
     }
@@ -60,4 +66,8 @@ class BuilderTest extends PHPUnit_Framework_TestCase
 
 class BuilderEntityStub extends Model
 {
+    public function getMorphKeys()
+    {
+        return ['entity_type', 'entity_id'];
+    }
 }
