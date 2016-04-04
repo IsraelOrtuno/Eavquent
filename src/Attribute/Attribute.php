@@ -19,7 +19,7 @@ class Attribute extends Model
      * @var array
      */
     protected $fillable = [
-        'code', 'label', 'model', 'entity', 'default_value', 'collection'
+        'code', 'label', 'model', 'entity', 'default_value', 'collection',
     ];
 
     /**

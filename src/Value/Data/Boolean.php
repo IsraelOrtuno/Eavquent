@@ -10,6 +10,6 @@ class Boolean extends Value
      * Atrribute casting.
      */
     protected $casts = [
-        'content' => 'boolean'
+        'content' => 'boolean',
     ];
 }
