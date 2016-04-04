@@ -64,8 +64,4 @@ class BuilderTest extends PHPUnit_Framework_TestCase
 
 class BuilderEntityStub extends Model
 {
-    public function getMorphKeys()
-    {
-        return ['entity_type', 'entity_id'];
-    }
 }
