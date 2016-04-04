@@ -30,7 +30,6 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $attribute->shouldReceive('getKey')->once()->andReturn(202);
 
         $value->shouldReceive('setAttribute')->with('entity_id', 101)->once();
-        $value->shouldReceive('setAttribute')->with('entity_type', 'BuilderEntityStub')->once();
         $value->shouldReceive('setAttribute')->with('attribute_id', 202)->once();
 
         $value->shouldReceive('setContent')->with('foo')->once()->andReturn($value);
@@ -52,7 +51,6 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $attribute->shouldReceive('getKey')->once()->andReturn(202);
 
         $value->shouldReceive('setAttribute')->with('entity_id', 101)->once();
-        $value->shouldReceive('setAttribute')->with('entity_type', 'BuilderEntityStub')->once();
         $value->shouldReceive('setAttribute')->with('attribute_id', 202)->once();
 
         $this->builder->ensure($entity, $attribute, $value);

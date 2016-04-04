@@ -37,7 +37,7 @@ abstract class Migration extends DatabaseMigration
 
             $table->integer('attribute_id')->unsigned();
 
-            $table->string('entity_type');
+//            $table->string('entity_type');
             $table->integer('entity_id')->unsigned();
         });
     }

@@ -35,6 +35,26 @@ class Attribute extends Model
     }
 
     /**
+     * Get the attribute code name.
+     *
+     * @return mixed
+     */
+    public function getCode()
+    {
+        return $this->getAttribute('code');
+    }
+
+    /**
+     * Get the model class name.
+     *
+     * @return mixed
+     */
+    public function getModel()
+    {
+        return $this->getAttribute('model');
+    }
+
+    /**
      * Return the model class.
      *
      * @return mixed

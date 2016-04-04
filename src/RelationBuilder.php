@@ -42,7 +42,7 @@ class RelationBuilder
         // This will help us to simulate any relation as if it was handly made
         // in the original model class definition using a function statement.
         return Closure::bind(function () use ($entity, $attribute, $method) {
-            $relation = $entity->$method($attribute->model, 'entity_id');
+            $relation = $entity->$method($attribute->getModel(), 'entity_id');
 
             // We add a where clausule in order to fetch only the elements that
             // are related to the given attribute. If no condition is set, it
