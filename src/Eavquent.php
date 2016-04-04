@@ -238,16 +238,6 @@ trait Eavquent
     }
 
     /**
-     * Get the morph type column.
-     *
-     * @return mixed
-     */
-    public function getMorphKeys()
-    {
-        return $this->getMorphs('entity', null, null);
-    }
-
-    /**
      * Get the interactor instance.
      *
      * @return Interactor

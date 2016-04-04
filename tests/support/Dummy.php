@@ -51,14 +51,12 @@ class Dummy
             factory(Varchar::class)->create([
                 'content'      => $faker->city,
                 'attribute_id' => $cityAttribute->id,
-                'entity_type'  => Company::class,
                 'entity_id'    => $item->getKey()
             ]);
 
             factory(Varchar::class, 2)->create([
                 'content'      => $faker->colorName,
                 'attribute_id' => $colorsAttribute->id,
-                'entity_type'  => Company::class,
                 'entity_id'    => $item->getKey()
             ]);
         });
