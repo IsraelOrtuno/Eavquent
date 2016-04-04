@@ -25,7 +25,7 @@ class Trash extends BaseCollection
      */
     public function clear()
     {
-        if (!$this->count()) {
+        if (! $this->count()) {
             return;
         }
 
