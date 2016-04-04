@@ -2,8 +2,8 @@
 
 namespace Devio\Eavquent\Events;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class EntityWasSaved
 {
@@ -15,7 +15,7 @@ class EntityWasSaved
      */
     public function handle(Model $model)
     {
-        if (! $model->autoPushEnabled()) {
+        if (!$model->isAttributeRelationsBooted() || ! $model->autoPushEnabled()) {
             return;
         }
 
@@ -27,6 +27,7 @@ class EntityWasSaved
         // and catch in order to make sure all values are correctly saved.
         try {
             $this->save($model);
+            $model->getTrash()->clear();
         } catch (\Exception $e) {
             $connection->rollBack();
             throw $e;

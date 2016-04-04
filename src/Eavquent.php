@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent;
 
+use Devio\Eavquent\Value\Trash;
 use Devio\Eavquent\Value\Collection;
 use Devio\Eavquent\Attribute\Manager;
 use Devio\Eavquent\Events\EntityWasSaved;
@@ -24,6 +25,13 @@ trait Eavquent
     protected $interactor;
 
     /**
+     * The trash instance.
+     *
+     * @var Trash
+     */
+    protected $trash;
+
+    /**
      * The attributes related to the entity.
      *
      * @var
@@ -42,7 +50,7 @@ trait Eavquent
      *
      * @var bool
      */
-    public $attributeRelationsBooted = false;
+    protected $attributeRelationsBooted = false;
 
     /**
      * Booting the trait.
@@ -66,7 +74,10 @@ trait Eavquent
     public function bootEavquentIfNotBooted()
     {
         if (! $this->attributeRelationsBooted) {
+            $this->trash = new Trash;
+
             $this->getRelationBuilder()->build($this);
+
             $this->attributeRelationsBooted = true;
         }
     }
@@ -322,6 +333,26 @@ trait Eavquent
     public function getContainer()
     {
         return $this->container = $this->container ?: \Illuminate\Container\Container::getInstance();
+    }
+
+    /**
+     * Get the trash instance.
+     *
+     * @return Trash
+     */
+    public function getTrash()
+    {
+        return $this->trash;
+    }
+
+    /**
+     * Check for attribute relations boot.
+     *
+     * @return boolean
+     */
+    public function isAttributeRelationsBooted()
+    {
+        return $this->attributeRelationsBooted;
     }
 
     /**

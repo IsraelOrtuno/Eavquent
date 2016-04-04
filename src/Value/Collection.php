@@ -81,7 +81,7 @@ class Collection extends EloquentCollection
         // We will just store the current value items to the replaced collection
         // and replacing them with the new given values. These values will be
         // transformed into a data type value based on the linked attribute.
-        $this->replaceCurrentItems();
+        $this->trashCurrentItems();
 
         $this->items = $this->buildValues($values);
 
@@ -93,17 +93,11 @@ class Collection extends EloquentCollection
      *
      * @return void
      */
-    protected function replaceCurrentItems()
+    protected function trashCurrentItems()
     {
-        $items = array_filter($this->items, function ($item) {
-            return $item->exists;
-        });
+        $trash = $this->entity->getTrash();
 
-        // We will add the current collection items to the replaced collection
-        // which will be used for deleting this items from database if saved.
-        // Filtering by exists will make sure we only store existing items.
-        $this->replaced = is_null($this->replaced) ?
-            new BaseCollection($items) : $this->replaced->merge($items);
+        $trash->add($this->items);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use Mockery as m;
 use Devio\Eavquent\Value\Value;
+use Devio\Eavquent\Value\Trash;
 use Devio\Eavquent\Value\Builder;
 use Devio\Eavquent\Value\Collection;
 use Devio\Eavquent\Attribute\Attribute;
@@ -15,7 +16,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     {
         $items = [
             (new ExistingValueStub)->setRawAttributes(['content' => 'foo']),
-            (new UnexistingValueStub)->setRawAttributes(['content' => 'bar'])
+            (new UnexistingValueStub)->setRawAttributes(['content' => 'bar']),
         ];
 
         $collection = new CollectionStub($items);
@@ -26,7 +27,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function add_new_value()
     {
-        list($entity, $attribute, $builder) = [$this->collection->getEntity(), $this->collection->getAttribute(), $this->collection->getBuilder()];
+        list($entity, $attribute, $builder) = [
+            $this->collection->getEntity(), $this->collection->getAttribute(), $this->collection->getBuilder(),
+        ];
 
         $builder->shouldReceive('build')->with($entity, $attribute, 'baz')
             ->andReturn((new UnexistingValueStub)->setRawAttributes(['content' => 'baz']));
@@ -38,31 +41,33 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function replace_current_values()
+    public function trash_current_values()
     {
-        list($entity, $attribute, $builder) = [$this->collection->getEntity(), $this->collection->getAttribute(), $this->collection->getBuilder()];
+        list($entity, $attribute, $builder) = [
+            $this->collection->getEntity(), $this->collection->getAttribute(), $this->collection->getBuilder(),
+        ];
+        $trash = $entity->getTrash();
 
         $builder->shouldReceive('build')->with($entity, $attribute, 'baz')
             ->andReturn((new ExistingValueStub)->setRawAttributes(['content' => 'baz']));
+        $trash->shouldReceive('add')->with($this->collection->all())->once();
 
         $this->collection->replace(['baz']);
 
         $this->assertCount(1, $this->collection);
         $this->assertCount(1, $this->collection->where('content', 'baz'));
-        $this->assertCount(1, $this->collection->getReplaced());
-        $this->assertCount(1, $this->collection->getReplaced()->where('content', 'foo'));
 
         $builder->shouldReceive('build')->with($entity, $attribute, 'qux')
             ->andReturn((new UnexistingValueStub)->setRawAttributes(['content' => 'qux']));
+        $builder->shouldReceive('build')->with($entity, $attribute, 'xuq')
+            ->andReturn((new UnexistingValueStub)->setRawAttributes(['content' => 'xuq']));
+        $trash->shouldReceive('add')->with($this->collection->all())->once();
 
-        $this->collection->replace(['qux']);
 
-        $this->assertCount(1, $this->collection);
+        $this->collection->replace(['qux', 'xuq']);
+        $this->assertCount(2, $this->collection);
         $this->assertCount(1, $this->collection->where('content', 'qux'));
-        $this->assertCount(2, $this->collection->getReplaced());
-        $this->assertCount(1, $this->collection->getReplaced()->where('content', 'foo'));
-        $this->assertCount(0, $this->collection->getReplaced()->where('content', 'bar'));
-        $this->assertCount(1, $this->collection->getReplaced()->where('content', 'baz'));
+        $this->assertCount(1, $this->collection->where('content', 'xuq'));
     }
 
     public function tearDown()
@@ -83,6 +88,10 @@ class CollectionStub extends Collection
 
 class CollectionModelStub extends Model
 {
+    public function getTrash()
+    {
+        return $this->trash = $this->trash ?: m::mock(Trash::class);
+    }
 }
 
 class ExistingValueStub extends Value

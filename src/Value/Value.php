@@ -82,7 +82,7 @@ abstract class Value extends Model
      *
      * @return string
      */
-    private function getAttributeTableName()
+    protected function getAttributeTableName()
     {
         $class = str_replace('Value', '', class_basename($this));
 

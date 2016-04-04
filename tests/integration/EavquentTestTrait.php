@@ -182,7 +182,7 @@ trait EavquentTestTrait
         $company->save();
 
         $company = Company::with('eav')->first();
-//        $this->assertCount(2, $company->colors); TODO: uncomment to make sure it deletes
+        $this->assertCount(2, $company->colors);
         $this->assertCount(1, $company->colors->where('content', 'foo'));
         $this->assertCount(1, $company->colors->where('content', 'bar'));
     }
