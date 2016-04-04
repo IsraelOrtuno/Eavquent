@@ -28,7 +28,7 @@ class BootEavquent
     }
 
     /**
-     *
+     * Booting Eavquent.
      */
     public function boot()
     {
@@ -41,6 +41,9 @@ class BootEavquent
         Container::setInstance($this->container);
     }
 
+    /**
+     * Registering contianer bindings.
+     */
     public function registerBindings()
     {
         $this->container->bind(AttributeCache::class, Cache::class);
