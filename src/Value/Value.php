@@ -68,6 +68,16 @@ abstract class Value extends Model
     }
 
     /**
+     * Check if value should push to relations when saving.
+     *
+     * @return bool
+     */
+    public function shouldPush()
+    {
+        return false;
+    }
+
+    /**
      * Get the attribute table name.
      *
      * @return string

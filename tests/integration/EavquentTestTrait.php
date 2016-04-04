@@ -19,7 +19,7 @@ trait EavquentTestTrait
         $this->assertEquals('colors', $company->colors->getAttribute()->code);
         $this->assertEquals($company, $company->colors->getEntity());
     }
-    
+
     /** @test */
     public function collections_are_linked_to_entity_and_attribute_when_eager_load()
     {
@@ -103,7 +103,7 @@ trait EavquentTestTrait
 
         $this->assertInstanceOf(\Devio\Eavquent\Value\Collection::class, $company->rawColorsObject);
     }
-    
+
     /** @test */
     public function collections_are_linked_to_entity_and_attribute()
     {
@@ -151,11 +151,47 @@ trait EavquentTestTrait
         $this->assertCount(1, $company->colors->where('content', 'foo'));
         $this->assertCount(1, $company->colors->where('content', 'bar'));
     }
+
+    /** @test */
+    public function saving_updated_content_of_existing_value()
+    {
+        $company = Company::with('eav')->first();
+        $company->city = 'foo';
+        $company->save();
+
+        $company = Company::with('eav')->first();
+        $this->assertEquals('foo', $company->city);
+    }
+
+    /** @test */
+    public function saving_setting_content_of_unexisting_value()
+    {
+        $company = Company::with('eav')->first();
+        $company->address = 'foo';
+        $company->save();
+
+        $company = Company::with('eav')->first();
+        $this->assertEquals('foo', $company->address);
+    }
+
+    /** @test */
+    public function saving_replacing_content_of_existing_collection_value()
+    {
+        $company = Company::with('eav')->first();
+        $company->colors = ['foo', 'bar'];
+        $company->save();
+
+        $company = Company::with('eav')->first();
+//        $this->assertCount(2, $company->colors); TODO: uncomment to make sure it deletes
+        $this->assertCount(1, $company->colors->where('content', 'foo'));
+        $this->assertCount(1, $company->colors->where('content', 'bar'));
+    }
 }
 
 class CompanyWithEavStub extends Company
 {
     public $table = 'companies';
+
     public $morphClass = 'Company';
 
     protected $with = ['eav'];
@@ -164,6 +200,7 @@ class CompanyWithEavStub extends Company
 class CompanyWithCityStub extends Company
 {
     public $table = 'companies';
+
     public $morphClass = 'Company';
 
     protected $with = ['city'];
