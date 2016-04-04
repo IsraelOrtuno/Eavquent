@@ -15,7 +15,7 @@ class EntityWasSaved
      */
     public function handle(Model $model)
     {
-        if (!$model->isAttributeRelationsBooted() || ! $model->autoPushEnabled()) {
+        if (! $model->isAttributeRelationsBooted() || ! $model->autoPushEnabled()) {
             return;
         }
 
