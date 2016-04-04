@@ -105,7 +105,7 @@ If you are using Laravel just include the `EavquentServiceProvider` to the provi
 ```php
 'providers' => [
     ...
-    Devio\Eavquent\EavquentServiceProvider::class
+    Devio\Eavquent\Eavquent::class
     ...
 ]
 ```
@@ -137,7 +137,7 @@ Eavquent has been specially made for Eloquent and simplicity has been taken very
 ```php
 class Company extends Model 
 {
-    use Devio\Eavquent\EntityAttributeValues;
+    use Devio\Eavquent\Eavquent;
 }
 ```
 
@@ -185,7 +185,7 @@ Eloquent ships with a `$with` which accepts an array of relationships that shoul
 ```php
 class Company extends Model
 {
-    use Devio\Eavquent\EntityAttributeValues;
+    use Devio\Eavquent\Eavquent;
 
     // Eager loading all the registered attributes
     protected $with = ['eav']; 
