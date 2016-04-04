@@ -27,8 +27,7 @@ class EntityWasSaved
         // and catch in order to make sure all values are correctly saved.
         try {
             $this->save($model);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $connection->rollBack();
             throw $e;
         }
