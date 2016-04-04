@@ -109,10 +109,47 @@ trait EavquentTestTrait
     {
         $company = Company::with('eav')->first();
 
-        $attribute = $company->getEntityAttributes('colors')['colors'];
+        $attribute = $company->getEntityAttributes()['colors'];
 
         $this->assertEquals($company, $company->colors->getEntity());
         $this->assertEquals($attribute, $company->colors->getAttribute());
+    }
+
+    /** @test */
+    public function updating_content_of_existing_simple_values()
+    {
+        $company = Company::with('eav')->first();
+        $company->city = 'foo';
+
+        $this->assertEquals('foo', $company->city);
+        $this->assertEquals(1, $company->rawCityObject->getKey());
+    }
+
+    /** @test */
+    public function setting_content_of_unexisting_simple_value()
+    {
+        $company = Company::with('eav')->first();
+
+        $this->assertNull($company->rawAddressObject);
+        $company->address = 'foo';
+
+        $value = $company->rawAddressObject;
+
+        $this->assertEquals('foo', $company->address);
+        $this->assertNull($value->getKey());
+        $this->assertInstanceOf(Varchar::class, $value);
+    }
+
+    /** @test */
+    public function replacing_content_of_existing_collection_value()
+    {
+        $company = Company::with('eav')->first();
+
+        $company->colors = ['foo', 'bar'];
+
+        $this->assertCount(2, $company->colors);
+        $this->assertCount(1, $company->colors->where('content', 'foo'));
+        $this->assertCount(1, $company->colors->where('content', 'bar'));
     }
 }
 

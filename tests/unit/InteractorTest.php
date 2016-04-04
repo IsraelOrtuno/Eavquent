@@ -54,7 +54,6 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => new Attribute]));
         $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
         $entity->shouldReceive('getRelation')->with('foo')->andReturn('bar');
-//        $entity->shouldReceive('getRelationValue')->with('foo')->andReturn('bar');
 
         $interactor = new Interactor($builder, $entity);
 
@@ -64,22 +63,70 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $interactor->get('rawFooobject'));
     }
 
+    /** @test */
+    public function update_content_of_existing_simple_value()
+    {
+        $value = m::mock(Value::class);
+        $builder = m::mock(Builder::class);
+        $entity = m::mock(InteractorModelStub::class);
+        $attribute = m::mock(Attribute::class);
+
+        $attribute->shouldReceive('isCollection')->once()->andReturn(false);
+        $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
+        $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
+        $entity->shouldReceive('getRelation')->with('foo')->andReturn($value);
+
+        $value->shouldReceive('setContent')->with('bar')->once();
+
+        $interactor = new Interactor($builder, $entity);
+
+        $interactor->set('foo', 'bar');
+    }
+
+    /** @test */
+    public function set_a_new_simple_value()
+    {
+        $value = m::mock(Value::class);
+        $builder = m::mock(Builder::class);
+        $entity = m::mock(InteractorModelStub::class);
+        $attribute = m::mock(Attribute::class);
+
+        $attribute->shouldReceive('isCollection')->once()->andReturn(false);
+        $attribute->shouldReceive('getAttribute')->with('code')->once()->andReturn('foo');
+        $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
+        $entity->shouldReceive('relationLoaded')->with('foo')->once()->andReturn(true);
+        $entity->shouldReceive('getRelation')->with('foo')->once()->andReturn(null);
+        $entity->shouldReceive('setRelation')->with('foo', $value)->once();
+
+        $builder->shouldReceive('build')->with($entity, $attribute, 'bar')->andReturn($value);
+
+        $interactor = new Interactor($builder, $entity);
+
+        $interactor->set('foo', 'bar');
+    }
+    
+    /** @test */
+    public function replace_an_entire_collection()
+    {
+        $value = m::mock(Collection::class);
+        $builder = m::mock(Builder::class);
+        $entity = m::mock(InteractorModelStub::class);
+        $attribute = m::mock(Attribute::class);
+
+        $attribute->shouldReceive('isCollection')->once()->andReturn(true);
+        $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
+        $entity->shouldReceive('relationLoaded')->with('foo')->once()->andReturn(true);
+        $entity->shouldReceive('getRelation')->with('foo')->once()->andReturn($value);
+        $value->shouldReceive('replace')->with('bar')->once();
+
+        $interactor = new Interactor($builder, $entity);
+
+        $interactor->set('foo', 'bar');
+    }
+
     public function tearDown()
     {
         m::close();
-    }
-}
-
-class InteractorStub extends Interactor
-{
-    public function getBuilder()
-    {
-        return $this->builder;
-    }
-
-    public function getEntity()
-    {
-        return $this->entity;
     }
 }
 
