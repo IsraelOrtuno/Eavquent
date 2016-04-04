@@ -127,9 +127,9 @@ class Collection extends EloquentCollection
     {
         $result = [];
 
-        // We will map the entire array of values and transform every item into
-        // into the data type object linked of this collection. We will also
-        // omit any model found so an user could also set models directly.
+        // We will iterate through the entire array of values transforming every
+        // item into the data type object linked to this collection. Any null
+        // value will be omited here in order to avoid storing NULL values.
         foreach (array_filter($values) as $value) {
             $result[] = $this->buildValue($value);
         }
