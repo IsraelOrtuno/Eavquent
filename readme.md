@@ -3,7 +3,7 @@ Eavquent - EAV modeling for Eloquent
 
 **NOTE:** STILL UNDER DEVELOPMENT.
 
-[![Build Status](https://travis-ci.org/IsraelOrtuno/Eavquent.svg?branch=master)](https://travis-ci.org/IsraelOrtuno/Eavquent) [![StyleCI](https://styleci.io/repos/38255175/shield)](https://styleci.io/repos/38255175)
+[![Build Status](https://travis-ci.org/IsraelOrtuno/Eavquent.svg?branch=master)](https://travis-ci.org/IsraelOrtuno/Eavquent) [![StyleCI](https://styleci.io/repos/38255175/shield?style=flat)](https://styleci.io/repos/38255175)
 
 This package will help you to provide an EAV structure and functionality to your Eloquent models.
 
