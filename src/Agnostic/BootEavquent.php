@@ -2,7 +2,6 @@
 
 namespace Devio\Eavquent\Agnostic;
 
-
 use Illuminate\Cache\FileStore;
 use Illuminate\Cache\Repository;
 use Devio\Eavquent\AttributeCache;
