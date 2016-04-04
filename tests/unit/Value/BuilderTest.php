@@ -5,7 +5,6 @@ use Devio\Eavquent\Value\Builder;
 use Devio\Eavquent\Value\Data\Varchar;
 use Illuminate\Database\Eloquent\Model;
 use Devio\Eavquent\Attribute\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BuilderTest extends PHPUnit_Framework_TestCase
 {
