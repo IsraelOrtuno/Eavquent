@@ -120,6 +120,13 @@ class Interactor
         return $this->entity->getRelationValue($key);
     }
 
+    /**
+     * Set the content of the given attribute.
+     *
+     * @param $key
+     * @param $value
+     * @return $this|mixed
+     */
     public function set($key, $value)
     {
         $current = $this->getRawContent($key);
