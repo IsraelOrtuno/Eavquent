@@ -22,9 +22,9 @@ class EntityWasSaved
         $connection = $model->getConnection();
         $connection->beginTransaction();
 
-        // If autopush is not enabled, we'll let the user handle this using the
-        // push() method. Otherwise we will just wrap this process within try
-        // and catch in order to make sure all values are correctly saved.
+        // If autopush is not enabled, we'll let the user handle the saving process.
+        // When saving a model, we will also clear any trashed value that may be
+        // queued for deletion for any reason: null, collection replacement...
         try {
             $this->save($model);
             $model->getTrash()->clear();
