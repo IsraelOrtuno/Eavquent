@@ -2,8 +2,9 @@
 
 namespace Devio\Eavquent;
 
-use Devio\Eavquent\Attribute\Manager;
 use Devio\Eavquent\Value\Collection;
+use Devio\Eavquent\Attribute\Manager;
+use Devio\Eavquent\Events\EntityWasSaved;
 use Illuminate\Contracts\Container\Container;
 
 trait Eavquent
@@ -55,6 +56,8 @@ trait Eavquent
         static::$entityAttributes = $attributes->keyBy('code');
 
         static::addGlobalScope(new EagerLoadScope);
+
+        static::saved(EntityWasSaved::class . '@handle');
     }
 
     /**
@@ -83,6 +86,11 @@ trait Eavquent
 
         return $model;
     }
+
+//    public function attributesToArray()
+//    {
+//
+//    }
 
     /**
      * Overwrite to link before setting when eager loading.
@@ -124,6 +132,8 @@ trait Eavquent
             $this->linkRelationCollection($key, $result);
         }
 
+        // TODO: This could be removed when setRelation PR gets released.
+
         return $result;
     }
 
@@ -144,7 +154,7 @@ trait Eavquent
      *
      * @return bool
      */
-    public function isAutoPush()
+    public function autoPushEnabled()
     {
         if (property_exists($this, 'autoPush')) {
             return $this->autoPush;
@@ -187,6 +197,13 @@ trait Eavquent
         return static::$entityAttributes;
     }
 
+    /**
+     * Set an attribute.
+     *
+     * @param $key
+     * @param $value
+     * @return $this|mixed
+     */
     public function setAttribute($key, $value)
     {
         $interactor = $this->getInteractor();
