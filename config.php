@@ -7,9 +7,9 @@ return [
     | Table Prefixes
     |--------------------------------------------------------------------------
     */
-    'prefix' => [
+    'prefix'    => [
         'package_tables' => 'eav_',
-        'value_tables' => 'values_'
+        'value_tables'   => 'values_'
     ],
 
     /*
