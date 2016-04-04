@@ -18,6 +18,10 @@ class Builder
      */
     public function build(Model $entity, Attribute $attribute, $value)
     {
+        if (is_null($value)) {
+            return $value;
+        }
+
         $instance = $attribute->getModelInstance();
 
         $this->ensure($entity, $attribute, $instance);

@@ -13,6 +13,8 @@ class Trash extends BaseCollection
      */
     public function add($values)
     {
+        $values = ! is_array($values) ? [$values] : $values;
+
         foreach ((array) $values as $value) {
             if ($value->exists) {
                 $this->push($value);

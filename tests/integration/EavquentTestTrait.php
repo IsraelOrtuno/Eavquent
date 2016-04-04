@@ -186,6 +186,34 @@ trait EavquentTestTrait
         $this->assertCount(1, $company->colors->where('content', 'foo'));
         $this->assertCount(1, $company->colors->where('content', 'bar'));
     }
+
+    /** @test */
+    public function deleting_values_when_replacing_collection()
+    {
+        $company = Company::with('eav')->first();
+        $color1 = $company->rawColorsObject[0];
+        $color2 = $company->rawColorsObject[1];
+
+        $company->colors = [];
+        $company->save();
+
+        $this->dontSeeInDatabase('eav_values_varchar', ['id' => $color1->getKey()]);
+        $this->dontSeeInDatabase('eav_values_varchar', ['id' => $color2->getKey()]);
+        $this->assertCount(0, $company->getRelationValue('colors'));
+    }
+
+    /** @test */
+    public function deleting_value_when_setting_null()
+    {
+        $company = Company::with('eav')->first();
+        $city = $company->rawCityObject;
+
+        $company->city = null;
+        $company->save();
+
+        $this->dontSeeInDatabase('eav_values_varchar', ['id' => $city->getKey()]);
+        $this->assertNull($company->getRelationValue('city'));
+    }
 }
 
 class CompanyWithEavStub extends Company

@@ -348,7 +348,7 @@ trait Eavquent
     /**
      * Check for attribute relations boot.
      *
-     * @return bool
+     * @return boolean
      */
     public function isAttributeRelationsBooted()
     {
