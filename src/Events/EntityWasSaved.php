@@ -56,7 +56,7 @@ class EntityWasSaved
     protected function save(Model $model)
     {
         foreach ($model->getEntityAttributes() as $attribute) {
-            if (! $model->relationLoaded($relation = $attribute->code)) {
+            if (! $model->relationLoaded($relation = $attribute->getCode())) {
                 continue;
             }
 
@@ -118,7 +118,7 @@ class EntityWasSaved
     protected function refresh($model)
     {
         foreach ($model->getEntityAttributes() as $attribute) {
-            if (! $model->relationLoaded($relation = $attribute->code)
+            if (! $model->relationLoaded($relation = $attribute->getCode())
                 || $attribute->isCollection()
                 || is_null($values = $model->getRelationValue($relation))
             ) {

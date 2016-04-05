@@ -165,7 +165,7 @@ class Interactor
         }
 
         return $this->entity->setRelation(
-            $attribute->code, $value
+            $attribute->getCode(), $value
         );
     }
 

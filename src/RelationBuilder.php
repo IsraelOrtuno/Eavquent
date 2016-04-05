@@ -23,7 +23,7 @@ class RelationBuilder
         foreach ($attributes as $attribute) {
             $relation = $this->getRelationClosure($entity, $attribute);
 
-            $entity->setAttributeRelation($attribute->code, $relation);
+            $entity->setAttributeRelation($attribute->getCode(), $relation);
         }
     }
 

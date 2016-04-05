@@ -92,7 +92,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $attribute = m::mock(Attribute::class);
 
         $attribute->shouldReceive('isCollection')->once()->andReturn(false);
-        $attribute->shouldReceive('getAttribute')->with('code')->once()->andReturn('foo');
+        $attribute->shouldReceive('getCode')->once()->andReturn('foo');
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
         $entity->shouldReceive('relationLoaded')->with('foo')->once()->andReturn(true);
         $entity->shouldReceive('getRelation')->with('foo')->once()->andReturn(null);
