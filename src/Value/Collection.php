@@ -129,9 +129,11 @@ class Collection extends EloquentCollection
 
         // We will iterate through the entire array of values transforming every
         // item into the data type object linked to this collection. Any null
-        // value will be omited here in order to avoid storing NULL values.
-        foreach (array_filter($values) as $value) {
-            $result[] = $this->buildValue($value);
+        // value will be omitted here in order to avoid storing NULL values.
+        foreach ($values as $value) {
+            if (! is_null($value)) {
+                $result[] = $this->buildValue($value);
+            }
         }
 
         return $result;
