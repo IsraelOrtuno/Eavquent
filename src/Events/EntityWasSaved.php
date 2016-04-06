@@ -82,8 +82,8 @@ class EntityWasSaved
         // In order to provide flexibility and let the values have their own
         // relationships, here we'll check if a value should be completely
         // saved with its relations or just save its own current state.
-        foreach (array_filter($values) as $value) {
-            if ($this->trash($value)) {
+        foreach ($values as $value) {
+            if (is_null($value) || $this->trash($value)) {
                 continue;
             }
 
