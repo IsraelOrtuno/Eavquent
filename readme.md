@@ -86,14 +86,14 @@ Loading values as relationships will let us load only those values we may requir
 You can install the package via composer require command:
 
 ```shell
-composer require xxx/xxx
+composer require devio/eavquent
 ```
 
 Or simply add it to your `composer.json` dependences and run composer update:
 
 ```json
 "require": {
-    "xxx/xxx": "dev-master"
+    "devio/eavquent": "dev-master"
 }
 ```
 
