@@ -118,14 +118,14 @@ class EntityWasSaved
     protected function refresh($model)
     {
         foreach ($model->getEntityAttributes() as $attribute) {
-            if (! $model->relationLoaded($relation = $attribute->getCode())
-                || $attribute->isCollection()
+            if ($attribute->isCollection()
+                || ! $model->relationLoaded($relation = $attribute->getCode())
                 || is_null($values = $model->getRelationValue($relation))
             ) {
                 continue;
             }
 
-            if (! is_null($values) && is_null($values->getContent())) {
+            if (is_null($values->getContent())) {
                 $model->setRelation($relation, null);
             }
         }
