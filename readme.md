@@ -105,7 +105,7 @@ If you are using Laravel just include the `EavquentServiceProvider` to the provi
 ```php
 'providers' => [
     ...
-    Devio\Eavquent\Eavquent::class
+    Devio\Eavquent\EavquentServiceProvider::class
     ...
 ]
 ```
