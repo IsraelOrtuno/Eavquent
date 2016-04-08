@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent;
 
+use Illuminate\Support\Arr;
 use Devio\Eavquent\Value\Trash;
 use Devio\Eavquent\Value\Collection;
 use Devio\Eavquent\Attribute\Manager;
@@ -98,10 +99,56 @@ trait Eavquent
         return $model;
     }
 
-//    public function attributesToArray()
-//    {
-//
-//    }
+    /**
+     * Adding eav attributes to relations array.
+     *
+     * @return mixed
+     */
+    public function relationsToArray()
+    {
+        $eavAttributes = [];
+        $attributes = parent::relationsToArray();
+        $relations = array_keys($this->getAttributeRelations());
+
+        foreach ($relations as $relation) {
+            if (! array_key_exists($relation, $attributes)) {
+                continue;
+            }
+
+            // Otherwise, if the relation was loaded, we will assume the user wants
+            // to include it even if value corresponds to an empty collection or
+            // null. The Interactor will be responsible for fetching the value.
+            $value = $this->rawAttributeRelations() ?
+                $attributes[$relation] : $this->getAttribute($relation);
+
+            $eavAttributes[$relation] = $value;
+
+            // By unsetting the relation from the attributes array we will make
+            // sure we do not provide a duplicity when adding the namespace.
+            // Otherwise it would keep the relation as a key in the root.
+            unset ($attributes[$relation]);
+        }
+
+        return $this->namespacedAttributes($attributes, $eavAttributes);
+    }
+
+    /**
+     * Add namespace when converting to array if any.
+     *
+     * @param $original
+     * @param $added
+     * @return mixed
+     */
+    protected function namespacedAttributes($original, $added)
+    {
+        if (is_null($ns = $this->getAttributesNamespace())) {
+            $original = array_merge($original, $added);
+        } else {
+            Arr::set($original, $ns, $added);
+        }
+
+        return $original;
+    }
 
     /**
      * Overwrite to link before setting when eager loading.
@@ -161,17 +208,35 @@ trait Eavquent
     }
 
     /**
+     * Get the namespace for attributes when converting to array.
+     *
+     * @return null
+     */
+    public function getAttributesNamespace()
+    {
+        return property_exists($this, 'attributesNamespace') ?
+            $this->attributesNamespace : null;
+    }
+
+    /**
+     * Check if relations should be included as raw objects when converting to array.
+     *
+     * @return bool
+     */
+    public function rawAttributeRelations()
+    {
+        return property_exists($this, 'rawAttributeRelations') ?
+            $this->rawAttributeRelations : false;
+    }
+
+    /**
      * Check for auto pushing.
      *
      * @return bool
      */
     public function autoPushEnabled()
     {
-        if (property_exists($this, 'autoPush')) {
-            return $this->autoPush;
-        }
-
-        return true;
+        return property_exists($this, 'autoPush') ? $this->autoPush : true;
     }
 
     /**

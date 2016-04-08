@@ -97,7 +97,7 @@ class Interactor
         // a collection with pairs of id and value content. Otherwise we'll
         // just return the single model value content as a plain result.
         if ($this->getAttribute($key)->isCollection()) {
-            return $value;
+            return $value->pluck('content');
         }
 
         return ! is_null($value) ? $value->getContent() : null;
