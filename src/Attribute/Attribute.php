@@ -42,7 +42,7 @@ class Attribute extends Model
     {
         parent::boot();
 
-//        static::saved(AttributeWasSaved::class . '@handle');
+        static::saved(AttributeWasSaved::class . '@handle');
     }
 
     /**
