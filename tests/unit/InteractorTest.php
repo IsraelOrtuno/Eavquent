@@ -8,6 +8,7 @@ use Devio\Eavquent\Value\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Devio\Eavquent\Attribute\Attribute;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as BaseCollection;
 
 class InteractorTest extends PHPUnit_Framework_TestCase
 {
@@ -42,7 +43,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
 
         $interactor = new Interactor($builder, $entity);
 
-        $this->assertInstanceOf(Collection::class, $interactor->get('foo'));
+        $this->assertInstanceOf(BaseCollection::class, $interactor->get('foo'));
     }
 
     /** @test */

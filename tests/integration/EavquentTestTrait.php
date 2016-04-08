@@ -16,8 +16,8 @@ trait EavquentTestTrait
     {
         $company = Company::first();
 
-        $this->assertEquals('colors', $company->colors->getAttribute()->code);
-        $this->assertEquals($company, $company->colors->getEntity());
+        $this->assertEquals('colors', $company->rawColorsObject->getAttribute()->code);
+        $this->assertEquals($company, $company->rawColorsObject->getEntity());
     }
 
     /** @test */
@@ -25,8 +25,8 @@ trait EavquentTestTrait
     {
         $company = Company::with('eav')->first();
 
-        $this->assertEquals('colors', $company->colors->getAttribute()->code);
-        $this->assertEquals($company, $company->colors->getEntity());
+        $this->assertEquals('colors', $company->rawColorsObject->getAttribute()->code);
+        $this->assertEquals($company, $company->rawColorsObject->getEntity());
     }
 
     /** @test */
@@ -111,8 +111,8 @@ trait EavquentTestTrait
 
         $attribute = $company->getEntityAttributes()['colors'];
 
-        $this->assertEquals($company, $company->colors->getEntity());
-        $this->assertEquals($attribute, $company->colors->getAttribute());
+        $this->assertEquals($company, $company->rawColorsObject->getEntity());
+        $this->assertEquals($attribute, $company->rawColorsObject->getAttribute());
     }
 
     /** @test */
@@ -148,8 +148,8 @@ trait EavquentTestTrait
         $company->colors = ['foo', 'bar'];
 
         $this->assertCount(2, $company->colors);
-        $this->assertCount(1, $company->colors->where('content', 'foo'));
-        $this->assertCount(1, $company->colors->where('content', 'bar'));
+        $this->assertEquals('foo', $company->colors[0]);
+        $this->assertEquals('bar', $company->colors[1]);
     }
 
     /** @test */
@@ -183,8 +183,8 @@ trait EavquentTestTrait
 
         $company = Company::with('eav')->first();
         $this->assertCount(2, $company->colors);
-        $this->assertCount(1, $company->colors->where('content', 'foo'));
-        $this->assertCount(1, $company->colors->where('content', 'bar'));
+        $this->assertEquals('foo', $company->colors[0]);
+        $this->assertEquals('bar', $company->colors[1]);
     }
 
     /** @test */
@@ -214,6 +214,41 @@ trait EavquentTestTrait
         $this->dontSeeInDatabase('eav_values_varchar', ['id' => $city->getKey()]);
         $this->assertNull($company->getRelationValue('city'));
     }
+
+    /** @test */
+    public function converting_plain_attributes_to_array_json()
+    {
+        $company = Company::with('eav')->first();
+
+        $result = $company->toArray();
+
+        $this->assertFalse(array_key_exists('data', $result));
+        $this->assertTrue(is_string($result['city']));
+        $this->assertTrue(is_string($result['colors'][0]));
+        $this->assertTrue(is_string($result['colors'][1]));
+    }
+
+    /** @test */
+    public function converting_raw_attributes_to_array_json()
+    {
+        $company = CompanyWithRawRelationsStub::with('eav')->first();
+
+        $result = $company->toArray();
+
+        $this->assertFalse(array_key_exists('data', $result));
+        $this->assertTrue(array_key_exists('id', $result['city']));
+        $this->assertTrue(array_key_exists('id', $result['colors'][0]));
+        $this->assertTrue(array_key_exists('id', $result['colors'][1]));
+    }
+}
+
+class CompanyWithRawRelationsStub extends Company
+{
+    public $table = 'companies';
+
+    public $morphClass = 'Company';
+
+    protected $rawAttributeRelations = true;
 }
 
 class CompanyWithEavStub extends Company
