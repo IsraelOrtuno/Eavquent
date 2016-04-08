@@ -126,7 +126,7 @@ trait Eavquent
             // By unsetting the relation from the attributes array we will make
             // sure we do not provide a duplicity when adding the namespace.
             // Otherwise it would keep the relation as a key in the root.
-            unset ($attributes[$relation]);
+            unset($attributes[$relation]);
         }
 
         return $this->namespacedAttributes($attributes, $eavAttributes);
