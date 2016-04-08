@@ -39,6 +39,8 @@ class Interactor
      */
     public function __construct(Builder $builder, Model $entity)
     {
+        $entity->bootEavquentIfNotBooted();
+
         $this->entity = $entity;
         $this->attributes = $entity->getEntityAttributes();
         $this->builder = $builder;
@@ -136,6 +138,10 @@ class Interactor
         // as morphMany provides collections even if no values were matched, making
         // us assume at least an empty collection object will be always provided.
         if ($attribute->isCollection()) {
+            if (is_null($current)) {
+                $this->entity->setRelation($key, $current = new Collection);
+            }
+
             $current->replace($value);
 
             return $this;

@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent\Events;
 
+use Devio\Eavquent\Value\Builder;
 use Devio\Eavquent\Value\Trash;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -55,15 +56,22 @@ class EntityWasSaved
      */
     protected function save(Model $model)
     {
+        $builder = new Builder;
+
         foreach ($model->getEntityAttributes() as $attribute) {
             if (! $model->relationLoaded($relation = $attribute->getCode())) {
                 continue;
             }
 
-            $values = $model->getRelationValue($relation);
+            // We will ensure all values are truly linked to the entity record.
+            // This is specially useful when creating new entity records as
+            // we do not know its id until it is persisted into database.
+            $values = $builder->ensure(
+                $model, $attribute, $model->getRelationValue($relation)
+            );
 
             // We will check for relation loads as we do not want to load any relation
-            // which was not implicity lodaded. Then iterating over any value model
+            // which was not implicitly loaded. Then iterating over any value model
             // existing as relation and save it to persist it and its relations.
             $this->saveOrTrash($values);
         }

@@ -20,6 +20,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity = m::mock(InteractorModelStub::class);
 
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => new Attribute]));
+        $entity->shouldReceive('bootEavquentIfNotBooted');
         $value->shouldReceive('getContent')->andReturn('bar');
         $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
         $entity->shouldReceive('getRelation')->with('foo')->andReturn($value);
@@ -36,6 +37,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity = m::mock(InteractorModelStub::class);
         $attribute = m::mock(Attribute::class);
 
+        $entity->shouldReceive('bootEavquentIfNotBooted');
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
         $attribute->shouldReceive('isCollection')->once()->andReturn(true);
         $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
@@ -52,6 +54,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $builder = m::mock(Builder::class);
         $entity = m::mock(InteractorModelStub::class);
 
+        $entity->shouldReceive('bootEavquentIfNotBooted');
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => new Attribute]));
         $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
         $entity->shouldReceive('getRelation')->with('foo')->andReturn('bar');
@@ -72,6 +75,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity = m::mock(InteractorModelStub::class);
         $attribute = m::mock(Attribute::class);
 
+        $entity->shouldReceive('bootEavquentIfNotBooted');
         $attribute->shouldReceive('isCollection')->once()->andReturn(false);
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
         $entity->shouldReceive('relationLoaded')->with('foo')->andReturn(true);
@@ -92,6 +96,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity = m::mock(InteractorModelStub::class);
         $attribute = m::mock(Attribute::class);
 
+        $entity->shouldReceive('bootEavquentIfNotBooted');
         $attribute->shouldReceive('isCollection')->once()->andReturn(false);
         $attribute->shouldReceive('getCode')->once()->andReturn('foo');
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
@@ -114,6 +119,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
         $entity = m::mock(InteractorModelStub::class);
         $attribute = m::mock(Attribute::class);
 
+        $entity->shouldReceive('bootEavquentIfNotBooted');
         $attribute->shouldReceive('isCollection')->once()->andReturn(true);
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
         $entity->shouldReceive('relationLoaded')->with('foo')->once()->andReturn(true);
