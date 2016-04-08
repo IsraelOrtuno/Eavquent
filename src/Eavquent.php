@@ -112,7 +112,7 @@ trait Eavquent
      */
     public function setRelation($key, $value)
     {
-        if ($value instanceof Collection) {
+        if (! is_null($value) && ($value instanceof Collection)) {
             $this->linkRelationCollection($key, $value);
         }
 
