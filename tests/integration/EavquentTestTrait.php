@@ -240,6 +240,23 @@ trait EavquentTestTrait
         $this->assertTrue(array_key_exists('id', $result['colors'][0]));
         $this->assertTrue(array_key_exists('id', $result['colors'][1]));
     }
+
+    /** @test */
+    public function create_entity_with_values()
+    {
+        $company = new Company;
+
+        $company->name = 'fooCompany';
+        $company->city = 'foo';
+        $company->colors = ['bar', 'baz'];
+
+        $company->save();
+
+        $this->seeInDatabase('companies', ['name' => 'fooCompany']);
+        $this->seeInDatabase('eav_values_varchar', ['entity_id' => $company->getKey(), 'content' => 'foo']);
+        $this->seeInDatabase('eav_values_varchar', ['entity_id' => $company->getKey(), 'content' => 'bar']);
+        $this->seeInDatabase('eav_values_varchar', ['entity_id' => $company->getKey(), 'content' => 'baz']);
+    }
 }
 
 class CompanyWithRawRelationsStub extends Company
