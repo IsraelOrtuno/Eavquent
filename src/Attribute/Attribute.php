@@ -2,6 +2,7 @@
 
 namespace Devio\Eavquent\Attribute;
 
+use Devio\Eavquent\Events\AttributeWasSaved;
 use Illuminate\Database\Eloquent\Model;
 
 class Attribute extends Model
@@ -32,6 +33,16 @@ class Attribute extends Model
         $this->setTable(eav_table('attributes'));
 
         parent::__construct($attributes);
+    }
+
+    /**
+     * Registering events.
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+//        static::saved(AttributeWasSaved::class . '@handle');
     }
 
     /**
