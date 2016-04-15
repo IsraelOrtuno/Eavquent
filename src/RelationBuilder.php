@@ -24,7 +24,7 @@ class RelationBuilder
             $relation = $this->getRelationClosure($entity, $attribute);
 
             $entity->setAttributeRelation($attribute->getCode(), $relation);
-            +        }
+        }
     }
 
     /**
