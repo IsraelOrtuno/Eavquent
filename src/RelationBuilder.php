@@ -24,7 +24,7 @@ class RelationBuilder
             $relation = $this->getRelationClosure($entity, $attribute);
 
             $entity->setAttributeRelation($attribute->getCode(), $relation);
-        }
+            +        }
     }
 
     /**
@@ -36,7 +36,7 @@ class RelationBuilder
      */
     protected function getRelationClosure(Model $entity, Attribute $attribute)
     {
-        $method = $method = $this->guessRelationMethod($attribute);
+        $method = $this->guessRelationMethod($attribute);
 
         // This will return a closure fully binded to the current model instance.
         // This will help us to simulate any relation as if it was handly made
