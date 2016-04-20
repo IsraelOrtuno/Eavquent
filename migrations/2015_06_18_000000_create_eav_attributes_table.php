@@ -14,7 +14,7 @@ class CreateEavAttributesTable extends Migration
     {
         Schema::create(eav_table('attributes'), function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code');
+            $table->string('name');
             $table->string('label');
             $table->string('model');
             $table->string('entity');

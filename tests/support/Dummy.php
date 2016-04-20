@@ -11,7 +11,7 @@ class Dummy
 
         // Simple attribute with values
         $cityAttribute = Attribute::create([
-            'code'          => 'city',
+            'name'          => 'city',
             'label'         => 'City',
             'model'         => Varchar::class,
             'entity'        => Company::class,
@@ -20,7 +20,7 @@ class Dummy
 
         // Collection attribute with values
         $colorsAttribute = Attribute::create([
-            'code'          => 'colors',
+            'name'          => 'colors',
             'label'         => 'Colors',
             'model'         => Varchar::class,
             'entity'        => Company::class,
@@ -30,7 +30,7 @@ class Dummy
 
         // Simple attribute without any value
         $addressAttribute = Attribute::create([
-            'code'          => 'address',
+            'name'          => 'address',
             'label'         => 'Address',
             'model'         => Varchar::class,
             'entity'        => Company::class,
@@ -39,7 +39,7 @@ class Dummy
 
         // Collection attribute without any value
         $sizesAttribute = Attribute::create([
-            'code'          => 'sizes',
+            'name'          => 'sizes',
             'label'         => 'Sizes',
             'model'         => Varchar::class,
             'entity'        => Company::class,

@@ -59,7 +59,7 @@ class EntityWasSaved
         $builder = new Builder;
 
         foreach ($model->getEntityAttributes() as $attribute) {
-            if (! $model->relationLoaded($relation = $attribute->getCode())) {
+            if (! $model->relationLoaded($relation = $attribute->getName())) {
                 continue;
             }
 
@@ -127,7 +127,7 @@ class EntityWasSaved
     {
         foreach ($model->getEntityAttributes() as $attribute) {
             if ($attribute->isCollection()
-                || ! $model->relationLoaded($relation = $attribute->getCode())
+                || ! $model->relationLoaded($relation = $attribute->getName())
                 || is_null($values = $model->getRelationValue($relation))
             ) {
                 continue;

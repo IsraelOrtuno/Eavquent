@@ -62,7 +62,7 @@ trait Eavquent
         $manager = $instance->getAttributeManager();
 
         $attributes = $manager->get($instance->getMorphClass());
-        static::$entityAttributes = $attributes->keyBy('code');
+        static::$entityAttributes = $attributes->keyBy('name');
 
         static::addGlobalScope(new EagerLoadScope);
 

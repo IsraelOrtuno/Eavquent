@@ -16,7 +16,7 @@ trait EavquentTestTrait
     {
         $company = Company::first();
 
-        $this->assertEquals('colors', $company->rawColorsObject->getAttribute()->code);
+        $this->assertEquals('colors', $company->rawColorsObject->getAttribute()->name);
         $this->assertEquals($company, $company->rawColorsObject->getEntity());
     }
 
@@ -25,7 +25,7 @@ trait EavquentTestTrait
     {
         $company = Company::with('eav')->first();
 
-        $this->assertEquals('colors', $company->rawColorsObject->getAttribute()->code);
+        $this->assertEquals('colors', $company->rawColorsObject->getAttribute()->name);
         $this->assertEquals($company, $company->rawColorsObject->getEntity());
     }
 

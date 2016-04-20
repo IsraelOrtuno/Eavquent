@@ -98,7 +98,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
 
         $entity->shouldReceive('bootEavquentIfNotBooted');
         $attribute->shouldReceive('isCollection')->once()->andReturn(false);
-        $attribute->shouldReceive('getCode')->once()->andReturn('foo');
+        $attribute->shouldReceive('getName')->once()->andReturn('foo');
         $entity->shouldReceive('getEntityAttributes')->andReturn(new Collection(['foo' => $attribute]));
         $entity->shouldReceive('relationLoaded')->with('foo')->once()->andReturn(true);
         $entity->shouldReceive('getRelation')->with('foo')->once()->andReturn(null);
@@ -110,7 +110,7 @@ class InteractorTest extends PHPUnit_Framework_TestCase
 
         $interactor->set('foo', 'bar');
     }
-    
+
     /** @test */
     public function replace_an_entire_collection()
     {
