@@ -1,10 +1,10 @@
 <?php
 
+use Mockery as m;
+use Illuminate\Support\Collection;
 use Devio\Eavquent\Attribute\Cache;
 use Devio\Eavquent\Attribute\Manager;
 use Devio\Eavquent\Attribute\Repository;
-use Illuminate\Support\Collection;
-use Mockery as m;
 
 class ManagerTest extends PHPUnit_Framework_TestCase
 {
@@ -23,7 +23,7 @@ class ManagerTest extends PHPUnit_Framework_TestCase
 
         $this->manager->get();
     }
-    
+
     /** @test */
     public function refresh_attributes_if_no_cache()
     {
