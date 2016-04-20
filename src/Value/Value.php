@@ -37,16 +37,6 @@ abstract class Value extends Model
     }
 
     /**
-     * Polymorphic relationship to the entity instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
-    public function entity()
-    {
-        return $this->morphTo();
-    }
-
-    /**
      * Set the content.
      *
      * @param $content
