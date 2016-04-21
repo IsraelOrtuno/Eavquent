@@ -2,8 +2,8 @@
 
 namespace Devio\Eavquent\Attribute;
 
-use Devio\Eavquent\Events\AttributeWasSaved;
 use Illuminate\Database\Eloquent\Model;
+use Devio\Eavquent\Events\AttributeWasSaved;
 
 class Attribute extends Model
 {
