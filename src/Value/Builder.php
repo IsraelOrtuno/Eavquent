@@ -23,7 +23,7 @@ class Builder
             return $value;
         }
 
-        $instance = $attribute->getModelInstance();
+        $instance = $attribute->getTypeInstance();
 
         $this->ensure($entity, $attribute, $instance);
 

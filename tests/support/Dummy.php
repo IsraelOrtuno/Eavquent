@@ -13,7 +13,7 @@ class Dummy
         $cityAttribute = Attribute::create([
             'name'          => 'city',
             'label'         => 'City',
-            'model'         => Varchar::class,
+            'type'          => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null
         ]);
@@ -22,7 +22,7 @@ class Dummy
         $colorsAttribute = Attribute::create([
             'name'          => 'colors',
             'label'         => 'Colors',
-            'model'         => Varchar::class,
+            'type'          => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null,
             'collection'    => true
@@ -32,7 +32,7 @@ class Dummy
         $addressAttribute = Attribute::create([
             'name'          => 'address',
             'label'         => 'Address',
-            'model'         => Varchar::class,
+            'type'          => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null
         ]);
@@ -41,7 +41,7 @@ class Dummy
         $sizesAttribute = Attribute::create([
             'name'          => 'sizes',
             'label'         => 'Sizes',
-            'model'         => Varchar::class,
+            'type'          => Varchar::class,
             'entity'        => Company::class,
             'default_value' => null,
             'collection'    => true

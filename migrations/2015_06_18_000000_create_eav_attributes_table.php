@@ -16,7 +16,7 @@ class CreateEavAttributesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('label');
-            $table->string('model');
+            $table->string('type');
             $table->string('entity');
             $table->boolean('collection')->default(false);
             $table->text('default_value')->nullable();

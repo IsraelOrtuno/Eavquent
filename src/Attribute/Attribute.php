@@ -20,7 +20,7 @@ class Attribute extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'label', 'model', 'entity', 'default_value', 'collection',
+        'name', 'label', 'type', 'entity', 'default_value', 'collection',
     ];
 
     /**
@@ -60,9 +60,9 @@ class Attribute extends Model
      *
      * @return mixed
      */
-    public function getModel()
+    public function getType()
     {
-        return $this->getAttribute('model');
+        return $this->getAttribute('type');
     }
 
     /**
@@ -70,9 +70,9 @@ class Attribute extends Model
      *
      * @return mixed
      */
-    public function getModelInstance()
+    public function getTypeInstance()
     {
-        $class = $this->getAttribute('model');
+        $class = $this->getType();
 
         return new $class;
     }

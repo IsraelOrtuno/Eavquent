@@ -23,7 +23,7 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $value = m::mock(Varchar::class);
         $attribute = m::mock(Attribute::class);
 
-        $attribute->shouldReceive('getModelInstance')->once()->andReturn($value);
+        $attribute->shouldReceive('getTypeInstance')->once()->andReturn($value);
 
         $attribute->shouldReceive('getForeignKey')->once()->andReturn('attribute_id');
         $attribute->shouldReceive('getKey')->once()->andReturn(202);
@@ -45,7 +45,7 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $entity->setRawAttributes(['id' => 101]);
         $attribute = m::mock(Attribute::class);
         $value = m::mock(Varchar::class);
-        
+
         $attribute->shouldReceive('getForeignKey')->once()->andReturn('attribute_id');
         $attribute->shouldReceive('getKey')->once()->andReturn(202);
 
