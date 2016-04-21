@@ -20,6 +20,8 @@ class CreateEavAttributesTable extends Migration
             $table->string('entity');
             $table->boolean('collection')->default(false);
             $table->text('default_value')->nullable();
+
+            $table->unique(['name', 'type']);
         });
     }
 
