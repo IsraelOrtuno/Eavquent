@@ -2,7 +2,7 @@
 
 use Devio\Eavquent\Migration;
 
-class CreateEavValuesIntegerTable extends Migration
+class CreateEavValuesDoubleTable extends Migration
 {
     /**
      * The table name.
