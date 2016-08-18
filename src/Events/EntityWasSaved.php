@@ -2,8 +2,8 @@
 
 namespace Devio\Eavquent\Events;
 
-use Devio\Eavquent\Value\Builder;
 use Devio\Eavquent\Value\Trash;
+use Devio\Eavquent\Value\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
