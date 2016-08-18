@@ -7,6 +7,7 @@ use Devio\Eavquent\Value\Trash;
 use Devio\Eavquent\Value\Collection;
 use Devio\Eavquent\Attribute\Manager;
 use Devio\Eavquent\Events\EntityWasSaved;
+use Devio\Eavquent\Events\EntityWasDeleted;
 use Illuminate\Contracts\Container\Container;
 
 trait Eavquent
@@ -67,6 +68,7 @@ trait Eavquent
         static::addGlobalScope(new EagerLoadScope);
 
         static::saved(EntityWasSaved::class . '@handle');
+        static::deleted(EntityWasDeleted::class . '@handle');
     }
 
     /**
@@ -408,6 +410,17 @@ trait Eavquent
     public function isAttributeRelationsBooted()
     {
         return $this->attributeRelationsBooted;
+    }
+
+    /**
+     * Check for forcing deletion when using soft deleting.
+     *
+     * @return bool
+     */
+    public function isForceDeleting()
+    {
+        return property_exists($this, 'forceDeleting') ?
+            $this->forceDeleting : false;
     }
 
     /**

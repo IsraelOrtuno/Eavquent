@@ -2,12 +2,7 @@
     "name": "devio/eavquent",
     "description": "EAV modeling package for Eloquent and Laravel.",
     "keywords": [
-        "eav",
-        "eloquent",
-        "laravel",
-        "dynamic",
-        "schema",
-        "database"
+        "eav", "eloquent", "laravel", "dynamic", "schema", "database"
     ],
     "license": "MIT",
     "authors": [

@@ -2,7 +2,7 @@
 
 use Devio\Eavquent\Migration;
 
-class CreateEavValuesDateTimeTable extends Migration
+class CreateEavValuesDatetimeTable extends Migration
 {
     /**
      * The table name.
