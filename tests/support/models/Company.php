@@ -12,7 +12,7 @@ class Company extends Model
     
     public function __call($method, $parameters)
     {
-        if($eav_call = $this->eavquentMagicMethodCall($method,$parameters)) return $eav_call;
+        if ($eav_call = self::eavquentMagicMethodCall($method, $parameters)) return $eav_call;
        
         //if($other_package_call = $this->otherPackageMagicMethodCall($method,$parameters)) return $other_package_call;
        
