@@ -430,14 +430,16 @@ trait Eavquent
      * @param  array $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function eavquentMagicMethodCall($method, $parameters)
     {
         $this->bootEavquentIfNotBooted();
 
         if ($this->isAttributeRelation($method)) {
             return call_user_func_array($this->attributeRelations[$method], $parameters);
         }
+        else {
+            return false;
+        }
 
-        return parent::__call($method, $parameters);
     }
 }
