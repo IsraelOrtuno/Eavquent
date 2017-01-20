@@ -9,5 +9,14 @@ class Company extends Model
     protected $fillable = ['name'];
 
     public $timestamps = false;
+    
+    public function __call($method, $parameters)
+    {
+        if ($eav_call = self::eavquentMagicMethodCall($method, $parameters)) return $eav_call;
+       
+        //if($other_package_call = $this->otherPackageMagicMethodCall($method,$parameters)) return $other_package_call;
+       
+        return parent::__call($method, $parameters);
+    }
 
 }
